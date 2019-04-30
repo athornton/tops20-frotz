@@ -231,99 +231,6 @@ typedef unsigned char zchar;
 #define LOW_BYTE(addr,v)  { v = zmp[addr]; }
 #define CODE_BYTE(v)	  { v = *pcp++;    }
 
-#if defined (AMIGA)
-
-extern zbyte *pcp;
-extern zbyte *zmp;
-
-#define lo(v)	((zbyte *)&v)[1]
-#define hi(v)	((zbyte *)&v)[0]
-
-#define SET_WORD(addr,v)  { zmp[addr] = hi(v); zmp[addr+1] = lo(v); }
-#define LOW_WORD(addr,v)  { hi(v) = zmp[addr]; lo(v) = zmp[addr+1]; }
-#define HIGH_WORD(addr,v) { hi(v) = zmp[addr]; lo(v) = zmp[addr+1]; }
-#define CODE_WORD(v)      { hi(v) = *pcp++; lo(v) = *pcp++; }
-#define GET_PC(v)         { v = pcp - zmp; }
-#define SET_PC(v)         { pcp = zmp + v; }
-
-#endif
-
-#if defined (__MSDOS__)
-
-extern zbyte far *pcp;
-extern zbyte far *zmp;
-
-#define lo(v)	((zbyte *)&v)[0]
-#define hi(v)	((zbyte *)&v)[1]
-
-#define SET_WORD(addr,v) asm {\
-    les bx,zmp;\
-    add bx,addr;\
-    mov ax,v;\
-    xchg al,ah;\
-    mov es:[bx],ax }
-
-#define LOW_WORD(addr,v) asm {\
-    les bx,zmp;\
-    add bx,addr;\
-    mov ax,es:[bx];\
-    xchg al,ah;\
-    mov v,ax }
-
-#define HIGH_WORD(addr,v) asm {\
-    mov bx,word ptr zmp;\
-    add bx,word ptr addr;\
-    mov al,bh;\
-    mov bh,0;\
-    mov ah,0;\
-    adc ah,byte ptr addr+2;\
-    mov cl,4;\
-    shl ax,cl;\
-    add ax,word ptr zmp+2;\
-    mov es,ax;\
-    mov ax,es:[bx];\
-    xchg al,ah;\
-    mov v,ax }
-
-#define CODE_WORD(v) asm {\
-    les bx,pcp;\
-    mov ax,es:[bx];\
-    xchg al,ah;\
-    mov v,ax;\
-    add word ptr pcp,2 }
-
-#define GET_PC(v) asm {\
-    mov bx,word ptr pcp+2;\
-    sub bx,word ptr zmp+2;\
-    mov ax,bx;\
-    mov cl,4;\
-    shl bx,cl;\
-    mov cl,12;\
-    shr ax,cl;\
-    add bx,word ptr pcp;\
-    adc al,0;\
-    sub bx,word ptr zmp;\
-    sbb al,0;\
-    mov word ptr v,bx;\
-    mov word ptr v+2,ax }
-
-#define SET_PC(v) asm {\
-    mov bx,word ptr zmp;\
-    add bx,word ptr v;\
-    mov al,bh;\
-    mov bh,0;\
-    mov ah,0;\
-    adc ah,byte ptr v+2;\
-    mov cl,4;\
-    shl ax,cl;\
-    add ax,word ptr zmp+2;\
-    mov word ptr pcp,bx;\
-    mov word ptr pcp+2,ax }
-
-#endif
-
-#if !defined (AMIGA) && !defined (__MSDOS__)
-
 extern zbyte *pcp;
 extern zbyte *zmp;
 
@@ -336,8 +243,6 @@ extern zbyte *zmp;
 #define CODE_WORD(v)      { v = ((zword) pcp[0] << 8) | pcp[1]; pcp += 2; }
 #define GET_PC(v)         { v = pcp - zmp; }
 #define SET_PC(v)         { pcp = zmp + v; }
-
-#endif
 
 /*** Story file header data ***/
 

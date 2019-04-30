@@ -15,10 +15,6 @@
 
 #include "frotz.h"
 
-#ifndef __MSDOS__
-#define cdecl
-#endif
-
 extern void interpret (void);
 extern void init_memory (void);
 extern void init_undo (void);
@@ -157,7 +153,7 @@ void z_piracy (void)
  *
  */
 
-int cdecl main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
 
     os_process_arguments (argc, argv);

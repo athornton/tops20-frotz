@@ -9,17 +9,6 @@
 #include <string.h>
 #include "frotz.h"
 
-#ifdef __MSDOS__
-
-#include <alloc.h>
-
-#define malloc(size)	farmalloc (size)
-#define realloc(size,p)	farrealloc (size,p)
-#define free(size)	farfree (size)
-#define memcpy(d,s,n)	_fmemcpy (d,s,n)
-
-#else
-
 #include <stdlib.h>
 
 #ifndef SEEK_SET
@@ -30,7 +19,6 @@
 
 #define far
 
-#endif
 
 extern void seed_random (int);
 extern void restart_screen (void);
