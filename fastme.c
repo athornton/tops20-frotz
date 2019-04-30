@@ -9,17 +9,6 @@
 #include <string.h>
 #include "frotz.h"
 
-#ifdef __MSDOS__
-
-#include <alloc.h>
-
-#define malloc(size)	farmalloc (size)
-#define realloc(size,p)	farrealloc (size,p)
-#define free(size)	farfree (size)
-#define memcpy(d,s,n)	_fmemcpy (d,s,n)
-
-#else
-
 #include <stdlib.h>
 
 #ifndef SEEK_SET
@@ -30,7 +19,6 @@
 
 #define far
 
-#endif
 
 extern void A00016 (int);
 extern void A00017 (void);
@@ -259,8 +247,8 @@ void A00236 (void)
 	}
 
     no_match:
-
-(void)0;    }
+        (void)0;
+    }
 
     LOW_WORD (H_ABBREVIATIONS, A00036)
     LOW_WORD (H_FILE_SIZE, A00037)

@@ -15,10 +15,6 @@
 
 #include "frotz.h"
 
-#ifndef __MSDOS__
-#define cdecl
-#endif
-
 extern void A00235 (void);
 extern void A00236 (void);
 extern void A00237 (void);
@@ -157,7 +153,7 @@ void A00129 (void)
  *
  */
 
-int cdecl main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
 
     A00210 (argc, argv);
