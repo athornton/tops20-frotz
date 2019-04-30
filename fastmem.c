@@ -259,7 +259,7 @@ void init_memory (void)
 	}
 
     no_match:
-
+        (void) 0; /* Added to make modern compilers happy */
     }
 
     LOW_WORD (H_ABBREVIATIONS, h_abbreviations)
