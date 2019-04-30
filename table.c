@@ -8,7 +8,7 @@
 #include "frotz.h"
 
 /*
- * A00098, copy a table or fill it with zeroes.
+ * z_copy_table, copy a table or fill it with zeroes.
  *
  *	zargs[0] = address of table
  * 	zargs[1] = destination address or 0 for fill
@@ -19,7 +19,7 @@
  *
  */
 
-void A00098 (void)
+void z_copy_table (void)
 {
     zword addr;
     zword size = zargs[2];
@@ -29,14 +29,14 @@ void A00098 (void)
     if (zargs[1] == 0)      				/* zero table */
 
 	for (i = 0; i < size; i++)
-	    A00194 ((zword) (zargs[0] + i), 0);
+	    storeb ((zword) (zargs[0] + i), 0);
 
     else if ((short) size < 0 || zargs[0] > zargs[1])	/* copy forwards */
 
 	for (i = 0; i < (((short) size < 0) ? - (short) size : size); i++) {
 	    addr = zargs[0] + i;
 	    LOW_BYTE (addr, value)
-	    A00194 ((zword) (zargs[1] + i), value);
+	    storeb ((zword) (zargs[1] + i), value);
 	}
 
     else						/* copy backwards */
@@ -44,20 +44,20 @@ void A00098 (void)
 	for (i = size - 1; i >= 0; i--) {
 	    addr = zargs[0] + i;
 	    LOW_BYTE (addr, value)
-	    A00194 ((zword) (zargs[1] + i), value);
+	    storeb ((zword) (zargs[1] + i), value);
 	}
 
-}/* A00098 */
+}/* z_copy_table */
 
 /*
- * A00119, store a value from a table of bytes.
+ * z_loadb, store a value from a table of bytes.
  *
  *	zargs[0] = address of table
  *	zargs[1] = index of table entry to store
  *
  */
 
-void A00119 (void)
+void z_loadb (void)
 {
     zword addr = zargs[0] + zargs[1];
     zbyte value;
@@ -66,17 +66,17 @@ void A00119 (void)
 
     store (value);
 
-}/* A00119 */
+}/* z_loadb */
 
 /*
- * A00120, store a value from a table of words.
+ * z_loadw, store a value from a table of words.
  *
  *	zargs[0] = address of table
  *	zargs[1] = index of table entry to store
  *
  */
 
-void A00120 (void)
+void z_loadw (void)
 {
     zword addr = zargs[0] + 2 * zargs[1];
     zword value;
@@ -85,10 +85,10 @@ void A00120 (void)
 
     store (value);
 
-}/* A00120 */
+}/* z_loadw */
 
 /*
- * A00160, find and store the address of a target within a table.
+ * z_scan_table, find and store the address of a target within a table.
  *
  *	zargs[0] = target value to be searched for
  *	zargs[1] = address of table
@@ -100,7 +100,7 @@ void A00120 (void)
  *
  */
 
-void A00160 (void)
+void z_scan_table (void)
 {
     zword addr = zargs[1];
     int i;
@@ -143,12 +143,12 @@ void A00160 (void)
 finished:
 
     store (addr);
-    A00193 (addr);
+    branch (addr);
 
-}/* A00160 */
+}/* z_scan_table */
 
 /*
- * A00173, write a byte into a table of bytes.
+ * z_storeb, write a byte into a table of bytes.
  *
  *	zargs[0] = address of table
  *	zargs[1] = index of table entry
@@ -156,15 +156,15 @@ finished:
  *
  */
 
-void A00173 (void)
+void z_storeb (void)
 {
 
-    A00194 ((zword) (zargs[0] + zargs[1]), zargs[2]);
+    storeb ((zword) (zargs[0] + zargs[1]), zargs[2]);
 
-}/* A00173 */
+}/* z_storeb */
 
 /*
- * A00174, write a word into a table of words.
+ * z_storew, write a word into a table of words.
  *
  *	zargs[0] = address of table
  *	zargs[1] = index of table entry
@@ -172,9 +172,9 @@ void A00173 (void)
  *
  */
 
-void A00174 (void)
+void z_storew (void)
 {
 
-    A00195 ((zword) (zargs[0] + 2 * zargs[1]), zargs[2]);
+    storew ((zword) (zargs[0] + 2 * zargs[1]), zargs[2]);
 
-}/* A00174 */
+}/* z_storew */

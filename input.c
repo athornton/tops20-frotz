@@ -7,21 +7,21 @@
 
 #include "frotz.h"
 
-extern int A00231 (void);
+extern int save_undo (void);
 
-extern zchar A00232 (zword, zword, bool);
-extern zchar A00233 (int, zchar *, zword, zword, bool, bool);
+extern zchar stream_read_key (zword, zword, bool);
+extern zchar stream_read_input (int, zchar *, zword, zword, bool, bool);
 
-extern void A00234 (zword, zword, zword, bool);
+extern void tokenise_line (zword, zword, zword, bool);
 
 /*
- * A00003
+ * is_terminator
  *
  * Check if the given key is an input terminator.
  *
  */
 
-bool A00003 (zchar key)
+bool is_terminator (zchar key)
 {
 
     if (key == ZC_TIME_OUT)
@@ -31,16 +31,16 @@ bool A00003 (zchar key)
     if (key >= ZC_HKEY_MIN && key <= ZC_HKEY_MAX)
 	return TRUE;
 
-    if (A00051 != 0)
+    if (h_terminating_keys != 0)
 
 	if (key >= ZC_ARROW_MIN && key <= ZC_MENU_CLICK) {
 
-	    zword addr = A00051;
+	    zword addr = h_terminating_keys;
 	    zbyte c;
 
 	    do {
 		LOW_BYTE (addr, c)
-		if (c == 255 || key == A00182 (c))
+		if (c == 255 || key == translate_from_zscii (c))
 		    return TRUE;
 		addr++;
 	    } while (c != 0);
@@ -49,52 +49,52 @@ bool A00003 (zchar key)
 
     return FALSE;
 
-}/* A00003 */
+}/* is_terminator */
 
 /*
- * A00122, add or remove a menu and A00193 if successful.
+ * z_make_menu, add or remove a menu and branch if successful.
  *
  * 	zargs[0] = number of menu
  *	zargs[1] = table of menu entries or 0 to remove menu
  *
  */
 
-void A00122 (void)
+void z_make_menu (void)
 {
 
     /* This opcode was only used for the Macintosh version of Journey.
        It controls menus with numbers greater than 2 (menus 0, 1 and 2
        are system menus). Frotz doesn't implement menus yet. */
 
-    A00193 (FALSE);
+    branch (FALSE);
 
-}/* A00122 */
+}/* z_make_menu */
 
 /*
- * A00023
+ * read_yes_or_no
  *
  * Ask the user a question; return true if the answer is yes.
  *
  */
 
-bool A00023 (const char *s)
+bool read_yes_or_no (const char *s)
 {
     zchar key;
 
-    A00189 (s);
-    A00189 ("? (y/n) >");
+    print_string (s);
+    print_string ("? (y/n) >");
 
-    key = A00232 (0, 0, FALSE);
+    key = stream_read_key (0, 0, FALSE);
 
     if (key == 'y' || key == 'Y') {
-	A00189 ("y\n");
+	print_string ("y\n");
 	return TRUE;
     } else {
-	A00189 ("n\n");
+	print_string ("n\n");
 	return FALSE;
     }
 
-}/* A00023 */
+}/* read_yes_or_no */
 
 /*
  * read_string
@@ -111,20 +111,20 @@ void read_string (int max, zchar *buffer)
 
     do {
 
-	key = A00233 (max, buffer, 0, 0, FALSE, FALSE);
+	key = stream_read_input (max, buffer, 0, 0, FALSE, FALSE);
 
     } while (key != ZC_RETURN);
 
 }/* read_string */
 
 /*
- * A00226
+ * read_number
  *
  * Ask the user to type in a number and return it.
  *
  */
 
-int A00226 (void)
+int read_number (void)
 {
     zchar buffer[6];
     int value = 0;
@@ -138,10 +138,10 @@ int A00226 (void)
 
     return value;
 
-}/* A00226 */
+}/* read_number */
 
 /*
- * A00148, read a line of input and (in V5+) store the terminating key.
+ * z_read, read a line of input and (in V5+) store the terminating key.
  *
  *	zargs[0] = address of text buffer
  *	zargs[1] = address of token buffer
@@ -150,7 +150,7 @@ int A00226 (void)
  *
  */
 
-void A00148 (void)
+void z_read (void)
 {
     zchar buffer[INPUT_BUFFER_SIZE];
     zword addr;
@@ -170,7 +170,7 @@ void A00148 (void)
 
     LOW_BYTE (addr, max)
 
-    if (A00025 <= V4)
+    if (h_version <= V4)
 	max--;
 
     if (max >= INPUT_BUFFER_SIZE)
@@ -178,7 +178,7 @@ void A00148 (void)
 
     /* Get initial input size */
 
-    if (A00025 >= V5) {
+    if (h_version >= V5) {
 	addr++;
 	LOW_BYTE (addr, size)
     } else size = 0;
@@ -188,32 +188,32 @@ void A00148 (void)
     for (i = 0; i < size; i++) {
 	addr++;
 	LOW_BYTE (addr, c)
-	buffer[i] = A00182 (c);
+	buffer[i] = translate_from_zscii (c);
     }
 
     buffer[i] = 0;
 
     /* Draw status line for V1 to V3 games */
 
-    if (A00025 <= V3)
-	A00169 ();
+    if (h_version <= V3)
+	z_show_status ();
 
     /* Read input from current input stream */
 
-    key = A00233 (
+    key = stream_read_input (
 	max, buffer,		/* buffer and size */
 	zargs[2],		/* timeout value   */
 	zargs[3],		/* timeout routine */
 	TRUE,	        	/* enable hot keys */
-	A00025 == V6);	/* no script in V6 */
+	h_version == V6);	/* no script in V6 */
 
     if (key == ZC_BAD)
 	return;
 
-    /* Perform A00231 for V1 to V4 games */
+    /* Perform save_undo for V1 to V4 games */
 
-    if (A00025 <= V4)
-	A00231 ();
+    if (h_version <= V4)
+	save_undo ();
 
     /* Copy local buffer back to dynamic memory */
 
@@ -228,31 +228,31 @@ void A00148 (void)
 
 	}
 
-	A00194 ((zword) (zargs[0] + ((A00025 <= V4) ? 1 : 2) + i), A00183 (buffer[i]));
+	storeb ((zword) (zargs[0] + ((h_version <= V4) ? 1 : 2) + i), translate_to_zscii (buffer[i]));
 
     }
 
     /* Add null character (V1-V4) or write input length into 2nd byte */
 
-    if (A00025 <= V4)
-	A00194 ((zword) (zargs[0] + 1 + i), 0);
+    if (h_version <= V4)
+	storeb ((zword) (zargs[0] + 1 + i), 0);
     else
-	A00194 ((zword) (zargs[0] + 1), i);
+	storeb ((zword) (zargs[0] + 1), i);
 
     /* Tokenise line if a token buffer is present */
 
     if (key == ZC_RETURN && zargs[1] != 0)
-	A00234 (zargs[0], zargs[1], 0, FALSE);
+	tokenise_line (zargs[0], zargs[1], 0, FALSE);
 
     /* Store key */
 
-    if (A00025 >= V5)
-	store (A00183 (key));
+    if (h_version >= V5)
+	store (translate_to_zscii (key));
 
-}/* A00148 */
+}/* z_read */
 
 /*
- * A00149, read and store a key.
+ * z_read_char, read and store a key.
  *
  *	zargs[0] = input device (must be 1)
  *	zargs[1] = timeout in tenths of a second (optional)
@@ -260,7 +260,7 @@ void A00148 (void)
  *
  */
 
-void A00149 (void)
+void z_read_char (void)
 {
     zchar key;
 
@@ -271,7 +271,7 @@ void A00149 (void)
 
     /* Read input from the current input stream */
 
-    key = A00232 (
+    key = stream_read_key (
 	zargs[1],	/* timeout value   */
 	zargs[2],	/* timeout routine */
 	TRUE);  	/* enable hot keys */
@@ -281,23 +281,23 @@ void A00149 (void)
 
     /* Store key */
 
-    store (A00183 (key));
+    store (translate_to_zscii (key));
 
-}/* A00149 */
+}/* z_read_char */
 
 /*
- * A00150, write the current mouse status into a table.
+ * z_read_mouse, write the current mouse status into a table.
  *
  *	zargs[0] = address of table
  *
  */
 
-void A00150 (void)
+void z_read_mouse (void)
 {
 
-    A00195 ((zword) (zargs[0] + 0), A00060);
-    A00195 ((zword) (zargs[0] + 2), A00059);
-    A00195 ((zword) (zargs[0] + 4), 1);		/* mouse button bits */
-    A00195 ((zword) (zargs[0] + 6), 0);		/* menu selection */
+    storew ((zword) (zargs[0] + 0), hx_mouse_y);
+    storew ((zword) (zargs[0] + 2), hx_mouse_x);
+    storew ((zword) (zargs[0] + 4), 1);		/* mouse button bits */
+    storew ((zword) (zargs[0] + 6), 0);		/* menu selection */
 
-}/* A00150 */
+}/* z_read_mouse */

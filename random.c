@@ -13,17 +13,17 @@ static interval = 0;
 static counter = 0;
 
 /*
- * A00016
+ * seed_random
  *
  * Set the seed value for the random number generator.
  *
  */
 
-void A00016 (int value)
+void seed_random (int value)
 {
 
     if (value == 0) {		/* ask interface for seed value */
-	A = A00211 ();
+	A = os_random_seed ();
 	interval = 0;
     } else if (value < 1000) {	/* special seed value */
 	counter = 0;
@@ -33,21 +33,21 @@ void A00016 (int value)
 	interval = 0;
     }
 
-}/* A00016 */
+}/* seed_random */
 
 /*
- * A00147, store a random number or set the random number seed.
+ * z_random, store a random number or set the random number seed.
  *
  *	zargs[0] = range (positive) or seed value (negative)
  *
  */
 
-void A00147 ()
+void z_random ()
 {
 
     if ((short) zargs[0] <= 0) {	/* set random seed */
 
-	A00016 (- (short) zargs[0]);
+	seed_random (- (short) zargs[0]);
 	store (0);
 
     } else {				/* generate random number */
@@ -66,4 +66,4 @@ void A00147 ()
 
     }
 
-}/* A00147 */
+}/* z_random */

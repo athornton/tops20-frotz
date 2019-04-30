@@ -4,12 +4,12 @@
  * Any use permitted provided this notice stays intact.
  */
 
-#include "dfrotz.h"
+#include "dumb-frotz.h"
 
 static char runtime_usage[] =
   "DUMB-FROTZ runtime help:\n"
   "  General Commands:\n"
-  "    \\help    Show this A00070.\n"
+  "    \\help    Show this message.\n"
   "    \\set     Show the current values of runtime settings.\n"
   "    \\s       Show the current contents of the whole screen.\n"
   "    \\d       Discard the part of the input before the cursor.\n"
@@ -70,7 +70,7 @@ static int xgetchar(void)
       fprintf(stderr, "\nEOT\n");
       exit(0);
     }
-    A00202(strerror(errno));
+    os_fatal(strerror(errno));
   }
   return c;
 }
@@ -78,7 +78,7 @@ static int xgetchar(void)
 /* Read one line, including the newline, into s.  Safely avoids buffer
  * overruns (but that's kind of pointless because there are several
  * other places where I'm not so careful).  */
-static void frotz_getline(char *s)
+static void getline(char *s)
 {
   int c;
   char *p = s;
@@ -137,7 +137,7 @@ static void translate_special_chars(char *s)
 /* The time in tenths of seconds that the user is ahead of z time.  */
 static int time_ahead = 0;
 
-/* Called from A00213 and A00214 if they have input from
+/* Called from os_read_key and os_read_line if they have input from
  * a previous call to dumb_read_line.
  * Returns TRUE if we should timeout rather than use the read-ahead.
  * (because the user is further ahead than the timeout).  */
@@ -156,8 +156,8 @@ static void toggle(bool *var, char val)
   *var = val == '1' || (val != '0' && !*var);
 }
 
-/* Handle input-related user settings and call A00007.  */
-bool A00004(const char *setting, bool show_cursor, bool startup)
+/* Handle input-related user settings and call dumb_output_handle_setting.  */
+bool dumb_handle_setting(const char *setting, bool show_cursor, bool startup)
 {
   if (!strncmp(setting, "sf", 2)) {
     speed = atof(&setting[2]);
@@ -170,7 +170,7 @@ bool A00004(const char *setting, bool show_cursor, bool startup)
       printf("Speed Factor %g\n", speed);
       printf("More Prompts %s\n", do_more_prompts ? "ON" : "OFF");
     }
-    return A00007(setting, show_cursor, startup);
+    return dumb_output_handle_setting(setting, show_cursor, startup);
   }
   return TRUE;
 }
@@ -195,14 +195,14 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
   }
   time_ahead = 0;
 
-  A00008(show_cursor);
+  dumb_show_screen(show_cursor);
   for (;;) {
     char *command;
     if (prompt)
       fputs(prompt, stdout);
     else
-      A00009(show_cursor, (timeout ? "tTD" : ")>}")[type]);
-    frotz_getline(s);
+      dumb_show_prompt(show_cursor, (timeout ? "tTD" : ")>}")[type]);
+    getline(s);
     if ((s[0] != '\\') || ((s[1] != '\0') && !islower(s[1]))) {
       /* Is not a command line.  */
       translate_special_chars(s);
@@ -245,7 +245,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
       if (type != INPUT_LINE_CONTINUED)
 	fprintf(stderr, "DUMB-FROTZ: No input to discard\n");
       else {
-	A00012(strlen(continued_line_chars));
+	dumb_discard_old_input(strlen(continued_line_chars));
 	continued_line_chars[0] = '\0';
 	type = INPUT_LINE;
       }
@@ -257,21 +257,21 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
 	current_page = next_page = runtime_usage;
 	for (;;) {
 	  int i;
-	  for (i = 0; (i < A00041 - 2) && *next_page; i++)
+	  for (i = 0; (i < h_screen_rows - 2) && *next_page; i++)
 	    next_page = strchr(next_page, '\n') + 1;
 	  printf("%.*s", next_page - current_page, current_page);
 	  current_page = next_page;
 	  if (!*current_page)
 	    break;
 	  printf("HELP: Type <return> for more, or q <return> to stop: ");
-	  frotz_getline(s);
+	  getline(s);
 	  if (!strcmp(s, "q\n"))
 	    break;
 	}
       }
     } else if (!strcmp(command, "s")) {
-	A00010();
-    } else if (!A00004(command, show_cursor, FALSE)) {
+	dumb_dump_screen();
+    } else if (!dumb_handle_setting(command, show_cursor, FALSE)) {
       fprintf(stderr, "DUMB-FROTZ: unknown command: %s\n", s);
       fprintf(stderr, "Enter \\help to see the list of commands\n");
     }
@@ -295,7 +295,7 @@ static char read_key_buffer[INPUT_BUFFER_SIZE];
 /* Similar.  Useful for using function key abbreviations.  */
 static char read_line_buffer[INPUT_BUFFER_SIZE];
 
-zchar A00213 (int timeout, bool show_cursor)
+zchar os_read_key (int timeout, bool show_cursor)
 {
   char c;
   int timed_out;
@@ -320,12 +320,12 @@ zchar A00213 (int timeout, bool show_cursor)
   c = read_key_buffer[0];
   memmove(read_key_buffer, read_key_buffer + 1, strlen(read_key_buffer));
 
-  /* TODO: error A00070s for invalid special chars.  */
+  /* TODO: error messages for invalid special chars.  */
 
   return c;
 }
 
-zchar A00214 (int max, zchar *buf, int timeout, int width, int continued)
+zchar os_read_line (int max, zchar *buf, int timeout, int width, int continued)
 {
   char *p;
   int terminator;
@@ -353,7 +353,7 @@ zchar A00214 (int max, zchar *buf, int timeout, int width, int continued)
 
   /* find the terminating character.  */
   for (p = read_line_buffer;; p++) {
-    if (A00003(*p)) {
+    if (is_terminator(*p)) {
       terminator = *p;
       *p++ = '\0';
       break;
@@ -363,7 +363,7 @@ zchar A00214 (int max, zchar *buf, int timeout, int width, int continued)
   /* TODO: Truncate to width and max.  */
 
   /* copy to screen */
-  A00011(read_line_buffer);
+  dumb_display_user_input(read_line_buffer);
 
   /* copy to the buffer and save the rest for next time.  */
   strcat(buf, read_line_buffer);
@@ -379,7 +379,7 @@ zchar A00214 (int max, zchar *buf, int timeout, int width, int continued)
   return terminator;
 }
 
-int A00212 (char *file_name, const char *default_name, int flag)
+int os_read_file_name (char *file_name, const char *default_name, int flag)
 {
   char buf[INPUT_BUFFER_SIZE], prompt[INPUT_BUFFER_SIZE];
   FILE *fp;
@@ -403,20 +403,20 @@ int A00212 (char *file_name, const char *default_name, int flag)
   return TRUE;
 }
 
-void A00206 (void)
+void os_more_prompt (void)
 {
   if (do_more_prompts) {
     char buf[INPUT_BUFFER_SIZE];
     dumb_read_misc_line(buf, "***MORE***");
   } else
-    A00013();
+    dumb_elide_more_prompt();
 }
 
-void A00005(void)
+void dumb_init_input(void)
 {
-  if ((A00025 >= V4) && (speed != 0))
-    A00026 |= CONFIG_TIMEDINPUT;
+  if ((h_version >= V4) && (speed != 0))
+    h_config |= CONFIG_TIMEDINPUT;
 
-  if (A00025 >= V5)
-    A00034 &= ~(MOUSE_FLAG | MENU_FLAG);
+  if (h_version >= V5)
+    h_flags &= ~(MOUSE_FLAG | MENU_FLAG);
 }

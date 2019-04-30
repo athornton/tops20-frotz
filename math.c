@@ -38,14 +38,14 @@ void z_and (void)
 }/* z_and */
 
 /*
- * A00090, arithmetic SHIFT operation.
+ * z_art_shift, arithmetic SHIFT operation.
  *
  *	zargs[0] = value
  *	zargs[1] = #positions to shift left (positive) or right
  *
  */
 
-void A00090 (void)
+void z_art_shift (void)
 {
 
     if ((short) zargs[1] > 0)
@@ -53,7 +53,7 @@ void A00090 (void)
     else
 	store ((zword) ((short) zargs[0] >> - (short) zargs[1]));
 
-}/* A00090 */
+}/* z_art_shift */
 
 /*
  * z_div, signed 16bit division.
@@ -67,14 +67,14 @@ void z_div (void)
 {
 
     if (zargs[1] == 0)
-	A00192 ("Division by zero");
+	runtime_error ("Division by zero");
 
     store ((zword) ((short) zargs[0] / (short) zargs[1]));
 
 }/* z_div */
 
 /*
- * z_je, A00193 if the first value equals any of the following.
+ * z_je, branch if the first value equals any of the following.
  *
  *	zargs[0] = first value
  *	zargs[1] = second value (optional)
@@ -86,7 +86,7 @@ void z_div (void)
 void z_je (void)
 {
 
-    A00193 (
+    branch (
 	zargc > 1 && (zargs[0] == zargs[1] || (
 	zargc > 2 && (zargs[0] == zargs[2] || (
 	zargc > 3 && (zargs[0] == zargs[3]))))));
@@ -94,7 +94,7 @@ void z_je (void)
 }/* z_je */
 
 /*
- * z_jg, A00193 if the first value is greater than the second.
+ * z_jg, branch if the first value is greater than the second.
  *
  *	zargs[0] = first value
  *	zargs[1] = second value
@@ -104,12 +104,12 @@ void z_je (void)
 void z_jg (void)
 {
 
-    A00193 ((short) zargs[0] > (short) zargs[1]);
+    branch ((short) zargs[0] > (short) zargs[1]);
 
 }/* z_jg */
 
 /*
- * z_jl, A00193 if the first value is less than the second.
+ * z_jl, branch if the first value is less than the second.
  *
  *	zargs[0] = first value
  *	zargs[1] = second value
@@ -119,12 +119,12 @@ void z_jg (void)
 void z_jl (void)
 {
 
-    A00193 ((short) zargs[0] < (short) zargs[1]);
+    branch ((short) zargs[0] < (short) zargs[1]);
 
 }/* z_jl */
 
 /*
- * z_jz, A00193 if value is zero.
+ * z_jz, branch if value is zero.
  *
  * 	zargs[0] = value
  *
@@ -133,19 +133,19 @@ void z_jl (void)
 void z_jz (void)
 {
 
-    A00193 ((short) zargs[0] == 0);
+    branch ((short) zargs[0] == 0);
 
 }/* z_jz */
 
 /*
- * A00121, logical SHIFT operation.
+ * z_log_shift, logical SHIFT operation.
  *
  * 	zargs[0] = value
  *	zargs[1] = #positions to shift left (positive) or right (negative)
  *
  */
 
-void A00121 (void)
+void z_log_shift (void)
 {
 
     if ((short) zargs[1] > 0)
@@ -153,7 +153,7 @@ void A00121 (void)
     else
 	store ((zword) (zargs[0] >> - (short) zargs[1]));
 
-}/* A00121 */
+}/* z_log_shift */
 
 /*
  * z_mod, remainder after signed 16bit division.
@@ -167,7 +167,7 @@ void z_mod (void)
 {
 
     if (zargs[1] == 0)
-	A00192 ("Division by zero");
+	runtime_error ("Division by zero");
 
     store ((zword) ((short) zargs[0] % (short) zargs[1]));
 
@@ -233,16 +233,16 @@ void z_sub (void)
 }/* z_sub */
 
 /*
- * A00175, A00193 if all the flags of a bit mask are set in a value.
+ * z_test, branch if all the flags of a bit mask are set in a value.
  *
  *	zargs[0] = value to be examined
  *	zargs[1] = bit mask
  *
  */
 
-void A00175 (void)
+void z_test (void)
 {
 
-    A00193 ((zargs[0] & zargs[1]) == zargs[1]);
+    branch ((zargs[0] & zargs[1]) == zargs[1]);
 
-}/* A00175 */
+}/* z_test */

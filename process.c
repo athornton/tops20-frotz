@@ -16,41 +16,41 @@ static void __extended__ (void);
 static void __illegal__ (void);
 
 void (*op0_opcodes[0x10]) (void) = {
-    A00157,
-    A00156,
-    A00131,
-    A00138,
+    z_rtrue,
+    z_rfalse,
+    z_print,
+    z_print_ret,
     z_nop,
-    A00158,
-    A00153,
-    A00152,
-    A00155,
-    A00094,
-    A00146,
-    A00125,
-    A00169,
-    A00179,
+    z_save,
+    z_restore,
+    z_restart,
+    z_ret_popped,
+    z_catch,
+    z_quit,
+    z_new_line,
+    z_show_status,
+    z_verify,
     __extended__,
-    A00129
+    z_piracy
 };
 
 void (*op1_opcodes[0x10]) (void) = {
     z_jz,
-    A00112,
-    A00105,
-    A00108,
-    A00111,
+    z_get_sibling,
+    z_get_child,
+    z_get_parent,
+    z_get_prop_len,
     z_inc,
     z_dec,
-    A00132,
-    A00093,
-    A00151,
-    A00136,
+    z_print_addr,
+    z_call_s,
+    z_remove_obj,
+    z_print_obj,
     z_ret,
-    A00117,
-    A00137,
-    A00118,
-    A00092
+    z_jump,
+    z_print_paddr,
+    z_load,
+    z_call_n
 };
 
 void (*var_opcodes[0x40]) (void) = {
@@ -58,98 +58,98 @@ void (*var_opcodes[0x40]) (void) = {
     z_je,
     z_jl,
     z_jg,
-    A00099,
-    A00114,
+    z_dec_chk,
+    z_inc_chk,
     z_jin,
-    A00175,
+    z_test,
     z_or,
     z_and,
-    A00176,
-    A00162,
-    A00097,
-    A00172,
-    A00116,
-    A00120,
-    A00119,
-    A00109,
-    A00110,
-    A00107,
+    z_test_attr,
+    z_set_attr,
+    z_clear_attr,
+    z_store,
+    z_insert_obj,
+    z_loadw,
+    z_loadb,
+    z_get_prop,
+    z_get_prop_addr,
+    z_get_next_prop,
     z_add,
     z_sub,
     z_mul,
     z_div,
     z_mod,
-    A00093,
-    A00092,
-    A00164,
-    A00177,
+    z_call_s,
+    z_call_n,
+    z_set_colour,
+    z_throw,
     __illegal__,
     __illegal__,
     __illegal__,
-    A00093,
-    A00174,
-    A00173,
-    A00144,
-    A00148,
-    A00133,
-    A00135,
-    A00147,
-    A00142,
-    A00141,
-    A00171,
-    A00167,
-    A00093,
-    A00104,
-    A00102,
-    A00165,
-    A00106,
-    A00168,
-    A00091,
-    A00126,
-    A00115,
-    A00170,
-    A00149,
-    A00160,
+    z_call_s,
+    z_storew,
+    z_storeb,
+    z_put_prop,
+    z_read,
+    z_print_char,
+    z_print_num,
+    z_random,
+    z_push,
+    z_pull,
+    z_split_window,
+    z_set_window,
+    z_call_s,
+    z_erase_window,
+    z_erase_line,
+    z_set_cursor,
+    z_get_cursor,
+    z_set_text_style,
+    z_buffer_mode,
+    z_output_stream,
+    z_input_stream,
+    z_sound_effect,
+    z_read_char,
+    z_scan_table,
     z_not,
-    A00092,
-    A00092,
-    A00178,
-    A00101,
-    A00098,
-    A00139,
-    A00095
+    z_call_n,
+    z_call_n,
+    z_tokenise,
+    z_encode_text,
+    z_copy_table,
+    z_print_table,
+    z_check_arg_count
 };
 
 void (*ext_opcodes[0x1d]) (void) = {
-    A00158,
-    A00153,
-    A00121,
-    A00090,
-    A00163,
-    A00100,
-    A00127,
-    A00103,
-    A00166,
-    A00159,
-    A00154,
-    A00140,
-    A00096,
+    z_save,
+    z_restore,
+    z_log_shift,
+    z_art_shift,
+    z_set_font,
+    z_draw_picture,
+    z_picture_data,
+    z_erase_picture,
+    z_set_margins,
+    z_save_undo,
+    z_restore_undo,
+    z_print_unicode,
+    z_check_unicode,
     __illegal__,
     __illegal__,
     __illegal__,
-    A00124,
-    A00180,
-    A00181,
-    A00113,
-    A00161,
-    A00130,
-    A00150,
-    A00123,
-    A00143,
-    A00145,
-    A00134,
-    A00122,
-    A00128
+    z_move_window,
+    z_window_size,
+    z_window_style,
+    z_get_wind_prop,
+    z_scroll_window,
+    z_pop_stack,
+    z_read_mouse,
+    z_mouse_window,
+    z_push_stack,
+    z_put_wind_prop,
+    z_print_form,
+    z_make_menu,
+    z_picture_table
 };
 
 /*
@@ -174,7 +174,7 @@ static void load_operand (zbyte type)
 	else if (variable < 16)
 	    value = *(fp - variable);
 	else {
-	    zword addr = A00032 + 2 * (variable - 16);
+	    zword addr = h_globals + 2 * (variable - 16);
 	    LOW_WORD (addr, value)
 	}
 
@@ -217,13 +217,13 @@ static void load_all_operands (zbyte specifier)
 }/* load_all_operands */
 
 /*
- * A00235
+ * interpret
  *
- * Z-code A00235er main loop
+ * Z-code interpreter main loop
  *
  */
 
-void A00235 (void)
+void interpret (void)
 {
 
     do {
@@ -274,7 +274,7 @@ void A00235 (void)
 
     finished--;
 
-}/* A00235 */
+}/* interpret */
 
 /*
  * call
@@ -282,7 +282,7 @@ void A00235 (void)
  * Call a subroutine. Save PC and FP then load new PC and initialise
  * new stack frame. Note that the caller may legally provide less or
  * more arguments than the function actually has. The call type "ct"
- * can be 0 (A00093), 1 (A00092) or 2 (direct call).
+ * can be 0 (z_call_s), 1 (z_call_n) or 2 (direct call).
  *
  */
 
@@ -294,7 +294,7 @@ void call (zword routine, int argc, zword *args, int ct)
     int i;
 
     if (sp - stack < 4)
-	A00192 ("Stack overflow");
+	runtime_error ("Stack overflow");
 
     GET_PC (pc)
 
@@ -307,17 +307,17 @@ void call (zword routine, int argc, zword *args, int ct)
 
     /* Calculate byte address of routine */
 
-    if (A00025 <= V3)
+    if (h_version <= V3)
 	pc = (long) routine << 1;
-    else if (A00025 <= V5)
+    else if (h_version <= V5)
 	pc = (long) routine << 2;
-    else if (A00025 <= V7)
-	pc = ((long) routine << 2) + ((long) A00047 << 3);
-    else /* A00025 == V8 */
+    else if (h_version <= V7)
+	pc = ((long) routine << 2) + ((long) h_functions_offset << 3);
+    else /* h_version == V8 */
 	pc = (long) routine << 3;
 
-    if (pc >= A00064)
-	A00192 ("Call to illegal address");
+    if (pc >= story_size)
+	runtime_error ("Call to illegal address");
 
     SET_PC (pc)
 
@@ -326,15 +326,15 @@ void call (zword routine, int argc, zword *args, int ct)
     CODE_BYTE (count)
 
     if (count > 15)
-	A00192 ("Call to non-routine");
+	runtime_error ("Call to non-routine");
     if (sp - stack < count)
-	A00192 ("Stack overflow");
+	runtime_error ("Stack overflow");
 
     value = 0;
 
     for (i = 0; i < count; i++) {
 
-	if (A00025 <= V4)		/* V1 to V4 games provide default */
+	if (h_version <= V4)		/* V1 to V4 games provide default */
 	    CODE_WORD (value)		/* values for all local variables */
 
 	*--sp = (zword) ((argc-- > 0) ? args[i] : value);
@@ -344,7 +344,7 @@ void call (zword routine, int argc, zword *args, int ct)
     /* Start main loop for direct calls */
 
     if (ct == 2)
-	A00235 ();
+	interpret ();
 
 }/* call */
 
@@ -354,7 +354,7 @@ void call (zword routine, int argc, zword *args, int ct)
  * Return from the current subroutine and restore the previous stack
  * frame. The result may be stored (0), thrown away (1) or pushed on
  * the stack (2). In the latter case a direct call has been finished
- * and we must exit the A00235er loop.
+ * and we must exit the interpreter loop.
  *
  */
 
@@ -364,7 +364,7 @@ void ret (zword value)
     int ct;
 
     if (sp > fp)
-	A00192 ("Stack underflow");
+	runtime_error ("Stack underflow");
 
     sp = fp;
 
@@ -390,21 +390,21 @@ void ret (zword value)
 }/* ret */
 
 /*
- * A00193
+ * branch
  *
  * Take a jump after an instruction based on the flag, either true or
- * false. The A00193 can be short or long; it is encoded in one or two
+ * false. The branch can be short or long; it is encoded in one or two
  * bytes respectively. When bit 7 of the first byte is set, the jump
  * takes place if the flag is true; otherwise it is taken if the flag
- * is false. When bit 6 of the first byte is set, the A00193 is short;
+ * is false. When bit 6 of the first byte is set, the branch is short;
  * otherwise it is long. The offset occupies the bottom 6 bits of the
- * first byte plus all the bits in the second byte for long A00193es.
+ * first byte plus all the bits in the second byte for long branches.
  * Uniquely, an offset of 0 means return false, and an offset of 1 is
  * return true.
  *
  */
 
-void A00193 (bool flag)
+void branch (bool flag)
 {
     long pc;
     zword offset;
@@ -419,7 +419,7 @@ void A00193 (bool flag)
     if (!flag)
 	specifier ^= 0x80;
 
-    if (!(specifier & 0x40)) {		/* it's a long A00193 */
+    if (!(specifier & 0x40)) {		/* it's a long branch */
 
 	if (off1 & 0x20)		/* propagate sign bit */
 	    off1 |= 0xc0;
@@ -428,11 +428,11 @@ void A00193 (bool flag)
 
 	offset = (off1 << 8) | off2;
 
-    } else offset = off1;		/* it's a short A00193 */
+    } else offset = off1;		/* it's a short branch */
 
     if (specifier & 0x80)
 
-	if (offset > 1) {		/* normal A00193 */
+	if (offset > 1) {		/* normal branch */
 
 	    GET_PC (pc)
 	    pc += (short) offset - 2;
@@ -440,7 +440,7 @@ void A00193 (bool flag)
 
 	} else ret (offset);		/* special case, return 0 or 1 */
 
-}/* A00193 */
+}/* branch */
 
 /*
  * store
@@ -460,26 +460,26 @@ void store (zword value)
     else if (variable < 16)
 	*(fp - variable) = value;
     else {
-	zword addr = A00032 + 2 * (variable - 16);
+	zword addr = h_globals + 2 * (variable - 16);
 	SET_WORD (addr, value)
     }
 
 }/* store */
 
 /*
- * A00241
+ * direct_call
  *
- * Call the A00235er loop directly. This is necessary when
+ * Call the interpreter loop directly. This is necessary when
  *
  * - a sound effect has been finished
  * - a read instruction has timed out
  * - a newline countdown has hit zero
  *
- * The A00235er returns the result value on the stack.
+ * The interpreter returns the result value on the stack.
  *
  */
 
-int A00241 (zword addr)
+int direct_call (zword addr)
 {
     zword saved_zargs[8];
     int saved_zargc;
@@ -512,7 +512,7 @@ int A00241 (zword addr)
 
     return (short) *sp++;
 
-}/* A00241 */
+}/* direct_call */
 
 /*
  * __extended__
@@ -546,46 +546,46 @@ static void __extended__ (void)
 static void __illegal__ (void)
 {
 
-    A00192 ("Illegal opcode");
+    runtime_error ("Illegal opcode");
 
 }/* __illegal__ */
 
 /*
- * A00094, store the current stack frame for later use with A00177.
+ * z_catch, store the current stack frame for later use with z_throw.
  *
  *	no zargs used
  *
  */
 
-void A00094 (void)
+void z_catch (void)
 {
 
     store ((zword) (fp - stack));
 
-}/* A00094 */
+}/* z_catch */
 
 /*
- * A00177, go back to the given stack frame and return the given value.
+ * z_throw, go back to the given stack frame and return the given value.
  *
  *	zargs[0] = value to return
  *	zargs[1] = stack frame
  *
  */
 
-void A00177 (void)
+void z_throw (void)
 {
 
     if (zargs[1] > STACK_SIZE)
-	A00192 ("Bad stack frame");
+	runtime_error ("Bad stack frame");
 
     fp = stack + zargs[1];
 
     ret (zargs[0]);
 
-}/* A00177 */
+}/* z_throw */
 
 /*
- * A00092, call a subroutine and discard its result.
+ * z_call_n, call a subroutine and discard its result.
  *
  * 	zargs[0] = packed address of subroutine
  *	zargs[1] = first argument (optional)
@@ -594,16 +594,16 @@ void A00177 (void)
  *
  */
 
-void A00092 (void)
+void z_call_n (void)
 {
 
     if (zargs[0] != 0)
 	call (zargs[0], zargc - 1, zargs + 1, 1);
 
-}/* A00092 */
+}/* z_call_n */
 
 /*
- * A00093, call a subroutine and store its result.
+ * z_call_s, call a subroutine and store its result.
  *
  * 	zargs[0] = packed address of subroutine
  *	zargs[1] = first argument (optional)
@@ -612,7 +612,7 @@ void A00092 (void)
  *
  */
 
-void A00093 (void)
+void z_call_s (void)
 {
 
     if (zargs[0] != 0)
@@ -620,33 +620,33 @@ void A00093 (void)
     else
 	store (0);
 
-}/* A00093 */
+}/* z_call_s */
 
 /*
- * A00095, A00193 if subroutine was called with >= n arg's.
+ * z_check_arg_count, branch if subroutine was called with >= n arg's.
  *
  * 	zargs[0] = number of arguments
  *
  */
 
-void A00095 (void)
+void z_check_arg_count (void)
 {
 
     if (fp == stack + STACK_SIZE)
-	A00193 (zargs[0] == 0);
+	branch (zargs[0] == 0);
     else
-	A00193 (zargs[0] <= (*fp & 0xff));
+	branch (zargs[0] <= (*fp & 0xff));
 
-}/* A00095 */
+}/* z_check_arg_count */
 
 /*
- * A00117, jump unconditionally to the given address.
+ * z_jump, jump unconditionally to the given address.
  *
  *	zargs[0] = PC relative address
  *
  */
 
-void A00117 (void)
+void z_jump (void)
 {
     long pc;
 
@@ -654,12 +654,12 @@ void A00117 (void)
 
     pc += (short) zargs[0] - 2;
 
-    if (pc >= A00064)
-	A00192 ("Jump to illegal address");
+    if (pc >= story_size)
+	runtime_error ("Jump to illegal address");
 
     SET_PC (pc)
 
-}/* A00117 */
+}/* z_jump */
 
 /*
  * z_nop, no operation.
@@ -676,18 +676,18 @@ void z_nop (void)
 }/* z_nop */
 
 /*
- * A00146, stop game and exit A00235er.
+ * z_quit, stop game and exit interpreter.
  *
  *	no zargs used
  *
  */
 
-void A00146 (void)
+void z_quit (void)
 {
 
     finished = 9999;
 
-}/* A00146 */
+}/* z_quit */
 
 /*
  * z_ret, return from a subroutine with the given value.
@@ -704,43 +704,43 @@ void z_ret (void)
 }/* z_ret */
 
 /*
- * A00155, return from a subroutine with a value popped off the stack.
+ * z_ret_popped, return from a subroutine with a value popped off the stack.
  *
  *	no zargs used
  *
  */
 
-void A00155 (void)
+void z_ret_popped (void)
 {
 
     ret (*sp++);
 
-}/* A00155 */
+}/* z_ret_popped */
 
 /*
- * A00156, return from a subroutine with false (0).
+ * z_rfalse, return from a subroutine with false (0).
  *
  * 	no zargs used
  *
  */
 
-void A00156 (void)
+void z_rfalse (void)
 {
 
     ret (0);
 
-}/* A00156 */
+}/* z_rfalse */
 
 /*
- * A00157, return from a subroutine with true (1).
+ * z_rtrue, return from a subroutine with true (1).
  *
  * 	no zargs used
  *
  */
 
-void A00157 (void)
+void z_rtrue (void)
 {
 
     ret (1);
 
-}/* A00157 */
+}/* z_rtrue */

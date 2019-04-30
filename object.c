@@ -33,26 +33,26 @@ static zword object_address (zword obj)
 
     /* Check object number */
 
-    if (obj > ((A00025 <= V3) ? 255 : MAX_OBJECT))
-	A00192 ("Illegal object");
+    if (obj > ((h_version <= V3) ? 255 : MAX_OBJECT))
+	runtime_error ("Illegal object");
 
     /* Return object address */
 
-    if (A00025 <= V3)
-	return A00031 + ((obj - 1) * O1_SIZE + 62);
+    if (h_version <= V3)
+	return h_objects + ((obj - 1) * O1_SIZE + 62);
     else
-	return A00031 + ((obj - 1) * O4_SIZE + 126);
+	return h_objects + ((obj - 1) * O4_SIZE + 126);
 
 }/* object_address */
 
 /*
- * A00268
+ * object_name
  *
  * Return the address of the given object's name.
  *
  */
 
-zword A00268 (zword object)
+zword object_name (zword object)
 {
     zword obj_addr;
     zword name_addr;
@@ -61,7 +61,7 @@ zword A00268 (zword object)
 
     /* The object name address is found at the start of the properties */
 
-    if (A00025 <= V3)
+    if (h_version <= V3)
 	obj_addr += O1_PROPERTY_OFFSET;
     else
 	obj_addr += O4_PROPERTY_OFFSET;
@@ -70,7 +70,7 @@ zword A00268 (zword object)
 
     return name_addr;
 
-}/* A00268 */
+}/* object_name */
 
 /*
  * first_property
@@ -87,7 +87,7 @@ static zword first_property (zword obj)
 
     /* Fetch address of object name */
 
-    prop_addr = A00268 (obj);
+    prop_addr = object_name (obj);
 
     /* Get length of object name */
 
@@ -117,7 +117,7 @@ static zword next_property (zword prop_addr)
 
     /* Calculate the length of this property */
 
-    if (A00025 <= V3)
+    if (h_version <= V3)
 	value >>= 5;
     else if (!(value & 0x80))
 	value >>= 6;
@@ -151,7 +151,7 @@ static void unlink_object (zword object)
 
     obj_addr = object_address (object);
 
-    if (A00025 <= V3) {
+    if (h_version <= V3) {
 
 	zbyte parent;
 	zbyte younger_sibling;
@@ -234,34 +234,34 @@ static void unlink_object (zword object)
 }/* unlink_object */
 
 /*
- * A00097, clear an object attribute.
+ * z_clear_attr, clear an object attribute.
  *
  *	zargs[0] = object
  *	zargs[1] = number of attribute to be cleared
  *
  */
 
-void A00097 (void)
+void z_clear_attr (void)
 {
     zword obj_addr;
     zbyte value;
 
-    if (A00063 == SHERLOCK)
+    if (story_id == SHERLOCK)
 	if (zargs[1] == 48)
 	    return;
 
-    if (zargs[1] > ((A00025 <= V3) ? 31 : 47))
-	A00192 ("Illegal attribute");
+    if (zargs[1] > ((h_version <= V3) ? 31 : 47))
+	runtime_error ("Illegal attribute");
 
     /* If we are monitoring attribute assignment display a short note */
 
-    if (A00077) {
-	A00190 ();
-	A00189 ("@clear_attr ");
-	A00188 (zargs[0]);
-	A00189 (" ");
-	A00187 (zargs[1]);
-	A00191 ();
+    if (option_attribute_assignment) {
+	stream_mssg_on ();
+	print_string ("@clear_attr ");
+	print_object (zargs[0]);
+	print_string (" ");
+	print_num (zargs[1]);
+	stream_mssg_off ();
     }
 
     /* Get attribute address */
@@ -274,10 +274,10 @@ void A00097 (void)
     value &= ~(0x80 >> (zargs[1] & 7));
     SET_BYTE (obj_addr, value)
 
-}/* A00097 */
+}/* z_clear_attr */
 
 /*
- * z_jin, A00193 if the first object is inside the second.
+ * z_jin, branch if the first object is inside the second.
  *
  *	zargs[0] = first object
  *	zargs[1] = second object
@@ -290,18 +290,18 @@ void z_jin (void)
 
     /* If we are monitoring object locating display a short note */
 
-    if (A00079) {
-	A00190 ();
-	A00189 ("@jin ");
-	A00188 (zargs[0]);
-	A00189 (" ");
-	A00188 (zargs[1]);
-	A00191 ();
+    if (option_object_locating) {
+	stream_mssg_on ();
+	print_string ("@jin ");
+	print_object (zargs[0]);
+	print_string (" ");
+	print_object (zargs[1]);
+	stream_mssg_off ();
     }
 
     obj_addr = object_address (zargs[0]);
 
-    if (A00025 <= V3) {
+    if (h_version <= V3) {
 
 	zbyte parent;
 
@@ -312,7 +312,7 @@ void z_jin (void)
 
 	/* Branch if the parent is obj2 */
 
-	A00193 (parent == zargs[1]);
+	branch (parent == zargs[1]);
 
     } else {
 
@@ -325,35 +325,35 @@ void z_jin (void)
 
 	/* Branch if the parent is obj2 */
 
-	A00193 (parent == zargs[1]);
+	branch (parent == zargs[1]);
 
     }
 
 }/* z_jin */
 
 /*
- * A00105, store the child of an object.
+ * z_get_child, store the child of an object.
  *
  *	zargs[0] = object
  *
  */
 
-void A00105 (void)
+void z_get_child (void)
 {
     zword obj_addr;
 
     /* If we are monitoring object locating display a short note */
 
-    if (A00079) {
-	A00190 ();
-	A00189 ("@get_child ");
-	A00188 (zargs[0]);
-	A00191 ();
+    if (option_object_locating) {
+	stream_mssg_on ();
+	print_string ("@get_child ");
+	print_object (zargs[0]);
+	stream_mssg_off ();
     }
 
     obj_addr = object_address (zargs[0]);
 
-    if (A00025 <= V3) {
+    if (h_version <= V3) {
 
 	zbyte child;
 
@@ -362,10 +362,10 @@ void A00105 (void)
 	obj_addr += O1_CHILD;
 	LOW_BYTE (obj_addr, child)
 
-	/* Store child id and A00193 */
+	/* Store child id and branch */
 
 	store (child);
-	A00193 (child);
+	branch (child);
 
     } else {
 
@@ -376,24 +376,24 @@ void A00105 (void)
 	obj_addr += O4_CHILD;
 	LOW_WORD (obj_addr, child)
 
-	/* Store child id and A00193 */
+	/* Store child id and branch */
 
 	store (child);
-	A00193 (child);
+	branch (child);
 
     }
 
-}/* A00105 */
+}/* z_get_child */
 
 /*
- * A00107, store the number of the first or next property.
+ * z_get_next_prop, store the number of the first or next property.
  *
  *	zargs[0] = object
  *	zargs[1] = address of current property (0 gets the first property)
  *
  */
 
-void A00107 (void)
+void z_get_next_prop (void)
 {
     zword prop_addr;
     zbyte value;
@@ -401,7 +401,7 @@ void A00107 (void)
 
     /* Property id is in bottom five (six) bits */
 
-    mask = (A00025 <= V3) ? 0x1f : 0x3f;
+    mask = (h_version <= V3) ? 0x1f : 0x3f;
 
     /* Load address of first property */
 
@@ -419,7 +419,7 @@ void A00107 (void)
 	/* Exit if the property does not exist */
 
 	if ((value & mask) != zargs[1])
-	    A00192 ("No such property");
+	    runtime_error ("No such property");
 
     }
 
@@ -428,31 +428,31 @@ void A00107 (void)
     LOW_BYTE (prop_addr, value)
     store ((zword) (value & mask));
 
-}/* A00107 */
+}/* z_get_next_prop */
 
 /*
- * A00108, store the parent of an object.
+ * z_get_parent, store the parent of an object.
  *
  *	zargs[0] = object
  *
  */
 
-void A00108 (void)
+void z_get_parent (void)
 {
     zword obj_addr;
 
     /* If we are monitoring object locating display a short note */
 
-    if (A00079) {
-	A00190 ();
-	A00189 ("@get_parent ");
-	A00188 (zargs[0]);
-	A00191 ();
+    if (option_object_locating) {
+	stream_mssg_on ();
+	print_string ("@get_parent ");
+	print_object (zargs[0]);
+	stream_mssg_off ();
     }
 
     obj_addr = object_address (zargs[0]);
 
-    if (A00025 <= V3) {
+    if (h_version <= V3) {
 
 	zbyte parent;
 
@@ -480,17 +480,17 @@ void A00108 (void)
 
     }
 
-}/* A00108 */
+}/* z_get_parent */
 
 /*
- * A00109, store the value of an object property.
+ * z_get_prop, store the value of an object property.
  *
  *	zargs[0] = object
  *	zargs[1] = number of property to be examined
  *
  */
 
-void A00109 (void)
+void z_get_prop (void)
 {
     zword prop_addr;
     zword wprop_val;
@@ -500,7 +500,7 @@ void A00109 (void)
 
     /* Property id is in bottom five (six) bits */
 
-    mask = (A00025 <= V3) ? 0x1f : 0x3f;
+    mask = (h_version <= V3) ? 0x1f : 0x3f;
 
     /* Load address of first property */
 
@@ -521,7 +521,7 @@ void A00109 (void)
 
 	prop_addr++;
 
-	if (A00025 <= V3 && !(value & 0xe0) || A00025 >= V4 && !(value & 0xc0)) {
+	if (h_version <= V3 && !(value & 0xe0) || h_version >= V4 && !(value & 0xc0)) {
 
 	    LOW_BYTE (prop_addr, bprop_val)
 	    wprop_val = bprop_val;
@@ -532,7 +532,7 @@ void A00109 (void)
 
 	/* Load default value */
 
-	prop_addr = A00031 + 2 * (zargs[1] - 1);
+	prop_addr = h_objects + 2 * (zargs[1] - 1);
 	LOW_WORD (prop_addr, wprop_val)
 
     }
@@ -541,29 +541,29 @@ void A00109 (void)
 
     store (wprop_val);
 
-}/* A00109 */
+}/* z_get_prop */
 
 /*
- * A00110, store the address of an object property.
+ * z_get_prop_addr, store the address of an object property.
  *
  *	zargs[0] = object
  *	zargs[1] = number of property to be examined
  *
  */
 
-void A00110 (void)
+void z_get_prop_addr (void)
 {
     zword prop_addr;
     zbyte value;
     zbyte mask;
 
-    if (A00063 == BEYOND_ZORK)
+    if (story_id == BEYOND_ZORK)
 	if (zargs[0] > MAX_OBJECT)
 	    { store (0); return; }
 
     /* Property id is in bottom five (six) bits */
 
-    mask = (A00025 <= V3) ? 0x1f : 0x3f;
+    mask = (h_version <= V3) ? 0x1f : 0x3f;
 
     /* Load address of first property */
 
@@ -582,22 +582,22 @@ void A00110 (void)
 
     if ((value & mask) == zargs[1]) {
 
-	if (A00025 >= V4 && (value & 0x80))
+	if (h_version >= V4 && (value & 0x80))
 	    prop_addr++;
 	store ((zword) (prop_addr + 1));
 
     } else store (0);
 
-}/* A00110 */
+}/* z_get_prop_addr */
 
 /*
- * A00111, store the length of an object property.
+ * z_get_prop_len, store the length of an object property.
  *
  * 	zargs[0] = address of property to be examined
  *
  */
 
-void A00111 (void)
+void z_get_prop_len (void)
 {
     zword addr;
     zbyte value;
@@ -609,7 +609,7 @@ void A00111 (void)
 
     /* Calculate length of property */
 
-    if (A00025 <= V3)
+    if (h_version <= V3)
 	value = (value >> 5) + 1;
     else if (!(value & 0x80))
 	value = (value >> 6) + 1;
@@ -625,22 +625,22 @@ void A00111 (void)
 
     store (value);
 
-}/* A00111 */
+}/* z_get_prop_len */
 
 /*
- * A00112, store the sibling of an object.
+ * z_get_sibling, store the sibling of an object.
  *
  *	zargs[0] = object
  *
  */
 
-void A00112 (void)
+void z_get_sibling (void)
 {
     zword obj_addr;
 
     obj_addr = object_address (zargs[0]);
 
-    if (A00025 <= V3) {
+    if (h_version <= V3) {
 
 	zbyte sibling;
 
@@ -649,10 +649,10 @@ void A00112 (void)
 	obj_addr += O1_SIBLING;
 	LOW_BYTE (obj_addr, sibling)
 
-	/* Store sibling and A00193 */
+	/* Store sibling and branch */
 
 	store (sibling);
-	A00193 (sibling);
+	branch (sibling);
 
     } else {
 
@@ -663,24 +663,24 @@ void A00112 (void)
 	obj_addr += O4_SIBLING;
 	LOW_WORD (obj_addr, sibling)
 
-	/* Store sibling and A00193 */
+	/* Store sibling and branch */
 
 	store (sibling);
-	A00193 (sibling);
+	branch (sibling);
 
     }
 
-}/* A00112 */
+}/* z_get_sibling */
 
 /*
- * A00116, make an object the first child of another object.
+ * z_insert_obj, make an object the first child of another object.
  *
  *	zargs[0] = object to be moved
  *	zargs[1] = destination object
  *
  */
 
-void A00116 (void)
+void z_insert_obj (void)
 {
     zword obj1 = zargs[0];
     zword obj2 = zargs[1];
@@ -689,13 +689,13 @@ void A00116 (void)
 
     /* If we are monitoring object movements display a short note */
 
-    if (A00080) {
-	A00190 ();
-	A00189 ("@move_obj ");
-	A00188 (obj1);
-	A00189 (" ");
-	A00188 (obj2);
-	A00191 ();
+    if (option_object_movement) {
+	stream_mssg_on ();
+	print_string ("@move_obj ");
+	print_object (obj1);
+	print_string (" ");
+	print_object (obj2);
+	stream_mssg_off ();
     }
 
     /* Get addresses of both objects */
@@ -709,7 +709,7 @@ void A00116 (void)
 
     /* Make object 1 first child of object 2 */
 
-    if (A00025 <= V3) {
+    if (h_version <= V3) {
 
 	zbyte child;
 
@@ -735,10 +735,10 @@ void A00116 (void)
 
     }
 
-}/* A00116 */
+}/* z_insert_obj */
 
 /*
- * A00144, set the value of an object property.
+ * z_put_prop, set the value of an object property.
  *
  *	zargs[0] = object
  *	zargs[1] = number of property to set
@@ -746,7 +746,7 @@ void A00116 (void)
  *
  */
 
-void A00144 (void)
+void z_put_prop (void)
 {
     zword prop_addr;
     zword value;
@@ -754,7 +754,7 @@ void A00144 (void)
 
     /* Property id is in bottom five or six bits */
 
-    mask = (A00025 <= V3) ? 0x1f : 0x3f;
+    mask = (h_version <= V3) ? 0x1f : 0x3f;
 
     /* Load address of first property */
 
@@ -772,13 +772,13 @@ void A00144 (void)
     /* Exit if the property does not exist */
 
     if ((value & mask) != zargs[1])
-	A00192 ("No such property");
+	runtime_error ("No such property");
 
     /* Store the new property value (byte or word sized) */
 
     prop_addr++;
 
-    if (A00025 <= V3 && !(value & 0xe0) || A00025 >= V4 && !(value & 0xc0)) {
+    if (h_version <= V3 && !(value & 0xe0) || h_version >= V4 && !(value & 0xc0)) {
 	zbyte v = zargs[2];
 	SET_BYTE (prop_addr, v)
     } else {
@@ -786,62 +786,62 @@ void A00144 (void)
 	SET_WORD (prop_addr, v)
     }
 
-}/* A00144 */
+}/* z_put_prop */
 
 /*
- * A00151, unlink an object from its parent and siblings.
+ * z_remove_obj, unlink an object from its parent and siblings.
  *
  *	zargs[0] = object
  *
  */
 
-void A00151 (void)
+void z_remove_obj (void)
 {
 
     /* If we are monitoring object movements display a short note */
 
-    if (A00080) {
-	A00190 ();
-	A00189 ("@remove_obj ");
-	A00188 (zargs[0]);
-	A00191 ();
+    if (option_object_movement) {
+	stream_mssg_on ();
+	print_string ("@remove_obj ");
+	print_object (zargs[0]);
+	stream_mssg_off ();
     }
 
     /* Call unlink_object to do the job */
 
     unlink_object (zargs[0]);
 
-}/* A00151 */
+}/* z_remove_obj */
 
 /*
- * A00162, set an object attribute.
+ * z_set_attr, set an object attribute.
  *
  *	zargs[0] = object
  *	zargs[1] = number of attribute to set
  *
  */
 
-void A00162 (void)
+void z_set_attr (void)
 {
     zword obj_addr;
     zbyte value;
 
-    if (A00063 == SHERLOCK)
+    if (story_id == SHERLOCK)
 	if (zargs[1] == 48)
 	    return;
 
-    if (zargs[1] > ((A00025 <= V3) ? 31 : 47))
-	A00192 ("Illegal attribute");
+    if (zargs[1] > ((h_version <= V3) ? 31 : 47))
+	runtime_error ("Illegal attribute");
 
     /* If we are monitoring attribute assignment display a short note */
 
-    if (A00077) {
-	A00190 ();
-	A00189 ("@set_attr ");
-	A00188 (zargs[0]);
-	A00189 (" ");
-	A00187 (zargs[1]);
-	A00191 ();
+    if (option_attribute_assignment) {
+	stream_mssg_on ();
+	print_string ("@set_attr ");
+	print_object (zargs[0]);
+	print_string (" ");
+	print_num (zargs[1]);
+	stream_mssg_off ();
     }
 
     /* Get attribute address */
@@ -860,33 +860,33 @@ void A00162 (void)
 
     SET_BYTE (obj_addr, value)
 
-}/* A00162 */
+}/* z_set_attr */
 
 /*
- * A00176, A00193 if an object attribute is set.
+ * z_test_attr, branch if an object attribute is set.
  *
  *	zargs[0] = object
  *	zargs[1] = number of attribute to test
  *
  */
 
-void A00176 (void)
+void z_test_attr (void)
 {
     zword obj_addr;
     zbyte value;
 
-    if (zargs[1] > ((A00025 <= V3) ? 31 : 47))
-	A00192 ("Illegal attribute");
+    if (zargs[1] > ((h_version <= V3) ? 31 : 47))
+	runtime_error ("Illegal attribute");
 
     /* If we are monitoring attribute testing display a short note */
 
-    if (A00078) {
-	A00190 ();
-	A00189 ("@test_attr ");
-	A00188 (zargs[0]);
-	A00189 (" ");
-	A00187 (zargs[1]);
-	A00191 ();
+    if (option_attribute_testing) {
+	stream_mssg_on ();
+	print_string ("@test_attr ");
+	print_object (zargs[0]);
+	print_string (" ");
+	print_num (zargs[1]);
+	stream_mssg_off ();
     }
 
     /* Get attribute address */
@@ -899,6 +899,6 @@ void A00176 (void)
 
     /* Test attribute */
 
-    A00193 (value & (0x80 >> (zargs[1] & 7)));
+    branch (value & (0x80 >> (zargs[1] & 7)));
 
-}/* A00176 */
+}/* z_test_attr */

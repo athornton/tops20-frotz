@@ -12,7 +12,7 @@
 #define EFFECT_STOP 3
 #define EFFECT_FINISH_WITH 4
 
-extern int A00241 (zword);
+extern int direct_call (zword);
 
 static zword routine = 0;
 
@@ -39,10 +39,10 @@ static void start_sample (int number, int volume, int repeats, zword eos)
 	0xff, 0xff, 0xff, 0xff, 0xff
     };
 
-    if (A00063 == LURKING_HORROR)
+    if (story_id == LURKING_HORROR)
 	repeats = lh_repeats[number];
 
-    A00222 (number, volume, repeats);
+    os_start_sample (number, volume, repeats);
 
     routine = eos;
     playing = TRUE;
@@ -85,17 +85,17 @@ void end_of_sound (void)
 
     if (!locked) {
 
-	if (A00063 == LURKING_HORROR)
+	if (story_id == LURKING_HORROR)
 	    start_next_sample ();
 
-	A00241 (routine);
+	direct_call (routine);
 
     }
 
 }/* end_of_sound */
 
 /*
- * A00170, load / play / stop / discard a sound effect.
+ * z_sound_effect, load / play / stop / discard a sound effect.
  *
  *   	zargs[0] = number of bleep (1 or 2) or sample
  *	zargs[1] = operation to perform (samples only)
@@ -107,7 +107,7 @@ void end_of_sound (void)
  *
  */
 
-void A00170 (void)
+void z_sound_effect (void)
 {
     zword number = zargs[0];
     zword effect = zargs[1];
@@ -117,7 +117,7 @@ void A00170 (void)
 
 	locked = TRUE;
 
-	if (A00063 == LURKING_HORROR && (number == 9 || number == 16)) {
+	if (story_id == LURKING_HORROR && (number == 9 || number == 16)) {
 
 	    if (effect == EFFECT_PLAY) {
 
@@ -140,22 +140,22 @@ void A00170 (void)
 	switch (effect) {
 
 	case EFFECT_PREPARE:
-	    A00209 (number);
+	    os_prepare_sample (number);
 	    break;
 	case EFFECT_PLAY:
 	    start_sample (number, lo (volume), hi (volume), (zargc == 4) ? zargs[3] : 0);
 	    break;
 	case EFFECT_STOP:
-	    A00223 ();
+	    os_stop_sample ();
 	    break;
 	case EFFECT_FINISH_WITH:
-	    A00203 ();
+	    os_finish_with_sample ();
 	    break;
 
 	}
 
 	locked = FALSE;
 
-    } else A00196 (number);
+    } else os_beep (number);
 
-}/* A00170 */
+}/* z_sound_effect */

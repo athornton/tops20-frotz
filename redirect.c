@@ -9,7 +9,7 @@
 
 #define MAX_NESTING 16
 
-extern zword A00239 (zword);
+extern zword get_max_width (zword);
 
 static depth = -1;
 
@@ -21,13 +21,13 @@ static struct {
 } redirect[MAX_NESTING];
 
 /*
- * A00244
+ * memory_open
  *
  * Begin output redirection to the memory of the Z-machine.
  *
  */
 
-void A00244 (zword table, zword xsize, bool buffering)
+void memory_open (zword table, zword xsize, bool buffering)
 {
 
     if (++depth < MAX_NESTING) {
@@ -35,29 +35,29 @@ void A00244 (zword table, zword xsize, bool buffering)
 	if (!buffering)
 	    xsize = 0xffff;
 	if (buffering && (short) xsize <= 0)
-	    xsize = A00239 ((zword) (- (short) xsize));
+	    xsize = get_max_width ((zword) (- (short) xsize));
 
-	A00195 (table, 0);
+	storew (table, 0);
 
 	redirect[depth].table = table;
 	redirect[depth].width = 0;
 	redirect[depth].total = 0;
 	redirect[depth].xsize = xsize;
 
-	A00067 = TRUE;
+	ostream_memory = TRUE;
 
-   } else A00192 ("Nesting stream #3 too deep");
+   } else runtime_error ("Nesting stream #3 too deep");
 
-}/* A00244 */
+}/* memory_open */
 
 /*
- * A00247
+ * memory_new_line
  *
  * Redirect a newline to the memory of the Z-machine.
  *
  */
 
-void A00247 (void)
+void memory_new_line (void)
 {
     zword size;
     zword addr;
@@ -75,37 +75,37 @@ void A00247 (void)
 	redirect[depth].table = addr + size;
 	size = 0;
 
-    } else A00194 ((zword) (addr + (size++)), 13);
+    } else storeb ((zword) (addr + (size++)), 13);
 
-    A00195 (redirect[depth].table, size);
+    storew (redirect[depth].table, size);
 
-}/* A00247 */
+}/* memory_new_line */
 
 /*
- * A00246
+ * memory_word
  *
  * Redirect a string of characters to the memory of the Z-machine.
  *
  */
 
-void A00246 (const zchar *s)
+void memory_word (const zchar *s)
 {
     zword size;
     zword addr;
     zchar c;
 
-    if (A00025 == V6) {
+    if (h_version == V6) {
 
-	int width = A00224 (s);
+	int width = os_string_width (s);
 
 	if (redirect[depth].xsize != 0xffff)
 
 	    if (redirect[depth].width + width > redirect[depth].xsize) {
 
 		if (*s == ' ' || *s == ZC_INDENT || *s == ZC_GAP)
-		    width = A00224 (++s);
+		    width = os_string_width (++s);
 
-		A00247 ();
+		memory_new_line ();
 
 	    }
 
@@ -119,41 +119,41 @@ void A00246 (const zchar *s)
     addr += 2;
 
     while ((c = *s++) != 0)
-	A00194 ((zword) (addr + (size++)), A00183 (c));
+	storeb ((zword) (addr + (size++)), translate_to_zscii (c));
 
-    A00195 (redirect[depth].table, size);
+    storew (redirect[depth].table, size);
 
-}/* A00246 */
+}/* memory_word */
 
 /*
- * A00245
+ * memory_close
  *
  * End of output redirection.
  *
  */
 
-void A00245 (void)
+void memory_close (void)
 {
 
     if (depth >= 0) {
 
 	if (redirect[depth].xsize != 0xffff)
-	    A00247 ();
+	    memory_new_line ();
 
-	if (A00025 == V6) {
+	if (h_version == V6) {
 
-	    A00052 = (redirect[depth].xsize != 0xffff) ?
+	    h_line_width = (redirect[depth].xsize != 0xffff) ?
 		redirect[depth].total : redirect[depth].width;
 
-	    SET_WORD (H_LINE_WIDTH, A00052)
+	    SET_WORD (H_LINE_WIDTH, h_line_width)
 
 	}
 
 	if (depth == 0)
-	    A00067 = FALSE;
+	    ostream_memory = FALSE;
 
 	depth--;
 
     }
 
-}/* A00245 */
+}/* memory_close */

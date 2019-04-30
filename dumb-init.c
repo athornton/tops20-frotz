@@ -5,11 +5,11 @@
  * Any use permitted provided this notice stays intact.
  */
 
-#include "dfrotz.h"
+#include "dumb-frotz.h"
 
 static char usage[] = "\
 \n\
-FROTZ V2.32 - A00235er for all Infocom games. Complies with standard\n\
+FROTZ V2.32 - interpreter for all Infocom games. Complies with standard\n\
 1.0 of Graham Nelson's specification. Written by Stefan Jokisch in 1995-7.\n\
 \n\
 DUMB-FROTZ V2.32R1 - port for all platforms.  Somewhat complies with standard\n\
@@ -21,7 +21,7 @@ Syntax: frotz [options] story-file [graphics-file]\n\
   -A      watch attribute testing\n\
   -h #    screen height\n\
   -i      ignore runtime errors\n\
-  -I #    A00235er number to report to game\n\
+  -I #    interpreter number to report to game\n\
   -o      watch object movement\n\
   -O      watch object locating\n\
   -p      alter piracy opcode\n\
@@ -75,13 +75,13 @@ error:
 
 static int user_screen_width = 75;
 static int user_screen_height = 24;
-static int user_A00235er_number = -1;
+static int user_interpreter_number = -1;
 static int user_random_seed = -1;
 static int user_tandy_bit = 0;
 static char *graphics_filename = NULL;
 static bool plain_ascii = FALSE;
 
-void A00210(int argc, char *argv[])
+void os_process_arguments(int argc, char *argv[])
 {
     int c;
 
@@ -89,22 +89,22 @@ void A00210(int argc, char *argv[])
     do {
 	c = zgetopt(argc, argv, "aAh:iI:oOpPs:R:S:tu:w:x");
 	switch(c) {
-	  case 'a': A00077 = 1; break;
-	  case 'A': A00078 = 1; break;
+	  case 'a': option_attribute_assignment = 1; break;
+	  case 'A': option_attribute_testing = 1; break;
           case 'h': user_screen_height = atoi(zoptarg); break;
-	  case 'i': A00084 = 1; break;
-	  case 'I': user_A00235er_number = atoi(zoptarg); break;
-	  case 'o': A00080 = 1; break;
-	  case 'O': A00079 = 1; break;
-	  case 'p': A00085 = 1; break;
+	  case 'i': option_ignore_errors = 1; break;
+	  case 'I': user_interpreter_number = atoi(zoptarg); break;
+	  case 'o': option_object_movement = 1; break;
+	  case 'O': option_object_locating = 1; break;
+	  case 'p': option_piracy = 1; break;
 	  case 'P': plain_ascii = 1; break;
-	  case 'R': A00004(zoptarg, FALSE, TRUE); break;
+	  case 'R': dumb_handle_setting(zoptarg, FALSE, TRUE); break;
 	  case 's': user_random_seed = atoi(zoptarg); break;
-	  case 'S': A00088 = atoi(zoptarg); break;
+	  case 'S': option_script_cols = atoi(zoptarg); break;
 	  case 't': user_tandy_bit = 1; break;
-	  case 'u': A00086 = atoi(zoptarg); break;
+	  case 'u': option_undo_slots = atoi(zoptarg); break;
 	  case 'w': user_screen_width = atoi(zoptarg); break;
-	  case 'x': A00087 = 1; break;
+	  case 'x': option_expand_abbreviations = 1; break;
 	}
     } while (c != EOF);
 
@@ -112,38 +112,38 @@ void A00210(int argc, char *argv[])
 	puts(usage);
 	exit(1);
     }
-    A00062 = argv[zoptind++];
+    story_name = argv[zoptind++];
     if (zoptind < argc)
       graphics_filename = argv[zoptind++];
 }
 
-void A00205(void)
+void os_init_screen(void)
 {
-  if (A00025 == V3 && user_tandy_bit)
-      A00026 |= CONFIG_TANDY;
+  if (h_version == V3 && user_tandy_bit)
+      h_config |= CONFIG_TANDY;
 
-  if (A00025 >= V5 && A00086 == 0)
-      A00034 &= ~UNDO_FLAG;
+  if (h_version >= V5 && option_undo_slots == 0)
+      h_flags &= ~UNDO_FLAG;
 
-  A00041 = user_screen_height;
-  A00042 = user_screen_width;
+  h_screen_rows = user_screen_height;
+  h_screen_cols = user_screen_width;
 
-  if (user_A00235er_number > 0)
-    A00039 = user_A00235er_number;
+  if (user_interpreter_number > 0)
+    h_interpreter_number = user_interpreter_number;
   else {
     /* Use ms-dos for v6 (because that's what most people have the
      * graphics files for), but don't use it for v5 (or Beyond Zork
      * will try to use funky characters).  */
-    A00039 = A00025 == 6 ? INTERP_MSDOS : INTERP_DEC_20;
+    h_interpreter_number = h_version == 6 ? INTERP_MSDOS : INTERP_DEC_20;
   }
-  A00040 = 'F';
+  h_interpreter_version = 'F';
 
-  A00005();
-  A00006();
-  A00015(graphics_filename);
+  dumb_init_input();
+  dumb_init_output();
+  dumb_init_pictures(graphics_filename);
 }
 
-int A00211 (void)
+int os_random_seed (void)
 {
   if (user_random_seed == -1)
     /* Use the epoch as seed value */
@@ -151,9 +151,9 @@ int A00211 (void)
   else return user_random_seed;
 }
 
-void A00216 (int stage) {}
+void os_restart_game (int stage) {}
 
-void A00202 (const char *s)
+void os_fatal (const char *s)
 {
   fprintf(stderr, "\nFatal error: %s\n", s);
   exit(1);

@@ -5,7 +5,7 @@
  * <alcibiades@petrofsky.berkeley.ca.us>.
  * Any use permitted provided this notice stays intact.
  */
-#include "dfrotz.h"
+#include "dumb-frotz.h"
 
 #define PIC_FILE_HEADER_FLAGS 1
 #define PIC_FILE_HEADER_NUM_IMAGES 4
@@ -31,7 +31,7 @@ static unsigned short lookupw(unsigned char *p, int n)
   return (p[n + 1] << 8) | p[n];
 }
 
-void A00015 (char *filename)
+void dumb_init_pictures (char *filename)
 {
   FILE *file = NULL;
   int success = FALSE;
@@ -41,7 +41,7 @@ void A00015 (char *filename)
   float x_scaler, y_scaler;
 
   do {
-    if ((A00025 != V6)
+    if ((h_version != V6)
 	|| !filename
 	|| ((file = fopen (filename, "rb")) == NULL)
 	|| (fread(&gheader, sizeof (gheader), 1, file) != 1))
@@ -61,8 +61,8 @@ void A00015 (char *filename)
     pict_info[0].height = num_pictures;
     pict_info[0].width = lookupw(gheader, PIC_FILE_HEADER_VERSION);
 
-    y_scaler = A00041 / 200.0;
-    x_scaler = A00042 / ((flags & 0x08) ? 640.0 : 320.0);
+    y_scaler = h_screen_rows / 200.0;
+    x_scaler = h_screen_cols / ((flags & 0x08) ? 640.0 : 320.0);
 
     /* Copy and scale.  */
     for (i = 1; i <= num_pictures; i++) {
@@ -80,10 +80,10 @@ void A00015 (char *filename)
   if (raw_info)
     free(raw_info);
   if (success)
-    A00026 |= CONFIG_PICTURES;
+    h_config |= CONFIG_PICTURES;
   else
     {
-      A00034 &= ~GRAPHICS_FLAG;
+      h_flags &= ~GRAPHICS_FLAG;
       if (filename)
 	fprintf(stderr, "Warning: could not read graphics file %s\n", filename);
     }
@@ -99,7 +99,7 @@ static int z_num_to_index(int n)
   return -1;
 }
 
-bool A00208(int num, int *height, int *width)
+bool os_picture_data(int num, int *height, int *width)
 {
   int index;
 
@@ -118,34 +118,34 @@ bool A00208(int num, int *height, int *width)
   return TRUE;
 }
 
-void A00200 (int num, int row, int col)
+void os_draw_picture (int num, int row, int col)
 {
   int width, height, r, c;
-  if (!A00208(num, &height, &width) || !width || !height)
+  if (!os_picture_data(num, &height, &width) || !width || !height)
     return;
   col--, row--;
   /* Draw corners */
-  A00014(row, col, '+');
-  A00014(row, col + width - 1, '+');
-  A00014(row + height - 1, col, '+');
-  A00014(row + height - 1, col + width - 1, '+');
+  dumb_set_picture_cell(row, col, '+');
+  dumb_set_picture_cell(row, col + width - 1, '+');
+  dumb_set_picture_cell(row + height - 1, col, '+');
+  dumb_set_picture_cell(row + height - 1, col + width - 1, '+');
   /* sides */
   for (c = col + 1; c < col + width - 1; c++) {
-    A00014(row, c, '-');
-    A00014(row + height - 1, c, '-');
+    dumb_set_picture_cell(row, c, '-');
+    dumb_set_picture_cell(row + height - 1, c, '-');
   }
   for (r = row + 1; r < row + height - 1; r++) {
-    A00014(r, col, '|');
-    A00014(r, col + width - 1, '|');
+    dumb_set_picture_cell(r, col, '|');
+    dumb_set_picture_cell(r, col + width - 1, '|');
   }
   /* body, but for last line */
   for (r = row + 1; r < row + height - 2; r++)
     for (c = col + 1; c < col + width - 1; c++)
-      A00014(r, c, ':');
+      dumb_set_picture_cell(r, c, ':');
   /* Last line of body, including picture number.  */
   if (height >= 3)
     for (c = col + width - 2; c > col; c--, (num /= 10))
-      A00014(row + height - 2, c, num ? (num % 10 + '0') : ':');
+      dumb_set_picture_cell(row + height - 2, c, num ? (num % 10 + '0') : ':');
 }
 
-int A00207 (void) {return BLACK_COLOUR; }
+int os_peek_colour (void) {return BLACK_COLOUR; }
