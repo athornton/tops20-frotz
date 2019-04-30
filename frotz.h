@@ -237,7 +237,7 @@ extern zbyte *pcp;
 extern zbyte *zmp;
 
 #define lo(v)	(v & 0xff)
-#define hi(v)	(v >> 8)
+#define hi(v)	( ( v & 0xff00) >> 8)
 
 #define SET_WORD(addr,v)  { zmp[addr] = hi(v); zmp[addr+1] = lo(v); }
 #define LOW_WORD(addr,v)  { v = ((zword) zmp[addr] << 8) | zmp[addr+1]; }
