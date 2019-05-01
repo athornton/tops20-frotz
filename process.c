@@ -320,7 +320,7 @@ void call (zword routine, int argc, zword *args, int ct)
     if (pc >= story_size)
 	runtime_error ("Call to illegal address");
 
-    SET_PC (pc)
+    s_pc(pc);
 
     /* Initialise local variables */
 
@@ -374,7 +374,7 @@ void ret (zword value)
     pc = *sp++;
     pc = ((long) *sp++ << 9) | pc;
 
-    SET_PC (pc)
+    s_pc(pc);
 
     /* Handle resulting value */
 
@@ -437,7 +437,7 @@ void branch (bool flag)
 
 	    pc = g_pc();
 	    pc += (short) offset - 2;
-	    SET_PC (pc)
+	    s_pc(pc);
 
 	} else ret (offset);		/* special case, return 0 or 1 */
 
@@ -658,7 +658,7 @@ void z_jump (void)
     if (pc >= story_size)
 	runtime_error ("Jump to illegal address");
 
-    SET_PC (pc)
+    s_pc(pc);
 
 }/* z_jump */
 
