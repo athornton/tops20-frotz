@@ -78,7 +78,7 @@ static int xgetchar(void)
 /* Read one line, including the newline, into s.  Safely avoids buffer
  * overruns (but that's kind of pointless because there are several
  * other places where I'm not so careful).  */
-static void frotz_d_getline(char *s)
+static void d_getline(char *s)
 {
   int c;
   char *p = s;
@@ -124,7 +124,7 @@ static void translate_special_chars(char *s)
       case '1': case '2': case '3': case '4':
       case '5': case '6': case '7': case '8': case '9':
 	*dest++ = ZC_FKEY_MIN + src[-1] - '0' - 1; break;
-      case '0': *dest++ = ZC_FKEY_MIN + 9; break;
+      case '0': *dest++ = (char) (ZC_FKEY_MIN + 9); break;
       default:
 	fprintf(stderr, "DUMB-FROTZ: unknown escape char: %c\n", src[-1]);
 	fprintf(stderr, "Enter \\help to see the list\n");
@@ -202,7 +202,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
       fputs(prompt, stdout);
     else
       A00009(show_cursor, (timeout ? "tTD" : ")>}")[type]);
-    frotz_d_getline(s);
+    d_getline(s);
     if ((s[0] != '\\') || ((s[1] != '\0') && !islower(s[1]))) {
       /* Is not a command line.  */
       translate_special_chars(s);
@@ -245,7 +245,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
       if (type != INPUT_LINE_CONTINUED)
 	fprintf(stderr, "DUMB-FROTZ: No input to discard\n");
       else {
-	A00012(strlen(continued_line_chars));
+          A00012(strlen((char *)continued_line_chars));
 	continued_line_chars[0] = '\0';
 	type = INPUT_LINE;
       }
@@ -259,12 +259,12 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
 	  int i;
 	  for (i = 0; (i < A00041 - 2) && *next_page; i++)
 	    next_page = strchr(next_page, '\n') + 1;
-	  printf("%.*s", next_page - current_page, current_page);
+	  printf("%.*s", (int) (next_page - current_page), current_page);
 	  current_page = next_page;
 	  if (!*current_page)
 	    break;
 	  printf("HELP: Type <return> for more, or q <return> to stop: ");
-	  frotz_d_getline(s);
+	  d_getline(s);
 	  if (!strcmp(s, "q\n"))
 	    break;
 	}
@@ -366,7 +366,7 @@ zchar A00214 (int max, zchar *buf, int timeout, int width, int continued)
   A00011(read_line_buffer);
 
   /* copy to the buffer and save the rest for next time.  */
-  strcat(buf, read_line_buffer);
+  strcat((char *)buf, read_line_buffer);
   p = read_line_buffer + strlen(read_line_buffer) + 1;
   memmove(read_line_buffer, p, strlen(p) + 1);
 

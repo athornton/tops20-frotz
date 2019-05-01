@@ -247,7 +247,7 @@ void A00236 (void)
 	}
 
     no_match:
-        (void)0;
+        (void) 0; /* Added to make modern compilers happy */
     }
 
     LOW_WORD (H_ABBREVIATIONS, A00036)
@@ -308,7 +308,7 @@ void A00236 (void)
 	if (A00064 - size < 0x8000)
 	    n = (unsigned) (A00064 - size);
 
-	SET_PC (size)
+	s_pc(size);
 
 	if (fread (pcp, 1, n, story_fp) != n)
 	    A00202 ("Story file read error");
@@ -457,7 +457,7 @@ void A00152 (void)
     if (A00025 != V6) {
 
 	long pc = (long) A00029;
-	SET_PC (pc)
+	s_pc(pc);
 
     } else call (A00029, 0, NULL, 0);
 
@@ -583,7 +583,7 @@ void A00153 (void)
 	    pc |= (unsigned) fgetc (gfp) << 8;
 	    pc |= fgetc (gfp);
 
-	    SET_PC (pc)
+	    s_pc(pc);
 
 	    sp = stack + (fgetc (gfp) << 8);
 	    sp += fgetc (gfp);
@@ -672,7 +672,7 @@ int A00225 (void)
 	sp = stack + stack[2];
 	fp = stack + stack[3];
 
-	SET_PC (pc)
+	s_pc(pc);
 
 	restart_header ();
 
@@ -767,7 +767,7 @@ void A00158 (void)
 	fputc ((int) hi (A00038), gfp);
 	fputc ((int) lo (A00038), gfp);
 
-	GET_PC (pc)
+	g_pc();
 
 	fputc ((int) (pc >> 16) & 0xff, gfp);
 	fputc ((int) (pc >> 8) & 0xff, gfp);
@@ -837,7 +837,7 @@ int A00231 (void)
 	if (undo_count == undo_slots)
 	    undo_count = 0;
 
-	GET_PC (pc)
+	g_pc();
 
 	stack[0] = (zword) (pc >> 16);
 	stack[1] = (zword) (pc & 0xffff);

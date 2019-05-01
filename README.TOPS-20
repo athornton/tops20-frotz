@@ -1,0 +1,10 @@
+This is the "Bring Zork Back Home" project.
+
+I am, quixotically, in the year 2019, trying to get dumb-frotz 2.32
+running on TOPS-20 on the PDP-10.
+
+This is complicated by:
+
+- lack of 8-bit char and 16-bit short.  I didn't bother to think
+       much about this.  If you're using a 36-bit Honeywell or
+       something, let me know.

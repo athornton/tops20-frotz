@@ -231,21 +231,25 @@ typedef unsigned char zchar;
 #define LOW_BYTE(addr,v)  { v = zmp[addr]; }
 #define CODE_BYTE(v)	  { v = *pcp++;    }
 
-
-
 extern zbyte *pcp;
 extern zbyte *zmp;
 
 #define lo(v)	(v & 0xff)
-#define hi(v)	( ( v & 0xff00) >> 8)
+#define hi(v)	((v & 0xff00) >> 8)
 
 #define SET_WORD(addr,v)  { zmp[addr] = hi(v); zmp[addr+1] = lo(v); }
 #define LOW_WORD(addr,v)  { v = ((zword) zmp[addr] << 8) | zmp[addr+1]; }
 #define HIGH_WORD(addr,v) { v = ((zword) zmp[addr] << 8) | zmp[addr+1]; }
+/***
 #define CODE_WORD(v)      { v = ((zword) pcp[0] << 8) | pcp[1]; pcp += 2; }
 #define GET_PC(v)         { v = pcp - zmp; }
 #define SET_PC(v)         { pcp = zmp + v; }
+***/
 
+/*** Non-macro versions ***/
+extern zword cw(void);
+extern long g_pc(void);
+extern void s_pc(long v);
 
 /*** Story file header data ***/
 

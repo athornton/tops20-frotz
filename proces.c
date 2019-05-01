@@ -6,6 +6,7 @@
  */
 
 #include "frotz.h"
+#include <stdio.h>
 
 zword zargs[8];
 int zargc;
@@ -185,7 +186,7 @@ static void load_operand (zbyte type)
 	CODE_BYTE (bvalue)
 	value = bvalue;
 
-    } else CODE_WORD (value) 		/* large constant */
+    } else value = cw(); 		/* large constant */
 
     zargs[zargc++] = value;
 
@@ -296,7 +297,7 @@ void call (zword routine, int argc, zword *args, int ct)
     if (sp - stack < 4)
 	A00192 ("Stack overflow");
 
-    GET_PC (pc)
+    pc = g_pc();
 
     *--sp = (zword) (pc >> 9);		/* for historical reasons */
     *--sp = (zword) (pc & 0x1ff);	/* Frotz keeps its stack  */
@@ -319,7 +320,7 @@ void call (zword routine, int argc, zword *args, int ct)
     if (pc >= A00064)
 	A00192 ("Call to illegal address");
 
-    SET_PC (pc)
+    s_pc(pc);
 
     /* Initialise local variables */
 
@@ -335,7 +336,7 @@ void call (zword routine, int argc, zword *args, int ct)
     for (i = 0; i < count; i++) {
 
 	if (A00025 <= V4)		/* V1 to V4 games provide default */
-	    CODE_WORD (value)		/* values for all local variables */
+	    value = cw();		/* values for all local variables */
 
 	*--sp = (zword) ((argc-- > 0) ? args[i] : value);
 
@@ -373,7 +374,7 @@ void ret (zword value)
     pc = *sp++;
     pc = ((long) *sp++ << 9) | pc;
 
-    SET_PC (pc)
+    s_pc(pc);
 
     /* Handle resulting value */
 
@@ -434,9 +435,9 @@ void A00193 (bool flag)
 
 	if (offset > 1) {		/* normal A00193 */
 
-	    GET_PC (pc)
+	    pc = g_pc();
 	    pc += (short) offset - 2;
-	    SET_PC (pc)
+	    s_pc(pc);
 
 	} else ret (offset);		/* special case, return 0 or 1 */
 
@@ -650,14 +651,14 @@ void A00117 (void)
 {
     long pc;
 
-    GET_PC (pc)
+    pc = g_pc();
 
     pc += (short) zargs[0] - 2;
 
     if (pc >= A00064)
 	A00192 ("Jump to illegal address");
 
-    SET_PC (pc)
+    s_pc(pc);
 
 }/* A00117 */
 
