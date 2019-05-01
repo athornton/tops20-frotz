@@ -308,7 +308,7 @@ void init_memory (void)
 	if (story_size - size < 0x8000)
 	    n = (unsigned) (story_size - size);
 
-	SET_PC (size)
+	s_pc(size);
 
 	if (fread (pcp, 1, n, story_fp) != n)
 	    os_fatal ("Story file read error");
@@ -457,7 +457,7 @@ void z_restart (void)
     if (h_version != V6) {
 
 	long pc = (long) h_start_pc;
-	SET_PC (pc)
+	s_pc(pc);
 
     } else call (h_start_pc, 0, NULL, 0);
 
@@ -583,7 +583,7 @@ void z_restore (void)
 	    pc |= (unsigned) fgetc (gfp) << 8;
 	    pc |= fgetc (gfp);
 
-	    SET_PC (pc)
+	    s_pc(pc);
 
 	    sp = stack + (fgetc (gfp) << 8);
 	    sp += fgetc (gfp);
@@ -672,7 +672,7 @@ int restore_undo (void)
 	sp = stack + stack[2];
 	fp = stack + stack[3];
 
-	SET_PC (pc)
+	s_pc(pc);
 
 	restart_header ();
 
@@ -767,7 +767,7 @@ void z_save (void)
 	fputc ((int) hi (h_checksum), gfp);
 	fputc ((int) lo (h_checksum), gfp);
 
-	GET_PC (pc)
+	g_pc();
 
 	fputc ((int) (pc >> 16) & 0xff, gfp);
 	fputc ((int) (pc >> 8) & 0xff, gfp);
@@ -837,7 +837,7 @@ int save_undo (void)
 	if (undo_count == undo_slots)
 	    undo_count = 0;
 
-	GET_PC (pc)
+	g_pc();
 
 	stack[0] = (zword) (pc >> 16);
 	stack[1] = (zword) (pc & 0xffff);

@@ -6,6 +6,7 @@
  */
 
 #include "frotz.h"
+#include <stdio.h>
 
 zword zargs[8];
 int zargc;
@@ -185,7 +186,7 @@ static void load_operand (zbyte type)
 	CODE_BYTE (bvalue)
 	value = bvalue;
 
-    } else CODE_WORD (value) 		/* large constant */
+    } else value = cw(); 		/* large constant */
 
     zargs[zargc++] = value;
 
@@ -296,7 +297,7 @@ void call (zword routine, int argc, zword *args, int ct)
     if (sp - stack < 4)
 	runtime_error ("Stack overflow");
 
-    GET_PC (pc)
+    pc = g_pc();
 
     *--sp = (zword) (pc >> 9);		/* for historical reasons */
     *--sp = (zword) (pc & 0x1ff);	/* Frotz keeps its stack  */
@@ -335,7 +336,7 @@ void call (zword routine, int argc, zword *args, int ct)
     for (i = 0; i < count; i++) {
 
 	if (h_version <= V4)		/* V1 to V4 games provide default */
-	    CODE_WORD (value)		/* values for all local variables */
+	    value = cw();		/* values for all local variables */
 
 	*--sp = (zword) ((argc-- > 0) ? args[i] : value);
 
@@ -434,7 +435,7 @@ void branch (bool flag)
 
 	if (offset > 1) {		/* normal branch */
 
-	    GET_PC (pc)
+	    pc = g_pc();
 	    pc += (short) offset - 2;
 	    SET_PC (pc)
 
@@ -650,7 +651,7 @@ void z_jump (void)
 {
     long pc;
 
-    GET_PC (pc)
+    pc = g_pc();
 
     pc += (short) zargs[0] - 2;
 

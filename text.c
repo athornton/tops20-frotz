@@ -404,7 +404,7 @@ static void decode_text (enum string_type st, zword addr)
 	    HIGH_WORD (byte_addr, code)
 	    byte_addr += 2;
 	} else
-	    CODE_WORD (code)
+            code=cw();
 
 	/* Read its three Z-characters */
 

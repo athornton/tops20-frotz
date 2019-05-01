@@ -240,9 +240,16 @@ extern zbyte *zmp;
 #define SET_WORD(addr,v)  { zmp[addr] = hi(v); zmp[addr+1] = lo(v); }
 #define LOW_WORD(addr,v)  { v = ((zword) zmp[addr] << 8) | zmp[addr+1]; }
 #define HIGH_WORD(addr,v) { v = ((zword) zmp[addr] << 8) | zmp[addr+1]; }
+/***
 #define CODE_WORD(v)      { v = ((zword) pcp[0] << 8) | pcp[1]; pcp += 2; }
 #define GET_PC(v)         { v = pcp - zmp; }
 #define SET_PC(v)         { pcp = zmp + v; }
+***/
+
+/*** Non-macro versions ***/
+extern zword cw(void);
+extern long g_pc(void);
+extern void s_pc(long v);
 
 /*** Story file header data ***/
 
