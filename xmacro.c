@@ -29,8 +29,9 @@ long g_pc(void) {
 
 void s_pc(long v) {
     extern zbyte *pcp, *zmp;
+    long q;
     printf("s_pc entry: V is 0x%x, PCP is 0x%x, ZMP is 0x%x\n", v, pcp, zmp);
-    long q = (long ) ( zmp + v);
+    q = (long ) ( zmp + v);
     /* q &= 0xffff; */
     pcp = (zbyte *) q;
     printf("s_pc exit: V is 0x%x, PCP is 0x%x, ZMP is 0x%x\n", v, pcp, zmp);
