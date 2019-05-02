@@ -229,7 +229,7 @@ typedef unsigned char zchar;
 
 #define SET_BYTE(addr,v)  { zmp[addr] = v; }
 #define LOW_BYTE(addr,v)  { v = zmp[addr]; }
-#define CODE_BYTE(v)	  { v = *pcp++;    }
+#define CODE_BYTE(v)	  { v = ( (*pcp++ ) & 0xff);    }
 
 extern zbyte *pcp;
 extern zbyte *zmp;
@@ -238,8 +238,10 @@ extern zbyte *zmp;
 #define hi(v)	((v & 0xff00) >> 8)
 
 #define SET_WORD(addr,v)  { zmp[addr] = hi(v); zmp[addr+1] = lo(v); }
-#define LOW_WORD(addr,v)  { v = ((zword) zmp[addr] << 8) | zmp[addr+1]; }
-#define HIGH_WORD(addr,v) { v = ((zword) zmp[addr] << 8) | zmp[addr+1]; }
+#define LOW_WORD(addr,v)  { v = ((zword) ( zmp[addr] & 0xff) << 8) | \
+            (zmp[addr+1] & 0xff); }
+#define HIGH_WORD(addr,v) { v = ((zword) ( zmp[addr] & 0xff) << 8) | \
+            (zmp[addr+1] & 0xff); }
 /***
 #define CODE_WORD(v)      { v = ((zword) pcp[0] << 8) | pcp[1]; pcp += 2; }
 #define GET_PC(v)         { v = pcp - zmp; }
