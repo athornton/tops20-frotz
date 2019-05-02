@@ -11,12 +11,12 @@ zbyte cb(void) {
 
     byte = *pcp;
     fprintf(stderr, \
-            "DEBUG: cb   value: %02x; PC = %lx\n", \
+            "DEBUG: cb   value: %02x; PC = 0x%lx\n", \
             byte, pc);
     pcp++;
     pc = (long) (pcp - zmp);
     fprintf(stderr, \
-            "DEBUG: cb_inc   v: %02x; PC = %lx\n", \
+            "DEBUG: cb_inc   v: %02x; PC = 0x%lx\n", \
             byte, pc);
     return byte;
 }
@@ -29,7 +29,7 @@ zword cw(void) {
 
     pc = (long) (pcp - zmp);
     fprintf(stderr, \
-            "DEBUG: cw   entry: PC = %lx\n", \
+            "DEBUG: cw   entry: PC = 0x%lx\n", \
             pc);
 
     retval = (zword) (256 * pcp[0] + pcp[1] );
@@ -37,12 +37,12 @@ zword cw(void) {
     pc = (long) (pcp - zmp);
 
     fprintf(stderr, \
-            "DEBUG: cw   sp   : PC = %lx\n", \
+            "DEBUG: cw   sp   : PC = 0x%lx\n", \
             pc);
 
     /* Check for overflow */
     if (pc > 0xffff) {
-        fprintf(stderr, "DEBUG: Code_word wrap detected: PC = %lx\n", pc);
+        fprintf(stderr, "DEBUG: Code_word wrap detected: PC = 0x%lx\n", pc);
         /* Don't fix up...
         offset &= ffff;
         pcp = (zbyte *)((long) zmp + offset);
@@ -50,7 +50,7 @@ zword cw(void) {
     }
 
     fprintf(stderr, \
-            "DEBUG: cw   exit : PC = %lx; ret = %x\n", \
+            "DEBUG: cw   exit : PC = 0x%lx; ret = %x\n", \
             pc,retval);
     return retval;
 }
@@ -66,7 +66,7 @@ long g_pc(void) {
         fprintf(stderr, "DEBUG: PC wrap detected (get): %lx\n", pc);
     }
     fprintf(stderr, \
-            "DEBUG: g_pc exit : PC = %lx\n", \
+            "DEBUG: g_pc exit : PC = 0x%lx\n", \
             pc);
     return pc;
 }
@@ -74,14 +74,14 @@ long g_pc(void) {
 void s_pc(long pc) {
     extern zbyte *pcp, *zmp;
     fprintf(stderr, \
-            "DEBUG: s_pc entry: PC = %lx\n", \
+            "DEBUG: s_pc entry: PC = 0x%lx\n", \
             pc);
     if ( pc > 0xffff) {
         fprintf(stderr, "DEBUG: PC wrap detected (set): %lx\n", pc);
     }
     pcp = (zbyte *) (pc + (long) zmp);
     fprintf(stderr, \
-            "DEBUG: s_pc exit : PC = %lx\n", \
+            "DEBUG: s_pc exit : PC = 0x%lx\n", \
             pc);
     return;
 }
