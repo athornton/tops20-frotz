@@ -5,9 +5,9 @@ zbyte cb(void) {
     extern zbyte *pcp;
     extern zbyte *zmp;
     long pc;
+    zbyte byte;
 
     pc = (long) (pcp - zmp);
-    zbyte byte;
 
     byte = *pcp;
     fprintf(stderr, \
