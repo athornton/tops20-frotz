@@ -229,7 +229,6 @@ typedef unsigned char zchar;
 
 #define SET_BYTE(addr,v)  { zmp[addr] = v & 0xff; }
 #define LOW_BYTE(addr,v)  { v = zmp[addr] & 0xff; }
-#define CODE_BYTE(v)	  { v = ( (*pcp++ ) & 0xff);    }
 
 extern zbyte *pcp;
 extern zbyte *zmp;
