@@ -235,12 +235,15 @@ void A00235 (void)
     do {
 
 	zbyte opcode;
-
+        long pc;
+        pc = (long) (  ( (long) pcp - (long) zmp) & 0x7ffff );
+        
 	opcode = cb();
 
 	zargc = 0;
 
-        fprintf(stderr, "DEBUG: Opcode    : %x\n",opcode);
+        /* fprintf(stderr, "DEBUG: PC: 0x%lx;       Opcode: 0x%02x\n",   \
+           pc, opcode); */
 	if (opcode < 0x80) {			/* 2OP opcodes */
 
 	    load_operand ((zbyte) (opcode & 0x40) ? 2 : 1);
@@ -443,15 +446,12 @@ void A00193 (bool flag)
 	if (offset > 1) {		/* normal A00193 */
 
 	    pc = g_pc();
-            fprintf(stderr,"DEBUG: A00193: PC=0x%lx; offset=0x%x\n", \
-                    pc, offset);
-            soffset = offset;
-            if (soffset > 32767) {
-                soffset = - ( 65536 - soffset );
-            }
+            /* fprintf(stderr,"DEBUG: A00193: PC=0x%lx; offset=0x%x\n",  \
+               pc, offset); */
+            soffset = s16(offset);
 	    pc += soffset - 2;
-            fprintf(stderr,"DEBUG: A00193: PC=0x%lx; soffset=%d\n", \
-                    pc, soffset);
+            /* fprintf(stderr,"DEBUG: A00193: PC=0x%lx; soffset=%d\n",   \
+               pc, soffset); */
 	    s_pc(pc);
 
 	} else ret (offset);		/* special case, return 0 or 1 */
@@ -665,29 +665,13 @@ void A00095 (void)
 void A00117 (void)
 {
     long pc;
-    zword zarg;
-    short offset;
+    short soffset;
 
     pc = g_pc();
 
-    zarg = zargs[0];
-    fprintf(stderr, "DEBUG: A00117 A: PC = 0x%lx\n", pc);
-    fprintf(stderr, "DEBUG: A00117 B: zarg[0] = 0x%x\n", zarg);
+    soffset = s16(zargs[0]);
+    pc = pc + soffset - 2 ;
 
-    /* Handle wraparound by hand, for our 36-bit friends */
-
-    zarg &= 0xffff;
-    fprintf(stderr, "DEBUG: A00117 C: zarg[0] = 0x%x\n", zarg);    
-
-    offset = zarg;
-    if (zarg > 32767) {
-        offset = - ( 65536 - zarg );
-        fprintf(stderr, "DEBUG: A00117 E: offset = 0x%x\n", offset);        
-    }
-    pc = pc + offset - 2 ;
-
-    fprintf(stderr,"DEBUG: A00117 F: PC = 0x%lx ; A00064 = 0x%lx\n",\
-            pc, A00064);
     if (pc >= A00064)
 	A00192 ("Jump to illegal address");
 

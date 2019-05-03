@@ -292,7 +292,7 @@ static void encode_text (int padding)
 
 void A00096 (void)
 {
-    zword c = zargs[0];
+    zword c = zargs[0] & 0xffff;
 
     if (c >= 0x20 && c <= 0x7e)
 	store (3);
@@ -322,7 +322,8 @@ void A00101 (void)
 {
     int i;
 
-    load_string ((zword) (zargs[0] + zargs[2]), zargs[1]);
+    load_string ((zword) ( (zargs[0] + zargs[2]) & 0xffff), \
+                 zargs[1] & 0xffff);
 
     encode_text (0x05);
 
@@ -670,7 +671,7 @@ void A00188 (zword object)
 void A00136 (void)
 {
 
-    A00188 (zargs[0]);
+    A00188 (zargs[0] & 0xffff);
 
 }/* A00136 */
 
@@ -684,7 +685,7 @@ void A00136 (void)
 void A00137 (void)
 {
 
-    decode_text (HIGH_STRING, zargs[0]);
+    decode_text (HIGH_STRING, zargs[0] & 0xffff);
 
 }/* A00137 */
 

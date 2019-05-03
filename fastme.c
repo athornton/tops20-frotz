@@ -335,9 +335,11 @@ void A00236 (void)
         A00202("Checksum failed!");
     }
 
+    /*
     fprintf(stderr, "DEBUG: checksum 0x%x; A00038 0x%x\n",\
             checksum, A00038);
-    fprintf(stderr, "DEBUG: ZMP %p\n", zmp);
+    fprintf(stderr, "DEBUG: ZMP: %p\n", zmp);
+    */
 
 }/* A00236 */
 
