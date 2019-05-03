@@ -161,6 +161,8 @@ void init_memory (void)
     unsigned n;
     int i, j;
 
+    zbyte *story_p;    
+    
     static struct {
 	enum story story_id;
 	zword release;
@@ -204,9 +206,15 @@ void init_memory (void)
 	os_fatal ("Out of memory");
 
     /* Load header into memory */
+    /* One byte at a time for 36-bit sanitization */
 
     if (fread (zmp, 1, 64, story_fp) != 64)
 	os_fatal ("Story file read error");
+
+    /* Strip bytes for 9-bit chars */
+    for ( i = 0; i < 64; i++) {
+        zmp[i] &= 0xff;
+    }
 
     /* Copy header fields to global variables */
 
@@ -312,8 +320,13 @@ void init_memory (void)
 
 	if (fread (pcp, 1, n, story_fp) != n)
 	    os_fatal ("Story file read error");
-
     }
+
+    /* Strip bytes for 9-bit chars */
+    for (size = 64; size < story_size; size++) {
+        zmp[size] &= 0xff;
+    }
+
 
     /* Read header extension table */
 
@@ -767,7 +780,7 @@ void z_save (void)
 	fputc ((int) hi (h_checksum), gfp);
 	fputc ((int) lo (h_checksum), gfp);
 
-	g_pc();
+	pc = g_pc();
 
 	fputc ((int) (pc >> 16) & 0xff, gfp);
 	fputc ((int) (pc >> 8) & 0xff, gfp);
@@ -837,7 +850,7 @@ int save_undo (void)
 	if (undo_count == undo_slots)
 	    undo_count = 0;
 
-	g_pc();
+	pc = g_pc();
 
 	stack[0] = (zword) (pc >> 16);
 	stack[1] = (zword) (pc & 0xffff);
