@@ -656,12 +656,28 @@ void z_check_arg_count (void)
 void z_jump (void)
 {
     long pc;
+    zword zarg;
+    short offset;
 
     pc = g_pc();
 
-    pc += (short) ( ( zargs[0] & 0xffff) - 2);
+    zarg = zargs[0];
+    fprintf(stderr, "DEBUG: z_jump A: PC = 0x%lx\n", pc);
+    fprintf(stderr, "DEBUG: z_jump B: zarg[0] = 0x%x\n", zarg);
 
-    fprintf(stderr,"DEBUG: z_jump: PC = 0x%lx ; story_size = 0x%lx\n",\
+    /* Handle wraparound by hand, for our 36-bit friends */
+
+    zarg &= 0xffff;
+    fprintf(stderr, "DEBUG: z_jump C: zarg[0] = 0x%x\n", zarg);    
+
+    offset = zarg;
+    if (zarg > 32767) {
+        offset = - ( 65536 - zarg );
+        fprintf(stderr, "DEBUG: z_jump E: offset = 0x%x\n", offset);        
+    }
+    pc = pc + offset - 2 ;
+
+    fprintf(stderr,"DEBUG: z_jump F: PC = 0x%lx ; story_size = 0x%lx\n",\
             pc, story_size);
     if (pc >= story_size)
 	runtime_error ("Jump to illegal address");
