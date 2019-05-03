@@ -240,7 +240,7 @@ void interpret (void)
 
 	zargc = 0;
 
-        fprintf(stderr, "DEBUG: Opcode    : 0x%02x\n",opcode);
+        /* fprintf(stderr, "DEBUG: Opcode    : 0x%02x\n",opcode); */
 	if (opcode < 0x80) {			/* 2OP opcodes */
 
 	    load_operand ((zbyte) (opcode & 0x40) ? 2 : 1);
