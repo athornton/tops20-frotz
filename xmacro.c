@@ -9,15 +9,15 @@ zbyte cb(void) {
 
     pc = (long) ( (long) pcp - (long) zmp);
 
-    byte = *pcp & 0xff;
+    byte = pcp[0] & 0xff;
     fprintf(stderr, \
             "DEBUG: cb   entry:              PCP = %p; ZMP = %p\n", \
             pcp, zmp);    
     fprintf(stderr, \
             "DEBUG: cb   value: %02x; PC = 0x%lx\n", \
             byte, pc);
-    pcp = pcp + 1;
-    pc = (long) ( (long) pcp - (long) zmp);
+    pc = pc + 1;
+    pcp = (zbyte *) ( (long ) zmp + (long) pc);
     fprintf(stderr, \
             "DEBUG: cb_inc   v: %02x; PC = 0x%lx\n", \
             byte, pc);
