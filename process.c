@@ -13,6 +13,8 @@ int zargc;
 
 extern zbyte cb(void);
 extern zword cw(void);
+extern void s_pc(long);
+extern long g_pc(void);
 
 static finished = 0;
 
