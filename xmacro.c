@@ -1,13 +1,16 @@
 #include "frotz.h"
 #include <stdio.h>
 
+/* The largest Z-Machine address is 512K for v8; so we can take just the
+   bottom 19 bits. */
+
 zbyte cb(void) {
     extern zbyte *pcp;
     extern zbyte *zmp;
     long pc;
     zbyte byte;
 
-    pc = (long) ( (long) pcp - (long) zmp);
+    pc = (long) ( ( (long) pcp - (long) zmp ) & 0x7ffff );
 
     byte = (zmp[pc]) & 0xff;
     fprintf(stderr, \
@@ -30,7 +33,7 @@ zword cw(void) {
     long pc;
     zword v;
 
-    pc = (long) ((long) pcp - (long) zmp);
+    pc = (long) ( ( (long) pcp - (long) zmp ) & 0x7ffff) ;
     fprintf(stderr, \
             "DEBUG: cw   entry:             PC = 0x%lx\n", \
             pc);
@@ -38,7 +41,7 @@ zword cw(void) {
     v = (zword) ((zbyte) (zmp[pc] & 0xff) * 256 \
                  + (zbyte) (zmp[pc+1] & 0xff ) ); 
     pcp = pcp + 2;
-    pc = (long) ( (long) pcp - (long) zmp);
+    pc = (long) ( ( (long) pcp - (long) zmp) & 0x7ffff) ;
 
     fprintf(stderr, \
             "DEBUG: cw   exit : v = 0x%x; PC = 0x%lx\n", \
