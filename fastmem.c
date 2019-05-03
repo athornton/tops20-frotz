@@ -209,9 +209,12 @@ void init_memory (void)
     /* Load header into memory */
     /* One byte at a time for 36-bit sanitization */
 
-    if (fread (zmp, 1, 64, story_fp) != 64)
-	os_fatal ("Story file read error");
-
+    for ( i = 0; i < 64 ; i++) {
+        if (fread (zmp+i, 1, 1, story_fp) != 1) {
+            os_fatal ("Story file read error");
+        }
+        zmp[i] &= 0xff; /* No nine-bit craziness here! */
+    }
     /* Copy header fields to global variables */
 
     LOW_BYTE (H_VERSION, h_version)
@@ -303,20 +306,15 @@ void init_memory (void)
     if ((zmp = (zbyte far *) realloc (zmp, story_size)) == NULL)
 	os_fatal ("Out of memory");
 
-    /* Load story file in chunks of 32KB */
+    /* Load and sanitize story file one byte at a time. */
 
-    n = 0x8000;
-
-    for (size = 64; size < story_size; size += n) {
-
-	if (story_size - size < 0x8000)
-	    n = (unsigned) (story_size - size);
-
-	s_pc(size);
-
-	if (fread (pcp, 1, n, story_fp) != n)
+    for (size = 64; size < story_size; size++) {
+	if (fread (zmp + size, 1, 1, story_fp) != 1) {
 	    os_fatal ("Story file read error");
+        }
+        zmp[size] &= 0xff; /* No nine-bit craziness here! */
     }
+    
 
     /* Read header extension table */
 
@@ -331,7 +329,7 @@ void init_memory (void)
     fseek (story_fp, 64, SEEK_SET);
 
     for (li = 64; li < story_size; li++)
-	checksum += fgetc (story_fp);
+	checksum = (checksum + fgetc (story_fp)) & 0xffff;
 
     if (checksum != h_checksum) {
         os_fatal("Checksum failed!");
