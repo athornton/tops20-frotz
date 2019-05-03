@@ -14,16 +14,20 @@ zbyte cb(void) {
 
     byte = (zmp[pc]) & 0xff;
     fprintf(stderr, \
-            "DEBUG: cb   entry:              PCP = %p; ZMP = %p\n", \
-            pcp, zmp);    
+            "DEBUG: cb   entry:                    PCP = %p\n", \
+            pcp);
     fprintf(stderr, \
             "DEBUG: cb   value: 0x%02x; PC = 0x%lx\n", \
             byte, pc);
-    pc = pc + 1;
+    pc = (pc + 1) & 0x7ffff;
     pcp = (zbyte *) ( (long ) zmp + (long) pc);
     fprintf(stderr, \
             "DEBUG: cb_inc   v: 0x%02x; PC = 0x%lx\n", \
             byte, pc);
+    fprintf(stderr, \
+            "DEBUG: cb   exit :                    PCP = %p\n", \
+            pcp);
+
     return byte;
 }
 
@@ -35,17 +39,23 @@ zword cw(void) {
 
     pc = (long) ( ( (long) pcp - (long) zmp ) & 0x7ffff) ;
     fprintf(stderr, \
+            "DEBUG: cw   entry:                    PCP = %p\n", \
+            pcp);
+    fprintf(stderr, \
             "DEBUG: cw   entry:             PC = 0x%lx\n", \
             pc);
 
     v = (zword) ((zbyte) (zmp[pc] & 0xff) * 256 \
-                 + (zbyte) (zmp[pc+1] & 0xff ) ); 
-    pcp = pcp + 2;
-    pc = (long) ( ( (long) pcp - (long) zmp) & 0x7ffff) ;
+                 + (zbyte) (zmp[pc+1] & 0xff ) );
+    pc = (pc + 2) & 0x7ffff ;
+    pcp = (zbyte *) ( (long ) zmp + (long) pc);
 
     fprintf(stderr, \
             "DEBUG: cw   exit : v = 0x%x; PC = 0x%lx\n", \
             v, pc);
+    fprintf(stderr, \
+            "DEBUG: cw   exit :                    PCP = %p\n", \
+            pcp);
     return v;
 }
 
@@ -53,8 +63,8 @@ long g_pc(void) {
     long pc;
     extern zbyte *pcp, *zmp;
     fprintf(stderr, \
-            "DEBUG: g_pc entry:              PCP = %p; ZMP = %p\n", \
-            pcp, zmp);
+            "DEBUG: g_pc entry:                    PCP = %p\n", \
+            pcp);
     pc = (long) ( ( (long) pcp - (long) zmp) & 0x7ffff) ;
     fprintf(stderr, \
             "DEBUG: g_pc exit : PC = 0x%lx\n", \
@@ -72,8 +82,8 @@ void s_pc(long pc) {
             "DEBUG: s_pc exit : PC = 0x%lx\n", \
             pc);
     fprintf(stderr, \
-            "DEBUG: s_pc exit :              PCP = %p; ZMP = %p\n", \
-            pcp, zmp);    
-    
+            "DEBUG: s_pc exit :                    PCP = %p\n", \
+            pcp);
+
     return;
 }
