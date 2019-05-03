@@ -567,7 +567,7 @@ static void __illegal__ (void)
 void z_catch (void)
 {
 
-    store ((zword) (fp - stack));
+    store ((zword) ((fp - stack) & 0xffff));
 
 }/* z_catch */
 
@@ -582,12 +582,12 @@ void z_catch (void)
 void z_throw (void)
 {
 
-    if (zargs[1] > STACK_SIZE)
+    if (((zargs[1]) & 0xffff) > STACK_SIZE)
 	runtime_error ("Bad stack frame");
 
     fp = stack + zargs[1];
 
-    ret (zargs[0]);
+        ret ((zargs[0]) & 0xffff);
 
 }/* z_throw */
 
@@ -604,8 +604,8 @@ void z_throw (void)
 void z_call_n (void)
 {
 
-    if (zargs[0] != 0)
-	call (zargs[0], zargc - 1, zargs + 1, 1);
+    if (((zargs[0]) & 0xffff) != 0)
+	call (((zargs[0]) & 0xffff), zargc - 1, zargs + 1, 1);
 
 }/* z_call_n */
 
@@ -622,8 +622,8 @@ void z_call_n (void)
 void z_call_s (void)
 {
 
-    if (zargs[0] != 0)
-	call (zargs[0], zargc - 1, zargs + 1, 0);
+    if (((zargs[0]) & 0xffff) != 0)
+	call (((zargs[0]) & 0xffff), zargc - 1, zargs + 1, 0);
     else
 	store (0);
 
@@ -640,9 +640,9 @@ void z_check_arg_count (void)
 {
 
     if (fp == stack + STACK_SIZE)
-	branch (zargs[0] == 0);
+	branch (((zargs[0]) & 0xffff) == 0);
     else
-	branch (zargs[0] <= (*fp & 0xff));
+	branch (((zargs[0]) & 0xffff) <= (*fp & 0xff));
 
 }/* z_check_arg_count */
 
@@ -659,7 +659,7 @@ void z_jump (void)
 
     pc = g_pc();
 
-    pc += (short) zargs[0] - 2;
+    pc += (short) ( ( zargs[0] & 0xffff) - 2);
 
     if (pc >= story_size)
 	runtime_error ("Jump to illegal address");
@@ -706,7 +706,7 @@ void z_quit (void)
 void z_ret (void)
 {
 
-    ret (zargs[0]);
+    ret ((zargs[0]) & 0xffff);
 
 }/* z_ret */
 
