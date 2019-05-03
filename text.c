@@ -292,7 +292,7 @@ static void encode_text (int padding)
 
 void z_check_unicode (void)
 {
-    zword c = zargs[0];
+    zword c = zargs[0] & 0xffff;
 
     if (c >= 0x20 && c <= 0x7e)
 	store (3);
@@ -322,7 +322,8 @@ void z_encode_text (void)
 {
     int i;
 
-    load_string ((zword) (zargs[0] + zargs[2]), zargs[1]);
+    load_string ((zword) ( (zargs[0] + zargs[2]) & 0xffff), \
+                 zargs[1] & 0xffff);
 
     encode_text (0x05);
 
@@ -670,7 +671,7 @@ void print_object (zword object)
 void z_print_obj (void)
 {
 
-    print_object (zargs[0]);
+    print_object (zargs[0] & 0xffff);
 
 }/* z_print_obj */
 
@@ -684,7 +685,7 @@ void z_print_obj (void)
 void z_print_paddr (void)
 {
 
-    decode_text (HIGH_STRING, zargs[0]);
+    decode_text (HIGH_STRING, zargs[0] & 0xffff);
 
 }/* z_print_paddr */
 
