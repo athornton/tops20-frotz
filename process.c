@@ -661,6 +661,8 @@ void z_jump (void)
 
     pc += (short) ( ( zargs[0] & 0xffff) - 2);
 
+    fprintf(stderr,"DEBUG: z_jump: PC = 0x%lx ; story_size = 0x%lx\n",\
+            pc, story_size);
     if (pc >= story_size)
 	runtime_error ("Jump to illegal address");
 
