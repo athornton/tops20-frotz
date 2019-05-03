@@ -161,7 +161,8 @@ void init_memory (void)
     unsigned n;
     int i, j;
 
-    zbyte *story_p;    
+    zword checksum = 0;
+    long li;
     
     static struct {
 	enum story story_id;
@@ -210,11 +211,6 @@ void init_memory (void)
 
     if (fread (zmp, 1, 64, story_fp) != 64)
 	os_fatal ("Story file read error");
-
-    /* Strip bytes for 9-bit chars */
-    for ( i = 0; i < 64; i++) {
-        zmp[i] &= 0xff;
-    }
 
     /* Copy header fields to global variables */
 
@@ -322,16 +318,24 @@ void init_memory (void)
 	    os_fatal ("Story file read error");
     }
 
-    /* Strip bytes for 9-bit chars */
-    for (size = 64; size < story_size; size++) {
-        zmp[size] &= 0xff;
-    }
-
-
     /* Read header extension table */
 
     hx_table_size = get_header_extension (HX_TABLE_SIZE);
     hx_unicode_table = get_header_extension (HX_UNICODE_TABLE);
+
+    /* Internal verification; is this where the PDP-10 is blowing up? */
+
+
+    /* Sum all bytes in story file except header bytes */
+
+    fseek (story_fp, 64, SEEK_SET);
+
+    for (li = 64; li < story_size; li++)
+	checksum += fgetc (story_fp);
+
+    if (checksum != h_checksum) {
+        os_fatal("Checksum failed!");
+    }
 
 }/* init_memory */
 
