@@ -415,6 +415,7 @@ void A00193 (bool flag)
 {
     long pc;
     zword offset;
+    short soffset;
     zbyte specifier;
     zbyte off1;
     zbyte off2;
@@ -442,7 +443,15 @@ void A00193 (bool flag)
 	if (offset > 1) {		/* normal A00193 */
 
 	    pc = g_pc();
-	    pc += (short) offset - 2;
+            fprintf(stderr,"DEBUG: A00193: PC=0x%lx; offset=0x%x\n", \
+                    pc, offset);
+            soffset = offset;
+            if (soffset > 32767) {
+                soffset = - ( 65536 - soffset );
+            }
+	    pc += soffset - 2;
+            fprintf(stderr,"DEBUG: A00193: PC=0x%lx; soffset=%d\n", \
+                    pc, soffset);
 	    s_pc(pc);
 
 	} else ret (offset);		/* special case, return 0 or 1 */
@@ -567,7 +576,7 @@ static void __illegal__ (void)
 void A00094 (void)
 {
 
-    store ((zword) (fp - stack));
+    store ((zword) ((fp - stack) & 0xffff));
 
 }/* A00094 */
 
@@ -582,12 +591,12 @@ void A00094 (void)
 void A00177 (void)
 {
 
-    if (zargs[1] > STACK_SIZE)
+    if (((zargs[1]) & 0xffff) > STACK_SIZE)
 	A00192 ("Bad stack frame");
 
     fp = stack + zargs[1];
 
-    ret (zargs[0]);
+        ret ((zargs[0]) & 0xffff);
 
 }/* A00177 */
 
@@ -604,8 +613,8 @@ void A00177 (void)
 void A00092 (void)
 {
 
-    if (zargs[0] != 0)
-	call (zargs[0], zargc - 1, zargs + 1, 1);
+    if (((zargs[0]) & 0xffff) != 0)
+	call (((zargs[0]) & 0xffff), zargc - 1, zargs + 1, 1);
 
 }/* A00092 */
 
@@ -622,8 +631,8 @@ void A00092 (void)
 void A00093 (void)
 {
 
-    if (zargs[0] != 0)
-	call (zargs[0], zargc - 1, zargs + 1, 0);
+    if (((zargs[0]) & 0xffff) != 0)
+	call (((zargs[0]) & 0xffff), zargc - 1, zargs + 1, 0);
     else
 	store (0);
 
@@ -640,9 +649,9 @@ void A00095 (void)
 {
 
     if (fp == stack + STACK_SIZE)
-	A00193 (zargs[0] == 0);
+	A00193 (((zargs[0]) & 0xffff) == 0);
     else
-	A00193 (zargs[0] <= (*fp & 0xff));
+	A00193 (((zargs[0]) & 0xffff) <= (*fp & 0xff));
 
 }/* A00095 */
 
@@ -656,11 +665,29 @@ void A00095 (void)
 void A00117 (void)
 {
     long pc;
+    zword zarg;
+    short offset;
 
     pc = g_pc();
 
-    pc += (short) zargs[0] - 2;
+    zarg = zargs[0];
+    fprintf(stderr, "DEBUG: A00117 A: PC = 0x%lx\n", pc);
+    fprintf(stderr, "DEBUG: A00117 B: zarg[0] = 0x%x\n", zarg);
 
+    /* Handle wraparound by hand, for our 36-bit friends */
+
+    zarg &= 0xffff;
+    fprintf(stderr, "DEBUG: A00117 C: zarg[0] = 0x%x\n", zarg);    
+
+    offset = zarg;
+    if (zarg > 32767) {
+        offset = - ( 65536 - zarg );
+        fprintf(stderr, "DEBUG: A00117 E: offset = 0x%x\n", offset);        
+    }
+    pc = pc + offset - 2 ;
+
+    fprintf(stderr,"DEBUG: A00117 F: PC = 0x%lx ; A00064 = 0x%lx\n",\
+            pc, A00064);
     if (pc >= A00064)
 	A00192 ("Jump to illegal address");
 
@@ -706,7 +733,7 @@ void A00146 (void)
 void z_ret (void)
 {
 
-    ret (zargs[0]);
+    ret ((zargs[0]) & 0xffff);
 
 }/* z_ret */
 
