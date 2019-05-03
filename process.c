@@ -11,6 +11,9 @@
 zword zargs[8];
 int zargc;
 
+extern zbyte cb(void);
+extern zword cw(void);
+
 static finished = 0;
 
 static void __extended__ (void);
