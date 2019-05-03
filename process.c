@@ -240,7 +240,7 @@ void interpret (void)
 
 	zargc = 0;
 
-        /* fprintf(stderr, "DEBUG: Opcode    : 0x%02x\n",opcode); */
+        fprintf(stderr, "DEBUG: Opcode    : 0x%02x\n",opcode);
 	if (opcode < 0x80) {			/* 2OP opcodes */
 
 	    load_operand ((zbyte) (opcode & 0x40) ? 2 : 1);
@@ -671,23 +671,23 @@ void z_jump (void)
     pc = g_pc();
 
     zarg = zargs[0];
-    fprintf(stderr, "DEBUG: z_jump A: PC = 0x%lx\n", pc);
-    fprintf(stderr, "DEBUG: z_jump B: zarg[0] = 0x%x\n", zarg);
+    /* fprintf(stderr, "DEBUG: z_jump A: PC = 0x%lx\n", pc);
+       fprintf(stderr, "DEBUG: z_jump B: zarg[0] = 0x%x\n", zarg); */
 
     /* Handle wraparound by hand, for our 36-bit friends */
 
     zarg &= 0xffff;
-    fprintf(stderr, "DEBUG: z_jump C: zarg[0] = 0x%x\n", zarg);    
+    /* fprintf(stderr, "DEBUG: z_jump C: zarg[0] = 0x%x\n", zarg); */
 
     soffset = zarg;
     if (soffset > 32767) {
         soffset = - ( 65536 - zarg );
-        fprintf(stderr, "DEBUG: z_jump E: soffset = %d\n", soffset);        
+        /* fprintf(stderr, "DEBUG: z_jump E: soffset = %d\n", soffset); */
     }
     pc = pc + soffset - 2 ;
 
-    fprintf(stderr,"DEBUG: z_jump F: PC = 0x%lx ; story_size = 0x%lx\n",\
-            pc, story_size);
+    /* fprintf(stderr,"DEBUG: z_jump F: PC = 0x%lx ; story_size = 0x%lx\n", \
+       pc, story_size); */
     if (pc >= story_size)
 	runtime_error ("Jump to illegal address");
 
