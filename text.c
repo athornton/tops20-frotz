@@ -12,6 +12,7 @@ enum string_type {
 };
 
 extern zword A00268 (zword);
+extern zword cw (void);
 
 static zchar decoded[10];
 static zword encoded[3];

@@ -1,67 +1,89 @@
 #include "frotz.h"
 #include <stdio.h>
 
+/* The largest Z-Machine address is 512K for v8; so we can take just the
+   bottom 19 bits. */
+
+zbyte cb(void) {
+    extern zbyte *pcp;
+    extern zbyte *zmp;
+    long pc;
+    zbyte byte;
+
+    pc = (long) ( ( (long) pcp - (long) zmp ) & 0x7ffff );
+
+    byte = (zmp[pc]) & 0xff;
+    fprintf(stderr, \
+            "DEBUG: cb   entry:                    PCP = %p\n", \
+            pcp);
+    fprintf(stderr, \
+            "DEBUG: cb   value: 0x%02x; PC = 0x%lx\n", \
+            byte, pc);
+    pc = (pc + 1) & 0x7ffff;
+    pcp = (zbyte *) ( (long ) zmp + (long) pc);
+    fprintf(stderr, \
+            "DEBUG: cb_inc   v: 0x%02x; PC = 0x%lx\n", \
+            byte, pc);
+    fprintf(stderr, \
+            "DEBUG: cb   exit :                    PCP = %p\n", \
+            pcp);
+
+    return byte;
+}
+
 zword cw(void) {
     extern zbyte *pcp;
     extern zbyte *zmp;
     long pc;
-    zword retval;
+    zword v;
 
-    pc = (long) (pcp - zmp);
+    pc = (long) ( ( (long) pcp - (long) zmp ) & 0x7ffff) ;
     fprintf(stderr, \
-            "DEBUG: cw   entry: PC = 0x%lx; PCP = 0x%p; ZMP = 0x%p\n", \
-            pc, pcp, zmp);
-
-    retval = (zword) (256 * pcp[0] + pcp[1] );
-    pcp += 2;
-    pc = (long) (pcp - zmp);
-
+            "DEBUG: cw   entry:                    PCP = %p\n", \
+            pcp);
     fprintf(stderr, \
-            "DEBUG: cw   sp   : PC = 0x%lx; PCP = 0x%p; ZMP = 0x%p\n", \
-            pc, pcp, zmp);
+            "DEBUG: cw   entry:             PC = 0x%lx\n", \
+            pc);
 
-    /* Check for overflow */
-    if (pc > 0xffff) {
-        fprintf(stderr, "DEBUG: Code_word wrap detected: PC = 0x%lx\n", pc);
-        /* Don't fix up...
-        offset &= 0xffff;
-        pcp = (zbyte *)((long) zmp + offset);
-        */
-    }
+    v = (zword) ((zbyte) (zmp[pc] & 0xff) * 256 \
+                 + (zbyte) (zmp[pc+1] & 0xff ) );
+    pc = (pc + 2) & 0x7ffff ;
+    pcp = (zbyte *) ( (long ) zmp + (long) pc);
 
     fprintf(stderr, \
-            "DEBUG: cw   exit : PC = 0x%lx; ret = 0x%x\n", \
-            pc,retval);
-    return retval;
+            "DEBUG: cw   exit : v = 0x%x; PC = 0x%lx\n", \
+            v, pc);
+    fprintf(stderr, \
+            "DEBUG: cw   exit :                    PCP = %p\n", \
+            pcp);
+    return v;
 }
 
 long g_pc(void) {
     long pc;
     extern zbyte *pcp, *zmp;
     fprintf(stderr, \
-            "DEBUG: g_pc entry:              PCP = 0x%p; ZMP = 0x%p\n", \
-            pcp, zmp);
-    pc = (long) (pcp - zmp);
-    if ( pc > 0xffff) {
-        fprintf(stderr, "DEBUG: PC wrap detected (get): 0x%lx\n", pc);
-    }
+            "DEBUG: g_pc entry:                    PCP = %p\n", \
+            pcp);
+    pc = (long) ( ( (long) pcp - (long) zmp) & 0x7ffff) ;
     fprintf(stderr, \
-            "DEBUG: g_pc exit : PC = 0x%lx, PCP = 0x%p, ZMP = 0x%p\n", \
-            pc, pcp, zmp);
+            "DEBUG: g_pc exit : PC = 0x%lx\n", \
+            pc);
     return pc;
 }
 
 void s_pc(long pc) {
     extern zbyte *pcp, *zmp;
     fprintf(stderr, \
-            "DEBUG: s_pc entry: PC = 0x%lx, PCP = 0x%p, ZMP = 0x%p\n", \
-            pc, pcp, zmp);
-    if ( pc > 0xffff) {
-        fprintf(stderr, "DEBUG: PC wrap detected (set): 0x%lx\n", pc);
-    }
+            "DEBUG: s_pc entry: PC = 0x%lx\n", \
+            pc);
     pcp = (zbyte *) (pc + (long) zmp);
     fprintf(stderr, \
-            "DEBUG: s_pc exit : PC = 0x%lx, PCP = 0x%p, ZMP = 0x%p\n", \
-            pc, pcp, zmp);
+            "DEBUG: s_pc exit : PC = 0x%lx\n", \
+            pc);
+    fprintf(stderr, \
+            "DEBUG: s_pc exit :                    PCP = %p\n", \
+            pcp);
+
     return;
 }

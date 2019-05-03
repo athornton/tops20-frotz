@@ -161,6 +161,9 @@ void A00236 (void)
     unsigned n;
     int i, j;
 
+    zword checksum = 0;
+    long li;
+    
     static struct {
 	enum story A00063;
 	zword release;
@@ -204,10 +207,14 @@ void A00236 (void)
 	A00202 ("Out of memory");
 
     /* Load header into memory */
+    /* One byte at a time for 36-bit sanitization */
 
-    if (fread (zmp, 1, 64, story_fp) != 64)
-	A00202 ("Story file read error");
-
+    for ( i = 0; i < 64 ; i++) {
+        if (fread (zmp+i, 1, 1, story_fp) != 1) {
+            A00202 ("Story file read error");
+        }
+        zmp[i] &= 0xff; /* No nine-bit craziness here! */
+    }
     /* Copy header fields to global variables */
 
     LOW_BYTE (H_VERSION, A00025)
@@ -299,26 +306,38 @@ void A00236 (void)
     if ((zmp = (zbyte far *) realloc (zmp, A00064)) == NULL)
 	A00202 ("Out of memory");
 
-    /* Load story file in chunks of 32KB */
+    /* Load and sanitize story file one byte at a time. */
 
-    n = 0x8000;
-
-    for (size = 64; size < A00064; size += n) {
-
-	if (A00064 - size < 0x8000)
-	    n = (unsigned) (A00064 - size);
-
-	s_pc(size);
-
-	if (fread (pcp, 1, n, story_fp) != n)
+    for (size = 64; size < A00064; size++) {
+	if (fread (zmp + size, 1, 1, story_fp) != 1) {
 	    A00202 ("Story file read error");
-
+        }
+        zmp[size] &= 0xff; /* No nine-bit craziness here! */
     }
+    
 
     /* Read header extension table */
 
     A00058 = get_header_extension (HX_TABLE_SIZE);
     A00061 = get_header_extension (HX_UNICODE_TABLE);
+
+    /* Internal verification; is this where the PDP-10 is blowing up? */
+
+
+    /* Sum all bytes in story file except header bytes */
+
+    fseek (story_fp, 64, SEEK_SET);
+
+    for (li = 64; li < A00064; li++)
+	checksum = (checksum + (fgetc (story_fp) & 0xff)) & 0xffff;
+
+    if (checksum != A00038) {
+        A00202("Checksum failed!");
+    }
+
+    fprintf(stderr, "DEBUG: checksum 0x%x; A00038 0x%x\n",\
+            checksum, A00038);
+    fprintf(stderr, "DEBUG: ZMP %p\n", zmp);
 
 }/* A00236 */
 
@@ -767,7 +786,7 @@ void A00158 (void)
 	fputc ((int) hi (A00038), gfp);
 	fputc ((int) lo (A00038), gfp);
 
-	g_pc();
+	pc = g_pc();
 
 	fputc ((int) (pc >> 16) & 0xff, gfp);
 	fputc ((int) (pc >> 8) & 0xff, gfp);
@@ -837,7 +856,7 @@ int A00231 (void)
 	if (undo_count == undo_slots)
 	    undo_count = 0;
 
-	g_pc();
+	pc = g_pc();
 
 	stack[0] = (zword) (pc >> 16);
 	stack[1] = (zword) (pc & 0xffff);

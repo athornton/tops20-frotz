@@ -11,6 +11,11 @@
 zword zargs[8];
 int zargc;
 
+extern zbyte cb(void);
+extern zword cw(void);
+extern void s_pc(long);
+extern long g_pc(void);
+
 static finished = 0;
 
 static void __extended__ (void);
@@ -168,7 +173,7 @@ static void load_operand (zbyte type)
 
 	zbyte variable;
 
-	CODE_BYTE (variable)
+	variable = cb();
 
 	if (variable == 0)
 	    value = *sp++;
@@ -183,7 +188,7 @@ static void load_operand (zbyte type)
 
 	zbyte bvalue;
 
-	CODE_BYTE (bvalue)
+	bvalue = cb();
 	value = bvalue;
 
     } else value = cw(); 		/* large constant */
@@ -231,10 +236,11 @@ void A00235 (void)
 
 	zbyte opcode;
 
-	CODE_BYTE (opcode)
+	opcode = cb();
 
 	zargc = 0;
 
+        fprintf(stderr, "DEBUG: Opcode    : %x\n",opcode);
 	if (opcode < 0x80) {			/* 2OP opcodes */
 
 	    load_operand ((zbyte) (opcode & 0x40) ? 2 : 1);
@@ -258,12 +264,12 @@ void A00235 (void)
 	    zbyte specifier2;
 
 	    if (opcode == 0xec || opcode == 0xfa) {	/* opcodes 0xec */
-		CODE_BYTE (specifier1)                  /* and 0xfa are */
-		CODE_BYTE (specifier2)                  /* call opcodes */
+		specifier1 = cb();                  /* and 0xfa are */
+		specifier2 = cb();                  /* call opcodes */
 		load_all_operands (specifier1);		/* with up to 8 */
 		load_all_operands (specifier2);         /* arguments    */
 	    } else {
-		CODE_BYTE (specifier1)
+		specifier1 = cb();
 		load_all_operands (specifier1);
 	    }
 
@@ -324,7 +330,7 @@ void call (zword routine, int argc, zword *args, int ct)
 
     /* Initialise local variables */
 
-    CODE_BYTE (count)
+    count = cb();
 
     if (count > 15)
 	A00192 ("Call to non-routine");
@@ -413,7 +419,7 @@ void A00193 (bool flag)
     zbyte off1;
     zbyte off2;
 
-    CODE_BYTE (specifier)
+    specifier = cb();
 
     off1 = specifier & 0x3f;
 
@@ -425,7 +431,7 @@ void A00193 (bool flag)
 	if (off1 & 0x20)		/* propagate sign bit */
 	    off1 |= 0xc0;
 
-	CODE_BYTE (off2)
+	off2 = cb();
 
 	offset = (off1 << 8) | off2;
 
@@ -454,7 +460,7 @@ void store (zword value)
 {
     zbyte variable;
 
-    CODE_BYTE (variable)
+    variable = cb();
 
     if (variable == 0)
 	*--sp = value;
@@ -527,8 +533,8 @@ static void __extended__ (void)
     zbyte opcode;
     zbyte specifier;
 
-    CODE_BYTE (opcode)
-    CODE_BYTE (specifier)
+    opcode = cb();
+    specifier = cb();
 
     load_all_operands (specifier);
 
