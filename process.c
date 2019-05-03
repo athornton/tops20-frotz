@@ -666,7 +666,7 @@ void z_jump (void)
 {
     long pc;
     zword zarg;
-    short offset;
+    short soffset;
 
     pc = g_pc();
 
@@ -679,12 +679,12 @@ void z_jump (void)
     zarg &= 0xffff;
     fprintf(stderr, "DEBUG: z_jump C: zarg[0] = 0x%x\n", zarg);    
 
-    offset = zarg;
-    if (zarg > 32767) {
-        offset = - ( 65536 - zarg );
-        fprintf(stderr, "DEBUG: z_jump E: offset = 0x%x\n", offset);        
+    soffset = zarg;
+    if (soffset > 32767) {
+        soffset = - ( 65536 - zarg );
+        fprintf(stderr, "DEBUG: z_jump E: soffset = %d\n", soffset);        
     }
-    pc = pc + offset - 2 ;
+    pc = pc + soffset - 2 ;
 
     fprintf(stderr,"DEBUG: z_jump F: PC = 0x%lx ; story_size = 0x%lx\n",\
             pc, story_size);
