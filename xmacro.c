@@ -55,7 +55,7 @@ long g_pc(void) {
     fprintf(stderr, \
             "DEBUG: g_pc entry:              PCP = %p; ZMP = %p\n", \
             pcp, zmp);
-    pc = (long) ( (long) pcp - (long) zmp);
+    pc = (long) ( ( (long) pcp - (long) zmp) & 0x7ffff) ;
     fprintf(stderr, \
             "DEBUG: g_pc exit : PC = 0x%lx\n", \
             pc);
