@@ -7,7 +7,7 @@ zbyte cb(void) {
     long pc;
     zbyte byte;
 
-    pc = (long) (pcp - zmp);
+    pc = (long) ( (long) pcp - (long) zmp);
 
     byte = *pcp;
     fprintf(stderr, \
@@ -17,7 +17,7 @@ zbyte cb(void) {
             "DEBUG: cb   value: %02x; PC = 0x%lx\n", \
             byte, pc);
     pcp++;
-    pc = (long) (pcp - zmp);
+    pc = (long) ( (long) pcp - (long) zmp);
     fprintf(stderr, \
             "DEBUG: cb_inc   v: %02x; PC = 0x%lx\n", \
             byte, pc);
@@ -37,7 +37,7 @@ zword cw(void) {
 
     retval = (zword) (256 * pcp[0] + pcp[1] );
     pcp += 2;
-    pc = (long) (pcp - zmp);
+    pc = (long) ( (long) pcp - (long) zmp);
 
     fprintf(stderr, \
             "DEBUG: cw   sp   : PC = 0x%lx\n", \
@@ -60,7 +60,7 @@ long g_pc(void) {
     fprintf(stderr, \
             "DEBUG: g_pc entry:              PCP = %p; ZMP = %p\n", \
             pcp, zmp);
-    pc = (long) (pcp - zmp);
+    pc = (long) ( (long) pcp - (long) zmp);
     if ( pc > 0xffff) {
         fprintf(stderr, "DEBUG: PC wrap detected (get): %lx\n", pc);
     }
