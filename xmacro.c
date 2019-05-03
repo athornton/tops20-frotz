@@ -11,6 +11,9 @@ zbyte cb(void) {
 
     byte = *pcp;
     fprintf(stderr, \
+            "DEBUG: cb   entry:              PCP = %p; ZMP = %p\n", \
+            pcp, zmp);    
+    fprintf(stderr, \
             "DEBUG: cb   value: %02x; PC = 0x%lx\n", \
             byte, pc);
     pcp++;
@@ -43,10 +46,6 @@ zword cw(void) {
     /* Check for overflow */
     if (pc > 0xffff) {
         fprintf(stderr, "DEBUG: Code_word wrap detected: PC = 0x%lx\n", pc);
-        /* Don't fix up...
-        offset &= ffff;
-        pcp = (zbyte *)((long) zmp + offset);
-        */
     }
 
     fprintf(stderr, \
@@ -83,5 +82,9 @@ void s_pc(long pc) {
     fprintf(stderr, \
             "DEBUG: s_pc exit : PC = 0x%lx\n", \
             pc);
+    fprintf(stderr, \
+            "DEBUG: s_pc exit :              PCP = %p; ZMP = %p\n", \
+            pcp, zmp);    
+    
     return;
 }
