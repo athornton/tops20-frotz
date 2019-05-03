@@ -7,6 +7,9 @@
 
 #include "frotz.h"
 
+    
+/* A whole lot of masking here to cope with 36-bit systems */
+
 /*
  * z_add, 16bit addition.
  *
@@ -17,8 +20,12 @@
 
 void z_add (void)
 {
-
-    store ((zword) ((short) zargs[0] + (short) zargs[1]));
+    short sz0, sz1;
+    
+    sz0 = s16(zargs[0]);
+    sz1 = s16(zargs[1]);
+    
+    store ((zword) (sz0 + sz1));
 
 }/* z_add */
 
@@ -33,7 +40,7 @@ void z_add (void)
 void z_and (void)
 {
 
-    store ((zword) (zargs[0] & zargs[1]));
+    store ((zword) ((zargs[0] & zargs[1]) & 0xffff));
 
 }/* z_and */
 
@@ -47,11 +54,14 @@ void z_and (void)
 
 void z_art_shift (void)
 {
-
-    if ((short) zargs[1] > 0)
-	store ((zword) ((short) zargs[0] << (short) zargs[1]));
+    short sz0, sz1;
+    sz0 = s16(zargs[0]);
+    sz1 = s16(zargs[1]);
+        
+    if (sz1 > 0)
+	store (((zword) ( sz0 << sz1 )) & 0xffff );
     else
-	store ((zword) ((short) zargs[0] >> - (short) zargs[1]));
+	store (((zword) ( sz0 >> -sz1 )) & 0xffff );
 
 }/* z_art_shift */
 
@@ -66,10 +76,14 @@ void z_art_shift (void)
 void z_div (void)
 {
 
-    if (zargs[1] == 0)
+    short sz0, sz1;
+    
+    sz0 = s16(zargs[0]);
+    sz1 = s16(zargs[1]);
+    if (sz1 == 0)
 	runtime_error ("Division by zero");
 
-    store ((zword) ((short) zargs[0] / (short) zargs[1]));
+    store ((zword) (sz0 / sz1));
 
 }/* z_div */
 
@@ -103,8 +117,12 @@ void z_je (void)
 
 void z_jg (void)
 {
+    short sz0, sz1;
 
-    branch ((short) zargs[0] > (short) zargs[1]);
+    sz0 = s16(zargs[0]);
+    sz1 = s16(zargs[1]);
+    
+    branch (sz0 > sz1);
 
 }/* z_jg */
 
@@ -118,9 +136,12 @@ void z_jg (void)
 
 void z_jl (void)
 {
+    short sz0, sz1;
 
-    branch ((short) zargs[0] < (short) zargs[1]);
-
+    sz0 = s16(zargs[0]);
+    sz1 = s16(zargs[1]);
+    
+    branch (sz0 < sz1);
 }/* z_jl */
 
 /*
@@ -132,8 +153,10 @@ void z_jl (void)
 
 void z_jz (void)
 {
-
-    branch ((short) zargs[0] == 0);
+    short sz;
+    
+    sz = s16(zargs[0]);
+    branch (sz == 0);
 
 }/* z_jz */
 
@@ -147,11 +170,13 @@ void z_jz (void)
 
 void z_log_shift (void)
 {
+    short sz1;
 
-    if ((short) zargs[1] > 0)
-	store ((zword) (zargs[0] << (short) zargs[1]));
+    sz1 = s16(zargs[1]);
+    if (sz1 > 0)
+	store ((zword) (zargs[0] << sz1));
     else
-	store ((zword) (zargs[0] >> - (short) zargs[1]));
+	store ((zword) (zargs[0] >> -sz1));
 
 }/* z_log_shift */
 
@@ -166,10 +191,14 @@ void z_log_shift (void)
 void z_mod (void)
 {
 
-    if (zargs[1] == 0)
+    short sz0, sz1;
+
+    sz0=s16(zargs[0]);
+    sz1=s16(zargs[1]);
+    if (sz1 == 0)
 	runtime_error ("Division by zero");
 
-    store ((zword) ((short) zargs[0] % (short) zargs[1]));
+    store ((zword) (sz0 % sz1));
 
 }/* z_mod */
 
@@ -184,7 +213,11 @@ void z_mod (void)
 void z_mul (void)
 {
 
-    store ((zword) ((short) zargs[0] * (short) zargs[1]));
+    short sz0, sz1;
+    sz0 = s16(zargs[0]);
+    sz1 = s16(zargs[1]);    
+    
+    store ((zword) (sz0 * sz1 ));
 
 }/* z_mul */
 
@@ -198,7 +231,7 @@ void z_mul (void)
 void z_not (void)
 {
 
-    store ((zword) ~zargs[0]);
+    store (((zword) ~zargs[0]) & 0xffff);
 
 }/* z_not */
 
@@ -213,7 +246,7 @@ void z_not (void)
 void z_or (void)
 {
 
-    store ((zword) (zargs[0] | zargs[1]));
+    store (((zword) (zargs[0] | zargs[1])) & 0xffff);
 
 }/* z_or */
 
@@ -228,7 +261,11 @@ void z_or (void)
 void z_sub (void)
 {
 
-    store ((zword) ((short) zargs[0] - (short) zargs[1]));
+    short sz0, sz1;
+    
+    sz0 = s16(zargs[0]);
+    sz1 = s16(zargs[1]);
+    store ((zword) (sz0 - sz1));
 
 }/* z_sub */
 
@@ -237,12 +274,12 @@ void z_sub (void)
  *
  *	zargs[0] = value to be examined
  *	zargs[1] = bit mask
- *
+*
  */
 
 void z_test (void)
 {
 
-    branch ((zargs[0] & zargs[1]) == zargs[1]);
+    branch (((zargs[0] & zargs[1]) & 0xffff) == (zargs[1] & 0xffff));
 
 }/* z_test */

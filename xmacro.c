@@ -87,3 +87,13 @@ void s_pc(long pc) {
 
     return;
 }
+
+short s16(zword z) {
+    short sz;
+    sz = (short) (z & 0xffff);
+    if ( ( sz > 0 ) && (sz > 32767 ) ) {
+        sz = - (65536 - sz );
+    }
+    return sz;
+}
+    

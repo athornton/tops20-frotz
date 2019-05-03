@@ -252,6 +252,9 @@ extern zword cw(void);
 extern long g_pc(void);
 extern void s_pc(long v);
 
+/*** Convenience zword-to-correctly-signed-sixteen-bit-short ***/
+extern short s16(zword);
+
 /*** Story file header data ***/
 
 extern zbyte h_version;
