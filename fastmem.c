@@ -329,11 +329,14 @@ void init_memory (void)
     fseek (story_fp, 64, SEEK_SET);
 
     for (li = 64; li < story_size; li++)
-	checksum = (checksum + fgetc (story_fp)) & 0xffff;
+	checksum = (checksum + (fgetc (story_fp) & 0xff)) & 0xffff;
 
     if (checksum != h_checksum) {
         os_fatal("Checksum failed!");
     }
+
+    fprintf(stderr, "DEBUG: checksum 0x%x; h_checksum 0x%x\n",\
+            checksum, h_checksum);
 
 }/* init_memory */
 
