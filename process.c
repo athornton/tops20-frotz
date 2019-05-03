@@ -442,6 +442,8 @@ void branch (bool flag)
 	if (offset > 1) {		/* normal branch */
 
 	    pc = g_pc();
+            fprintf(stderr,"DEBUG: branch: PC=0x%lx; offset=0x%x\n", \
+                    pc, offset);
 	    pc += (short) offset - 2;
 	    s_pc(pc);
 
