@@ -415,6 +415,7 @@ void branch (bool flag)
 {
     long pc;
     zword offset;
+    short soffset;
     zbyte specifier;
     zbyte off1;
     zbyte off2;
@@ -444,7 +445,13 @@ void branch (bool flag)
 	    pc = g_pc();
             fprintf(stderr,"DEBUG: branch: PC=0x%lx; offset=0x%x\n", \
                     pc, offset);
-	    pc += (short) offset - 2;
+            soffset = offset;
+            if (soffset > 32767) {
+                soffset = - ( 65536 - soffset );
+            }
+	    pc += soffset - 2;
+            fprintf(stderr,"DEBUG: branch: PC=0x%lx; soffset=%d\n", \
+                    pc, soffset);
 	    s_pc(pc);
 
 	} else ret (offset);		/* special case, return 0 or 1 */
