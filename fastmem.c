@@ -335,9 +335,11 @@ void init_memory (void)
         os_fatal("Checksum failed!");
     }
 
+    /*
     fprintf(stderr, "DEBUG: checksum 0x%x; h_checksum 0x%x\n",\
             checksum, h_checksum);
-    fprintf(stderr, "DEBUG: ZMP %p\n", zmp);
+    fprintf(stderr, "DEBUG: ZMP: %p\n", zmp);
+    */
 
 }/* init_memory */
 
