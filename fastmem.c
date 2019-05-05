@@ -215,9 +215,22 @@ void init_memory (void)
         }
         zmp[i] &= 0xff; /* No nine-bit craziness here! */
     }
+
+    /* Print game header */
+    
+    int idx;
+    fprintf(stderr,"DEBUG: GAME HEADER:\n");
+    for ( i = 0; i < 8 ; i++) {
+        fprintf(stderr,"DEBUG: %04x: ",8*i);
+        for ( j = 0; j < 8 ; j++) {
+            idx = j + 8*i;
+            fprintf(stderr,"%02x ",zmp[idx]);
+        }
+        fprintf(stderr,"\n");
+    }
+
     /* Copy header fields to global variables */
-
-
+    
     h_version=lb(H_VERSION);
         fprintf(stderr, "DEBUG: Z-code version: %d\n", h_version);
 
