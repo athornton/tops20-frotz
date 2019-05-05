@@ -219,8 +219,10 @@ void init_memory (void)
 
     LOW_BYTE (H_VERSION, h_version)
 
-    if (h_version < V1 || h_version > V8)
-	os_fatal ("Unknown Z-code version");
+        if (h_version < V1 || h_version > V8) {
+            fprintf(stderr, "Z-code version %d!\n", h_version);
+            os_fatal ("Unknown Z-code version");
+        }
 
     LOW_BYTE (H_CONFIG, h_config)
 
