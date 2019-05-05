@@ -2,9 +2,18 @@
 #include <stdio.h>
 
 /* The largest Z-Machine address is 512K for v8; so we can take just the
-   bottom 19 bits. */
+   bottom 19 bits for any address. */
 
-zbyte cb(void) {
+void sb(zword addr, zbyte z) { /* replaces SET_BYTE */
+    zmp[addr & 0xffff] = z & 0xff;
+}
+
+zbyte lb(zword addr) { /* replaces LOW_BYTE */
+    return zmp[addr & 0xffff] & 0xff;
+}
+
+
+zbyte cb(void) { /* replaces CODE_BYTE */
     extern zbyte *pcp;
     extern zbyte *zmp;
     long pc;
@@ -31,7 +40,7 @@ zbyte cb(void) {
     return byte;
 }
 
-zword cw(void) {
+zword cw(void) { /* replaces CODE_WORD */
     extern zbyte *pcp;
     extern zbyte *zmp;
     long pc;
@@ -59,7 +68,7 @@ zword cw(void) {
     return v;
 }
 
-long g_pc(void) {
+long g_pc(void) { /* replaces GET_PC) */
     long pc;
     extern zbyte *pcp, *zmp;
     /* fprintf(stderr,                                           \
@@ -72,7 +81,7 @@ long g_pc(void) {
     return pc;
 }
 
-void s_pc(long pc) {
+void s_pc(long pc) { /* replaces SET_PC */
     extern zbyte *pcp, *zmp;
     /* fprintf(stderr,                          \
             "DEBUG: s_pc entry: PC = 0x%lx\n", \
@@ -88,7 +97,7 @@ void s_pc(long pc) {
     return;
 }
 
-short s16(zword z) {
+short s16(zword z) { /* 16-bitify */
     short sz;
     sz = (short) (z & 0xffff);
     if ( ( sz > 0 ) && (sz > 32767 ) ) {
@@ -96,4 +105,12 @@ short s16(zword z) {
     }
     return sz;
 }
-    
+
+char c8(zbyte z) { /* 8-bitify) */
+    char cz;
+    cz = (char) (z & 0xff);
+    if ( ( cz >0 ) && (cz > 127) ) {
+        cz = - (128 - cz);
+    }
+    return cz;
+}

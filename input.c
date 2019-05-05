@@ -39,7 +39,7 @@ bool is_terminator (zchar key)
 	    zbyte c;
 
 	    do {
-		LOW_BYTE (addr, c)
+		c=lb(addr);
 		if (c == 255 || key == translate_from_zscii (c))
 		    return TRUE;
 		addr++;
@@ -168,7 +168,7 @@ void z_read (void)
 
     addr = zargs[0];
 
-    LOW_BYTE (addr, max)
+    max=lb(addr);
 
     if (h_version <= V4)
 	max--;
@@ -180,14 +180,14 @@ void z_read (void)
 
     if (h_version >= V5) {
 	addr++;
-	LOW_BYTE (addr, size)
+	size=lb(addr);
     } else size = 0;
 
     /* Copy initial input to local buffer */
 
     for (i = 0; i < size; i++) {
 	addr++;
-	LOW_BYTE (addr, c)
+	c=lb(addr);
 	buffer[i] = translate_from_zscii (c);
     }
 

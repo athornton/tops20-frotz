@@ -35,7 +35,7 @@ void z_copy_table (void)
 
 	for (i = 0; i < (((short) size < 0) ? - (short) size : size); i++) {
 	    addr = zargs[0] + i;
-	    LOW_BYTE (addr, value)
+	    value = lb(addr);
 	    storeb ((zword) (zargs[1] + i), value);
 	}
 
@@ -43,7 +43,7 @@ void z_copy_table (void)
 
 	for (i = size - 1; i >= 0; i--) {
 	    addr = zargs[0] + i;
-	    LOW_BYTE (addr, value)
+	    value = lb(addr);
 	    storeb ((zword) (zargs[1] + i), value);
 	}
 
@@ -62,7 +62,7 @@ void z_loadb (void)
     zword addr = zargs[0] + zargs[1];
     zbyte value;
 
-    LOW_BYTE (addr, value)
+    value = lb(addr);
 
     store (value);
 
@@ -127,7 +127,7 @@ void z_scan_table (void)
 
 	    zbyte bvalue;
 
-	    LOW_BYTE (addr, bvalue)
+	    bvalue=lb(addr);
 
 	    if (bvalue == zargs[0])
 		goto finished;

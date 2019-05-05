@@ -104,14 +104,14 @@ void restart_header (void)
 
     int i;
 
-    SET_BYTE (H_CONFIG, h_config)
+    sb(H_CONFIG, h_config);
     SET_WORD (H_FLAGS, h_flags)
 
     if (h_version >= V4) {
-	SET_BYTE (H_INTERPRETER_NUMBER, h_interpreter_number)
-	SET_BYTE (H_INTERPRETER_VERSION, h_interpreter_version)
-	SET_BYTE (H_SCREEN_ROWS, h_screen_rows)
-	SET_BYTE (H_SCREEN_COLS, h_screen_cols)
+	sb(H_INTERPRETER_NUMBER, h_interpreter_number);
+        sb(H_INTERPRETER_VERSION, h_interpreter_version);
+        sb(H_SCREEN_ROWS, h_screen_rows);
+        sb(H_SCREEN_COLS, h_screen_cols);
     }
 
     /* It's less trouble to use font size 1x1 for V5 games, especially
@@ -132,18 +132,18 @@ void restart_header (void)
     if (h_version >= V5) {
 	SET_WORD (H_SCREEN_WIDTH, screen_x_size)
 	SET_WORD (H_SCREEN_HEIGHT, screen_y_size)
-	SET_BYTE (H_FONT_HEIGHT, font_y_size)
-	SET_BYTE (H_FONT_WIDTH, font_x_size)
-	SET_BYTE (H_DEFAULT_BACKGROUND, h_default_background)
-	SET_BYTE (H_DEFAULT_FOREGROUND, h_default_foreground)
+        sb(H_FONT_HEIGHT, font_y_size);
+        sb(H_FONT_WIDTH, font_x_size);
+        sb(H_DEFAULT_BACKGROUND, h_default_background);
+        sb(H_DEFAULT_FOREGROUND, h_default_foreground);
     }
 
     if (h_version == V6)
 	for (i = 0; i < 8; i++)
 	    storeb ((zword) (H_USER_NAME + i), h_user_name[i]);
 
-    SET_BYTE (H_STANDARD_HIGH, h_standard_high)
-    SET_BYTE (H_STANDARD_LOW, h_standard_low)
+    sb(H_STANDARD_HIGH, h_standard_high);
+    sb(H_STANDARD_LOW, h_standard_low);
 
 }/* restart_header */
 
@@ -217,14 +217,15 @@ void init_memory (void)
     }
     /* Copy header fields to global variables */
 
-    LOW_BYTE (H_VERSION, h_version)
+
+    h_version=lb(H_VERSION);
+        fprintf(stderr, "DEBUG: Z-code version: %d\n", h_version);
 
         if (h_version < V1 || h_version > V8) {
-            fprintf(stderr, "Z-code version %d!\n", h_version);
             os_fatal ("Unknown Z-code version");
         }
 
-    LOW_BYTE (H_CONFIG, h_config)
+    h_config = lb(H_CONFIG);
 
     if (h_version == V3 && (h_config & CONFIG_BYTE_SWAPPED))
 	os_fatal ("Byte swapped story file");
@@ -239,7 +240,7 @@ void init_memory (void)
     LOW_WORD (H_FLAGS, h_flags)
 
     for (i = 0, addr = H_SERIAL; i < 6; i++, addr++)
-	LOW_BYTE (addr, h_serial[i])
+	h_serial[i] = lb(addr);
 
     /* Auto-detect buggy story files that need special fixes */
 
@@ -427,7 +428,7 @@ void storeb (zword addr, zbyte value)
 
     }
 
-    SET_BYTE (addr, value)
+    sb(addr, value);
 
 }/* storeb */
 
@@ -504,14 +505,14 @@ static void get_default_name (char *default_name, zword addr)
 	zbyte len;
 	int i;
 
-	LOW_BYTE (addr, len)
+	len=lb(addr);
 	addr++;
 
 	for (i = 0; i < len; i++) {
 
 	    zbyte c;
 
-	    LOW_BYTE (addr, c)
+	    c=lb(addr);
 	    addr++;
 
 	    if (c >= 'A' && c <= 'Z')

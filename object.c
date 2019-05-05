@@ -91,7 +91,7 @@ static zword first_property (zword obj)
 
     /* Get length of object name */
 
-    LOW_BYTE (prop_addr, size)
+    size=lb(prop_addr);
 
     /* Add name length to pointer */
 
@@ -112,7 +112,7 @@ static zword next_property (zword prop_addr)
 
     /* Load the current property id */
 
-    LOW_BYTE (prop_addr, value)
+    value=lb(prop_addr);
     prop_addr++;
 
     /* Calculate the length of this property */
@@ -123,7 +123,7 @@ static zword next_property (zword prop_addr)
 	value >>= 6;
     else {
 
-	LOW_BYTE (prop_addr, value)
+	value = lb(prop_addr);
 	value &= 0x3f;
 
 	if (value == 0) value = 64;	/* demanded by Spec 1.0 */
@@ -161,33 +161,33 @@ static void unlink_object (zword object)
 	/* Get parent of object, and return if no parent */
 
 	obj_addr += O1_PARENT;
-	LOW_BYTE (obj_addr, parent)
+	parent=(obj_addr);
 	if (!parent)
 	    return;
 
 	/* Get (older) sibling of object and set both parent and sibling
 	   pointers to 0 */
 
-	SET_BYTE (obj_addr, zero)
+	sb(obj_addr, zero);
 	obj_addr += O1_SIBLING - O1_PARENT;
-	LOW_BYTE (obj_addr, older_sibling)
-	SET_BYTE (obj_addr, zero)
+	older_sibling=lb(obj_addr);
+        sb(obj_addr, zero);
 
 	/* Get first child of parent (the youngest sibling of the object) */
 
 	parent_addr = object_address (parent) + O1_CHILD;
-	LOW_BYTE (parent_addr, younger_sibling)
+	younger_sibling=lb(parent_addr);
 
 	/* Remove object from the list of siblings */
 
 	if (younger_sibling == object)
-	    SET_BYTE (parent_addr, older_sibling)
+	    sb(parent_addr, older_sibling);
 	else {
 	    do {
 		sibling_addr = object_address (younger_sibling) + O1_SIBLING;
-		LOW_BYTE (sibling_addr, younger_sibling)
+		younger_sibling=lb(sibling_addr);
 	    } while (younger_sibling != object);
-	    SET_BYTE (sibling_addr, older_sibling)
+	    sb(sibling_addr, older_sibling);
 	}
 
     } else {
@@ -270,9 +270,9 @@ void z_clear_attr (void)
 
     /* Clear attribute bit */
 
-    LOW_BYTE (obj_addr, value)
+    value=lb(obj_addr);
     value &= ~(0x80 >> (zargs[1] & 7));
-    SET_BYTE (obj_addr, value)
+    sb(obj_addr, value);
 
 }/* z_clear_attr */
 
@@ -308,7 +308,7 @@ void z_jin (void)
 	/* Get parent id from object */
 
 	obj_addr += O1_PARENT;
-	LOW_BYTE (obj_addr, parent)
+	parent=lb(obj_addr);
 
 	/* Branch if the parent is obj2 */
 
@@ -360,7 +360,7 @@ void z_get_child (void)
 	/* Get child id from object */
 
 	obj_addr += O1_CHILD;
-	LOW_BYTE (obj_addr, child)
+	child=lb(obj_addr);
 
 	/* Store child id and branch */
 
@@ -412,7 +412,7 @@ void z_get_next_prop (void)
 	/* Scan down the property list */
 
 	do {
-	    LOW_BYTE (prop_addr, value)
+	    value=lb(prop_addr);
 	    prop_addr = next_property (prop_addr);
 	} while ((value & mask) > zargs[1]);
 
@@ -425,7 +425,7 @@ void z_get_next_prop (void)
 
     /* Return the property id */
 
-    LOW_BYTE (prop_addr, value)
+    value = lb(prop_addr);
     store ((zword) (value & mask));
 
 }/* z_get_next_prop */
@@ -459,7 +459,7 @@ void z_get_parent (void)
 	/* Get parent id from object */
 
 	obj_addr += O1_PARENT;
-	LOW_BYTE (obj_addr, parent)
+	parent=lb(obj_addr);
 
 	/* Store parent */
 
@@ -509,7 +509,7 @@ void z_get_prop (void)
     /* Scan down the property list */
 
     for (;;) {
-	LOW_BYTE (prop_addr, value)
+	value=lb(prop_addr);
 	if ((value & mask) <= zargs[1])
 	    break;
 	prop_addr = next_property (prop_addr);
@@ -523,7 +523,7 @@ void z_get_prop (void)
 
 	if (h_version <= V3 && !(value & 0xe0) || h_version >= V4 && !(value & 0xc0)) {
 
-	    LOW_BYTE (prop_addr, bprop_val)
+	    bprop_val=lb(prop_addr);
 	    wprop_val = bprop_val;
 
 	} else LOW_WORD (prop_addr, wprop_val)
@@ -572,7 +572,7 @@ void z_get_prop_addr (void)
     /* Scan down the property list */
 
     for (;;) {
-	LOW_BYTE (prop_addr, value)
+	value=lb(prop_addr);
 	if ((value & mask) <= zargs[1])
 	    break;
 	prop_addr = next_property (prop_addr);
@@ -605,7 +605,7 @@ void z_get_prop_len (void)
     /* Back up the property pointer to the property id */
 
     addr = zargs[0] - 1;
-    LOW_BYTE (addr, value)
+    value=lb(addr);
 
     /* Calculate length of property */
 
@@ -647,7 +647,7 @@ void z_get_sibling (void)
 	/* Get sibling id from object */
 
 	obj_addr += O1_SIBLING;
-	LOW_BYTE (obj_addr, sibling)
+	sibling=lb(obj_addr);
 
 	/* Store sibling and branch */
 
@@ -714,12 +714,12 @@ void z_insert_obj (void)
 	zbyte child;
 
 	obj1_addr += O1_PARENT;
-	SET_BYTE (obj1_addr, obj2)
+	sb(obj1_addr, obj2);
 	obj2_addr += O1_CHILD;
-	LOW_BYTE (obj2_addr, child)
-	SET_BYTE (obj2_addr, obj1)
+	child = lb(obj2_addr);
+        sb(obj2_addr, obj1);
 	obj1_addr += O1_SIBLING - O1_PARENT;
-	SET_BYTE (obj1_addr, child)
+	sb(obj1_addr, child);
 
     } else {
 
@@ -763,7 +763,7 @@ void z_put_prop (void)
     /* Scan down the property list */
 
     for (;;) {
-	LOW_BYTE (prop_addr, value)
+	value=lb(prop_addr);
 	if ((value & mask) <= zargs[1])
 	    break;
 	prop_addr = next_property (prop_addr);
@@ -780,7 +780,7 @@ void z_put_prop (void)
 
     if (h_version <= V3 && !(value & 0xe0) || h_version >= V4 && !(value & 0xc0)) {
 	zbyte v = zargs[2];
-	SET_BYTE (prop_addr, v)
+	sb(prop_addr, v);
     } else {
 	zword v = zargs[2];
 	SET_WORD (prop_addr, v)
@@ -850,7 +850,7 @@ void z_set_attr (void)
 
     /* Load attribute byte */
 
-    LOW_BYTE (obj_addr, value)
+    value=lb(obj_addr);
 
     /* Set attribute bit */
 
@@ -858,7 +858,7 @@ void z_set_attr (void)
 
     /* Store attribute byte */
 
-    SET_BYTE (obj_addr, value)
+    sb(obj_addr, value);
 
 }/* z_set_attr */
 
@@ -895,7 +895,7 @@ void z_test_attr (void)
 
     /* Load attribute byte */
 
-    LOW_BYTE (obj_addr, value)
+    value = lb(obj_addr);
 
     /* Test attribute */
 

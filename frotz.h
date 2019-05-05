@@ -227,8 +227,12 @@ typedef unsigned char zchar;
 
 /*** Data access macros ***/
 
+/***
 #define SET_BYTE(addr,v)  { zmp[addr] = v & 0xff; }
 #define LOW_BYTE(addr,v)  { v = zmp[addr] & 0xff; }
+***/
+extern void sb(zword addr, zbyte z);
+extern zbyte lb(zword addr);
 
 extern zbyte *pcp;
 extern zbyte *zmp;

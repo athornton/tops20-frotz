@@ -1231,7 +1231,7 @@ void z_print_table (void)
 
 	    zbyte c;
 
-	    LOW_BYTE (addr, c)
+	    c=lb(addr);
 	    addr++;
 
 	    print_char (c);
