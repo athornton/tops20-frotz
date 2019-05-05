@@ -158,8 +158,7 @@ void init_memory (void)
 {
     long size;
     zword addr;
-    unsigned n;
-    int i, j;
+    int i, j, idx;
 
     zword checksum = 0;
     long li;
@@ -216,9 +215,6 @@ void init_memory (void)
         zmp[i] &= 0xff; /* No nine-bit craziness here! */
     }
 
-    /* Print game header */
-    
-    int idx;
     fprintf(stderr,"DEBUG: GAME HEADER:\n");
     for ( i = 0; i < 8 ; i++) {
         fprintf(stderr,"DEBUG: %04x: ",8*i);
