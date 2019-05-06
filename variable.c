@@ -58,7 +58,7 @@ void z_dec_chk (void)
 {
     zword value;
     zword z0, z1;
-    short sv;
+    short sv, sz1;
     
     z0 = zargs[0];
     z1 = zargs[1];
@@ -85,8 +85,10 @@ void z_dec_chk (void)
         value &= 0xffff;
 	sw(addr, value);
     }
+    sv = s16(value);
+    sz1 = s16(z1);
 
-    branch ((short) value < (short) zargs[1]);
+    branch (sv < sz1);
 
 }/* z_dec_chk */
 
@@ -144,7 +146,7 @@ void z_inc_chk (void)
     
     z0 = zargs[0];
     z1 = zargs[1];
-
+    sz1 = s16(z1);
     
     if (z0 == 0) {
         sv = s16(*sp);
@@ -165,10 +167,8 @@ void z_inc_chk (void)
         value &= 0xffff;
 	sw(addr, value);
     }
-    sv = s16(value);
-    sz1 = s16(z1);
-    
-    branch ((zword) (sv > sz1));
+    sv=s16(value);
+    branch (sv > sz1);
 
 }/* z_inc_chk */
 
