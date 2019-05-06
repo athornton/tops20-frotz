@@ -81,7 +81,7 @@ void z_loadw (void)
     zword addr = zargs[0] + 2 * zargs[1];
     zword value;
 
-    LOW_WORD (addr, value)
+    value=lw(addr);
 
     store (value);
 
@@ -118,7 +118,7 @@ void z_scan_table (void)
 
 	    zword wvalue;
 
-	    LOW_WORD (addr, wvalue)
+	    wvalue=lw(addr);
 
 	    if (wvalue == zargs[0])
 		goto finished;

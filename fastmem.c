@@ -63,7 +63,7 @@ zword get_header_extension (int entry)
 	return 0;
 
     addr = h_extension_table + 2 * entry;
-    LOW_WORD (addr, val)
+    val=lw(addr);
 
     return val;
 
@@ -84,7 +84,7 @@ void set_header_extension (int entry, zword val)
 	return;
 
     addr = h_extension_table + 2 * entry;
-    SET_WORD (addr, val)
+    sw(addr, val);
 
 }/* set_header_extension */
 
@@ -105,7 +105,7 @@ void restart_header (void)
     int i;
 
     sb(H_CONFIG, h_config);
-    SET_WORD (H_FLAGS, h_flags)
+    sw(H_FLAGS, h_flags);
 
     if (h_version >= V4) {
 	sb(H_INTERPRETER_NUMBER, h_interpreter_number);
@@ -130,8 +130,8 @@ void restart_header (void)
     }
 
     if (h_version >= V5) {
-	SET_WORD (H_SCREEN_WIDTH, screen_x_size)
-	SET_WORD (H_SCREEN_HEIGHT, screen_y_size)
+	sw(H_SCREEN_WIDTH, screen_x_size);
+	sw(H_SCREEN_HEIGHT, screen_y_size);
         sb(H_FONT_HEIGHT, font_y_size);
         sb(H_FONT_WIDTH, font_x_size);
         sb(H_DEFAULT_BACKGROUND, h_default_background);
@@ -227,14 +227,14 @@ void init_memory (void)
     if (h_version == V3 && (h_config & CONFIG_BYTE_SWAPPED))
 	os_fatal ("Byte swapped story file");
 
-    LOW_WORD (H_RELEASE, h_release)
-    LOW_WORD (H_RESIDENT_SIZE, h_resident_size)
-    LOW_WORD (H_START_PC, h_start_pc)
-    LOW_WORD (H_DICTIONARY, h_dictionary)
-    LOW_WORD (H_OBJECTS, h_objects)
-    LOW_WORD (H_GLOBALS, h_globals)
-    LOW_WORD (H_DYNAMIC_SIZE, h_dynamic_size)
-    LOW_WORD (H_FLAGS, h_flags)
+    h_release = lw (H_RELEASE);
+    h_resident_size = lw (H_RESIDENT_SIZE);
+    h_start_pc = lw (H_START_PC);
+    h_dictionary = lw (H_DICTIONARY);
+    h_objects = lw (H_OBJECTS);
+    h_globals = lw (H_GLOBALS);
+    h_dynamic_size = lw (H_DYNAMIC_SIZE);
+    h_flags = lw (H_FLAGS);
 
     for (i = 0, addr = H_SERIAL; i < 6; i++, addr++)
 	h_serial[i] = lb(addr);
@@ -257,8 +257,8 @@ void init_memory (void)
         (void) 0; /* Added to make modern compilers happy */
     }
 
-    LOW_WORD (H_ABBREVIATIONS, h_abbreviations)
-    LOW_WORD (H_FILE_SIZE, h_file_size)
+    h_abbreviations = lw (H_ABBREVIATIONS);
+    h_file_size = lw (H_FILE_SIZE);
 
     /* Calculate story file size in bytes */
 
@@ -279,12 +279,12 @@ void init_memory (void)
 
     }
 
-    LOW_WORD (H_CHECKSUM, h_checksum)
-    LOW_WORD (H_ALPHABET, h_alphabet)
-    LOW_WORD (H_FUNCTIONS_OFFSET, h_functions_offset)
-    LOW_WORD (H_STRINGS_OFFSET, h_strings_offset)
-    LOW_WORD (H_TERMINATING_KEYS, h_terminating_keys)
-    LOW_WORD (H_EXTENSION_TABLE, h_extension_table)
+    h_checksum = lw (H_CHECKSUM);
+    h_alphabet = lw (H_ALPHABET);
+    h_functions_offset = lw (H_FUNCTIONS_OFFSET);
+    h_strings_offset = lw (H_STRINGS_OFFSET);
+    h_terminating_keys = lw (H_TERMINATING_KEYS);
+    h_extension_table = lw (H_EXTENSION_TABLE);
 
     /* Zork Zero Macintosh doesn't have the graphics flag set */
 

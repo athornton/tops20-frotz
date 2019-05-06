@@ -82,7 +82,7 @@ void script_open (void)
 
 done:
 
-    SET_WORD (H_FLAGS, h_flags)
+    sw(H_FLAGS, h_flags);
 
 }/* script_open */
 
@@ -97,7 +97,7 @@ void script_close (void)
 {
 
     h_flags &= ~SCRIPTING_FLAG;
-    SET_WORD (H_FLAGS, h_flags)
+    sw(H_FLAGS, h_flags);
 
     fclose (sfp); ostream_script = FALSE;
 

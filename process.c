@@ -181,7 +181,7 @@ static void load_operand (zbyte type)
 	    value = *(fp - variable);
 	else {
 	    zword addr = h_globals + 2 * (variable - 16);
-	    LOW_WORD (addr, value)
+	    value = lw(addr);
 	}
 
     } else if (type & 1) { 		/* small constant */
@@ -478,7 +478,7 @@ void store (zword value)
 	*(fp - variable) = value;
     else {
 	zword addr = h_globals + 2 * (variable - 16);
-	SET_WORD (addr, value)
+	sw(addr, value);
     }
 
 }/* store */

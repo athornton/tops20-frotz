@@ -1575,11 +1575,11 @@ void z_show_status (void)
        Z-machine into local variables */
 
     addr = h_globals;
-    LOW_WORD (addr, global0)
+    global0 = lw(addr);
     addr += 2;
-    LOW_WORD (addr, global1)
+    global1 = lw(addr);    
     addr += 2;
-    LOW_WORD (addr, global2)
+    global2 = lw(addr);    
 
     /* Frotz uses window 7 for the status line. Don't forget to select
        reverse and fixed width text style */

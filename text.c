@@ -59,7 +59,7 @@ zchar translate_from_zscii (zbyte c)
 		zword addr = hx_unicode_table + 1 + 2 * (c - 0x9b);
 		zword unicode;
 
-		LOW_WORD (addr, unicode)
+		unicode=lw(addr);
 
 		return (unicode < 0x100) ? (zchar) unicode : '?';
 
@@ -112,7 +112,7 @@ zbyte translate_to_zscii (zchar c)
 		zword addr = hx_unicode_table + 1 + 2 * (i - 0x9b);
 		zword unicode;
 
-		LOW_WORD (addr, unicode)
+		unicode=lw(addr);
 
 		if (c == unicode)
 		    return (zbyte) i;
@@ -400,10 +400,10 @@ static void decode_text (enum string_type st, zword addr)
 	/* Fetch the next 16bit word */
 
 	if (st == LOW_STRING || st == VOCABULARY) {
-	    LOW_WORD (addr, code)
+	    code=lw(addr);
 	    addr += 2;
 	} else if (st == HIGH_STRING || st == ABBREVIATION) {
-	    HIGH_WORD (byte_addr, code)
+	    code = hw(byte_addr);
 	    byte_addr += 2;
 	} else
             code=cw();
@@ -461,7 +461,7 @@ static void decode_text (enum string_type st, zword addr)
 
 		ptr_addr = h_abbreviations + 64 * (prev_c - 1) + 2 * c;
 
-		LOW_WORD (ptr_addr, abbr_addr)
+		abbr_addr=lw(ptr_addr);
 		decode_text (ABBREVIATION, abbr_addr);
 
 		status = 0;
@@ -567,7 +567,7 @@ void z_print_form (void)
 
     for (;;) {
 
-	LOW_WORD (addr, count)
+	count=lw(addr);
 	addr += 2;
 
 	if (count == 0)
@@ -650,7 +650,7 @@ void print_object (zword object)
     addr++;
 
     if (length != 0)
-	LOW_WORD (addr, code)
+	code=lw(addr);
 
     if (code == 0x94a5) { 	/* encoded text 0x94a5 == empty string */
 
@@ -773,7 +773,7 @@ static zword lookup_text (int padding, zword dct)
     dct += 1 + sep_count;
     entry_len=lb(dct);		/* get length of entries */
     dct += 1;
-    LOW_WORD (dct, entry_count)		/* get number of entries */
+    entry_count = lw(dct);		/* get number of entries */
     dct += 2;
 
     if ((short) entry_count < 0) {	/* bad luck, entries aren't sorted */
@@ -800,7 +800,7 @@ static zword lookup_text (int padding, zword dct)
 	addr = entry_addr;
 
 	for (i = 0; i < resolution; i++) {
-	    LOW_WORD (addr, entry)
+	    entry=lw(addr);
 	    if (encoded[i] != entry)
 		goto continuing;
 	    addr += 2;

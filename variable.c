@@ -18,15 +18,21 @@ void z_dec (void)
 {
     zword value;
 
-    if (zargs[0] == 0)
+    zword z0;
+
+    z0 = zargs[0];
+    z0 &= 0xffff;
+    
+    if (z0 == 0)
 	(*sp)--;
-    else if (zargs[0] < 16)
+    else if (z0 < 16)
 	(*(fp - zargs[0]))--;
     else {
 	zword addr = h_globals + 2 * (zargs[0] - 16);
-	LOW_WORD (addr, value)
+	value=lw(addr);
 	value--;
-	SET_WORD (addr, value)
+        value &= 0xffff;
+	sw(addr, value);
     }
 
 }/* z_dec */
@@ -43,15 +49,23 @@ void z_dec_chk (void)
 {
     zword value;
 
-    if (zargs[0] == 0)
+    zword z0, z1;
+    z0 = zargs[0];
+    z1 = zargs[1];
+
+    z0 &= 0xffff;
+    z1 &= 0xffff;
+    
+    if (z0 == 0)
 	value = --(*sp);
-    else if (zargs[0] < 16)
-	value = --(*(fp - zargs[0]));
+    else if (z0 < 16)
+	value = --(*(fp - z0));
     else {
-	zword addr = h_globals + 2 * (zargs[0] - 16);
-	LOW_WORD (addr, value)
+	zword addr = h_globals + 2 * (z0 - 16);
+	value=lw(addr);
 	value--;
-	SET_WORD (addr, value)
+        value &= 0xffff;
+	sw(addr, value);
     }
 
     branch ((short) value < (short) zargs[1]);
@@ -68,16 +82,21 @@ void z_dec_chk (void)
 void z_inc (void)
 {
     zword value;
+    zword z0;
 
-    if (zargs[0] == 0)
+    z0 = zargs[0];
+    z0 &= 0xffff;
+    
+    if (z0 == 0)
 	(*sp)++;
-    else if (zargs[0] < 16)
-	(*(fp - zargs[0]))++;
+    else if (z0 < 16)
+	(*(fp - z0))++;
     else {
-	zword addr = h_globals + 2 * (zargs[0] - 16);
-	LOW_WORD (addr, value)
+	zword addr = h_globals + 2 * (z0 - 16);
+	value=lw(addr);
 	value++;
-	SET_WORD (addr, value)
+        value &= 0xffff;
+	sw(addr, value);
     }
 
 }/* z_inc */
@@ -93,19 +112,28 @@ void z_inc (void)
 void z_inc_chk (void)
 {
     zword value;
+    zword z0, z1;
+    short sv, sz1;
+    
+    z0 = zargs[0];
+    z1 = zargs[1];
 
-    if (zargs[0] == 0)
+    
+    if (z0 == 0)
 	value = ++(*sp);
-    else if (zargs[0] < 16)
-	value = ++(*(fp - zargs[0]));
+    else if (z0 < 16)
+	value = ++(*(fp - z0));
     else {
-	zword addr = h_globals + 2 * (zargs[0] - 16);
-	LOW_WORD (addr, value)
+	zword addr = h_globals + 2 * (z0 - 16);
+	value=lw(addr);
 	value++;
-	SET_WORD (addr, value)
+        value &= 0xffff;
+	sw(addr, value);
     }
-
-    branch ((short) value > (short) zargs[1]);
+    sv = s16(value);
+    sz1 = s16(z1);
+    
+    branch ((zword) (sv > sz1));
 
 }/* z_inc_chk */
 
@@ -119,17 +147,20 @@ void z_inc_chk (void)
 void z_load (void)
 {
     zword value;
-
-    if (zargs[0] == 0)
+    zword z0;
+    z0 = zargs[0];
+    z0 &= 0xffff;
+    
+    if (z0 == 0)
 	value = *sp;
-    else if (zargs[0] < 16)
-	value = *(fp - zargs[0]);
+    else if (z0 < 16)
+	value = *(fp - z0);
     else {
-	zword addr = h_globals + 2 * (zargs[0] - 16);
-	LOW_WORD (addr, value)
+	zword addr = h_globals + 2 * (z0 - 16);
+	value=lw(addr);
     }
 
-    store (value);
+    store (value & 0xffff);
 
 }/* z_load */
 
@@ -163,7 +194,7 @@ void z_pop_stack (void)
 	zword size;
 	zword addr = zargs[1];
 
-	LOW_WORD (addr, size)
+	size=lw(addr);
 
 	size += zargs[0];
 	storew (addr, size);
@@ -199,7 +230,7 @@ void z_pull (void)
 	    *(fp - zargs[0]) = value;
 	else {
 	    zword addr = h_globals + 2 * (zargs[0] - 16);
-	    SET_WORD (addr, value)
+	    sw(addr, value);
 	}
 
     } else {			/* it's V6, but is there a user stack? */
@@ -209,13 +240,13 @@ void z_pull (void)
 	    zword size;
 	    zword addr = zargs[0];
 
-	    LOW_WORD (addr, size)
+	    size=lw(addr);
 
 	    size++;
 	    storew (addr, size);
 
 	    addr += 2 * size;
-	    LOW_WORD (addr, value)
+	    value=lw(addr);
 
 	} else value = *sp++;	/* it's the game stack */
 
@@ -252,7 +283,7 @@ void z_push_stack (void)
     zword size;
     zword addr = zargs[1];
 
-    LOW_WORD (addr, size)
+    size=lw(addr);
 
     if (size != 0) {
 
@@ -285,7 +316,7 @@ void z_store (void)
 	*(fp - zargs[0]) = value;
     else {
 	zword addr = h_globals + 2 * (zargs[0] - 16);
-	SET_WORD (addr, value)
+	sw(addr, value);
     }
 
 }/* z_store */
