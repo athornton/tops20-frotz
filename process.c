@@ -469,6 +469,7 @@ void store (zword value)
 {
     zbyte variable;
 
+    value &= 0xffff;
     variable = cb();
 
     if (variable == 0)
