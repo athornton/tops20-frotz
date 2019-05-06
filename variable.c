@@ -19,7 +19,8 @@ void z_dec (void)
     zword value;
 
     zword z0;
-
+    short sv;
+    
     z0 = zargs[0];
     z0 &= 0xffff;
     
@@ -30,7 +31,9 @@ void z_dec (void)
     else {
 	zword addr = h_globals + 2 * (zargs[0] - 16);
 	value=lw(addr);
-	value--;
+        sv=s16(value);
+	sv--;
+        value = (zword) sv;
         value &= 0xffff;
 	sw(addr, value);
     }
