@@ -44,10 +44,11 @@ void seed_random (int value)
 
 void z_random ()
 {
+    short sz;
+    sz = s16(zargs[0]);
+    if (sz <= 0) {	/* set random seed */
 
-    if ((short) zargs[0] <= 0) {	/* set random seed */
-
-	seed_random (- (short) zargs[0]);
+	seed_random (-sz);
 	store (0);
 
     } else {				/* generate random number */
@@ -62,7 +63,7 @@ void z_random ()
 	    result = (A >> 16) & 0x7fff;
 	}
 
-	store ((zword) (result % zargs[0] + 1));
+	store ((zword) ((result % zargs[0] + 1) & 0xffff));
 
     }
 
