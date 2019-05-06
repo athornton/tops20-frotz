@@ -27,12 +27,15 @@
  * Calculate the address of an object.
  *
  */
+#include <stdio.h>
 
 static zword object_address (zword obj)
 {
 
+    fprintf(stderr,"DEBUG: object_address: h_ver: %d, obj = 0x%04x\n",
+            h_version, obj);
+    
     /* Check object number */
-    obj &= 0xffff;
     if (obj > ((h_version <= V3) ? 255 : MAX_OBJECT))
 	runtime_error ("Illegal object");
 
