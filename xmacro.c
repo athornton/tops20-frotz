@@ -106,23 +106,6 @@ short s16(zword z) { /* 16-bitify */
     return sz;
 }
 
-zword z16(short s) { /* 16-bitify */
-    zword z;
-    int neg;
-    neg=0;
-    s %= 65536;
-    if ((s < 0) && (s < 32769)) {
-        neg = 1;
-        s=-s;
-    }
-    z = s;
-    if (neg) {
-        z |= 0x8000;
-    }
-    z &= 0xffff;
-    return z;
-}
-
 char c8(zbyte z) { /* 8-bitify) */
     char cz;
     cz = (char) (z & 0xff);

@@ -215,21 +215,9 @@ void init_memory (void)
         zmp[i] &= 0xff; /* No nine-bit craziness here! */
     }
 
-    fprintf(stderr,"DEBUG: GAME HEADER:\n");
-    for ( i = 0; i < 8 ; i++) {
-        fprintf(stderr,"DEBUG: %04x: ",8*i);
-        for ( j = 0; j < 8 ; j++) {
-            idx = j + 8*i;
-            fprintf(stderr,"%02x ",zmp[idx]);
-        }
-        fprintf(stderr,"\n");
-    }
-
     /* Copy header fields to global variables */
     
     h_version=lb(H_VERSION);
-        fprintf(stderr, "DEBUG: Z-code version: %d\n", h_version);
-
         if (h_version < V1 || h_version > V8) {
             os_fatal ("Unknown Z-code version");
         }
@@ -346,12 +334,6 @@ void init_memory (void)
     if (checksum != h_checksum) {
         os_fatal("Checksum failed!");
     }
-
-    /*
-    fprintf(stderr, "DEBUG: checksum 0x%x; h_checksum 0x%x\n",\
-            checksum, h_checksum);
-    fprintf(stderr, "DEBUG: ZMP: %p\n", zmp);
-    */
 
 }/* init_memory */
 

@@ -258,9 +258,6 @@ extern void s_pc(long v);
 
 /*** Convenience zword-to-correctly-signed-sixteen-bit-short ***/
 extern short s16(zword);
-/*** Convenience correctly-signed-sixteen-bit-short-to-zword ***/
-extern zword z16(short);
-
 
 /*** Story file header data ***/
 
