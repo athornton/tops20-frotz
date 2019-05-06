@@ -78,7 +78,7 @@ void z_loadb (void)
 
 void z_loadw (void)
 {
-    zword addr = zargs[0] + 2 * zargs[1];
+    zword addr = (zargs[0] + 2 * zargs[1]) & 0xffff;
     zword value;
 
     value=lw(addr);
