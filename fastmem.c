@@ -399,6 +399,9 @@ void reset_memory (void)
 void storeb (zword addr, zbyte value)
 {
 
+    addr &= 0xffff;
+    value &= 0xff;
+    
     if (addr >= h_dynamic_size)
 	runtime_error ("Store out of dynamic memory");
 
@@ -433,6 +436,8 @@ void storeb (zword addr, zbyte value)
 void storew (zword addr, zword value)
 {
 
+    addr &= 0xffff;
+    value &= 0xffff;
     storeb ((zword) (addr + 0), hi (value));
     storeb ((zword) (addr + 1), lo (value));
 
