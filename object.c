@@ -32,7 +32,7 @@ static zword object_address (zword obj)
 {
 
     /* Check object number */
-
+    obj &= 0xffff;
     if (obj > ((h_version <= V3) ? 255 : MAX_OBJECT))
 	runtime_error ("Illegal object");
 
