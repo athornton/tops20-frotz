@@ -100,10 +100,27 @@ void s_pc(long pc) { /* replaces SET_PC */
 short s16(zword z) { /* 16-bitify */
     short sz;
     sz = (short) (z & 0xffff);
-    /*    if ( ( sz > 0 ) && (sz > 32767 ) ) {
+    if ( ( sz > 0 ) && (sz > 32767 ) ) {
         sz = - (65536 - sz );
-        } */
-    return (sz & 0xffff);
+        } 
+    return sz;
+}
+
+zword z16(short s) { /* 16-bitify */
+    zword z;
+    int neg;
+    neg=0;
+    s %= 65536;
+    if ((s < 0) && (s < 32769)) {
+        neg = 1;
+        s=-s;
+    }
+    z = s;
+    if (neg) {
+        z |= 0x8000;
+    }
+    z &= 0xffff;
+    return z;
 }
 
 char c8(zbyte z) { /* 8-bitify) */
@@ -112,5 +129,5 @@ char c8(zbyte z) { /* 8-bitify) */
     if ( ( cz >0 ) && (cz > 127) ) {
         cz = - (128 - cz);
     }
-    return (cz & 0xff);
+    return cz;
 }

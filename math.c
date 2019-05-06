@@ -20,12 +20,17 @@
 
 void z_add (void)
 {
-    short sz0, sz1;
-    
+    /*    short sz0, sz1; */
+
+    /*
     sz0 = s16(zargs[0]);
     sz1 = s16(zargs[1]);
+    */
     
-    store ((zword) ((sz0 + sz1) & 0xffff) );
+    /*    store (z16(sz0 + sz1)); */
+        
+    /*    store ((zword) ((sz0 + sz1) & 0xffff) );*/
+    store ( (zword) (zargs[0] + zargs[1]) &0xffff);
 
 }/* z_add */
 
