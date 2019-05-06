@@ -103,7 +103,7 @@ short s16(zword z) { /* 16-bitify */
     if ( ( sz > 0 ) && (sz > 32767 ) ) {
         sz = - (65536 - sz );
     }
-    return sz;
+    return (sz & 0xffff);
 }
 
 char c8(zbyte z) { /* 8-bitify) */
@@ -112,5 +112,5 @@ char c8(zbyte z) { /* 8-bitify) */
     if ( ( cz >0 ) && (cz > 127) ) {
         cz = - (128 - cz);
     }
-    return cz;
+    return (cz & 0xff);
 }
