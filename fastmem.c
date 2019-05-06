@@ -913,6 +913,7 @@ void z_verify (void)
 
     /* Branch if the checksums are equal */
 
+    checksum &= 0xffff;
     branch (checksum == h_checksum);
 
 }/* z_verify */
