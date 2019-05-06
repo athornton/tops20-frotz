@@ -17,20 +17,27 @@
  *	zargs[1] = second value
  *
  */
+#include <stdio.h>
 
 void z_add (void)
 {
-    /*    short sz0, sz1; */
-
-    /*
+    short sz0, sz1;
+    zword z;
+    
+    fprintf(stderr,"DEBUG: z_add: zargs[0]: 0x%04x ; zargs[1]: 0x%04x\n",
+            zargs[0], zargs[1]);
+    
     sz0 = s16(zargs[0]);
     sz1 = s16(zargs[1]);
-    */
-    
-    /*    store (z16(sz0 + sz1)); */
-        
-    /*    store ((zword) ((sz0 + sz1) & 0xffff) );*/
-    store ( (zword) (zargs[0] + zargs[1]) &0xffff);
+    fprintf(stderr,"DEBUG: z_add: sz0: %d ; sz1: %d\n", sz0, sz1);
+
+    z = (zword) (sz0 + sz1);
+
+    fprintf(stderr,"DEBUG: z_add: z: 0x%04x\n",z);
+    z &= 0xffff;
+    fprintf(stderr,"DEBUG: z_add: z: 0x%04x\n",z);
+    store (z);
+
 
 }/* z_add */
 
