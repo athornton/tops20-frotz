@@ -25,7 +25,7 @@ void z_add (void)
     sz0 = s16(zargs[0]);
     sz1 = s16(zargs[1]);
     
-    store ((zword) (sz0 + sz1));
+    store ((zword) ((sz0 + sz1) & 0xffff) );
 
 }/* z_add */
 
@@ -83,7 +83,7 @@ void z_div (void)
     if (sz1 == 0)
 	runtime_error ("Division by zero");
 
-    store ((zword) (sz0 / sz1));
+    store ((zword) ((sz0 / sz1) & 0xffff));
 
 }/* z_div */
 
