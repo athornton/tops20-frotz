@@ -67,7 +67,7 @@ void z_dec_chk (void)
 	SET_WORD (addr, value)
     }
 
-    branch ((short) value < (short) zargs[1]);
+    branch (sanitize_16( value ) < sanitize_16( zargs[1]) );
 
 }/* z_dec_chk */
 
@@ -118,7 +118,7 @@ void z_inc_chk (void)
 	SET_WORD (addr, value)
     }
 
-    branch ((short) value > (short) zargs[1]);
+    branch (sanitize_16( value ) > sanitize_16( zargs[1]) );
 
 }/* z_inc_chk */
 

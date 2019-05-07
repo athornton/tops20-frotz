@@ -112,7 +112,7 @@ void z_output_stream (void)
 {
     flush_buffer ();
 
-    switch ((short) zargs[0]) {
+    switch (sanitize_16( zargs[0]) ) {
 
     case  1: ostream_screen = TRUE;
 	     break;

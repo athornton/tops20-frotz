@@ -29,7 +29,7 @@
  */
 void z_add (void)
 {
-    store ((zword) ((short) zargs[0] + (short) zargs[1]));
+    store ((zword) (sanitize_16( zargs[0] ) + sanitize_16( zargs[1])) );
 
 }/* z_add */
 
@@ -57,10 +57,10 @@ void z_and (void)
  */
 void z_art_shift (void)
 {
-    if ((short) zargs[1] > 0)
-	store ((zword) ((short) zargs[0] << (short) zargs[1]));
+    if (sanitize_16( zargs[1] ) > 0)
+	store ((zword) (sanitize_16( zargs[0] ) << sanitize_16( zargs[1])) );
     else
-	store ((zword) ((short) zargs[0] >> - (short) zargs[1]));
+	store ((zword) (sanitize_16( zargs[0] ) >> - sanitize_16( zargs[1])) );
 
 }/* z_art_shift */
 
@@ -77,7 +77,7 @@ void z_div (void)
     if (zargs[1] == 0)
 	runtime_error (ERR_DIV_ZERO);
 
-    store ((zword) ((short) zargs[0] / (short) zargs[1]));
+    store ((zword) (sanitize_16( zargs[0] ) / sanitize_16( zargs[1])) );
 
 }/* z_div */
 
@@ -110,7 +110,7 @@ void z_je (void)
  */
 void z_jg (void)
 {
-    branch ((short) zargs[0] > (short) zargs[1]);
+    branch (sanitize_16( zargs[0] ) > sanitize_16( zargs[1]) );
 
 }/* z_jg */
 
@@ -124,7 +124,7 @@ void z_jg (void)
  */
 void z_jl (void)
 {
-    branch ((short) zargs[0] < (short) zargs[1]);
+    branch (sanitize_16( zargs[0] ) < sanitize_16( zargs[1]) );
 
 }/* z_jl */
 
@@ -137,7 +137,7 @@ void z_jl (void)
  */
 void z_jz (void)
 {
-    branch ((short) zargs[0] == 0);
+    branch (sanitize_16( zargs[0] ) == 0);
 
 }/* z_jz */
 
@@ -151,10 +151,10 @@ void z_jz (void)
  */
 void z_log_shift (void)
 {
-    if ((short) zargs[1] > 0)
-	store ((zword) (zargs[0] << (short) zargs[1]));
+    if (sanitize_16( zargs[1] ) > 0)
+	store ((zword) (zargs[0] << sanitize_16( zargs[1])) );
     else
-	store ((zword) (zargs[0] >> - (short) zargs[1]));
+	store ((zword) (zargs[0] >> - sanitize_16( zargs[1])) );
 
 }/* z_log_shift */
 
@@ -171,7 +171,7 @@ void z_mod (void)
     if (zargs[1] == 0)
 	runtime_error (ERR_DIV_ZERO);
 
-    store ((zword) ((short) zargs[0] % (short) zargs[1]));
+    store ((zword) (sanitize_16( zargs[0] ) % sanitize_16( zargs[1])) );
 
 }/* z_mod */
 
@@ -185,7 +185,7 @@ void z_mod (void)
  */
 void z_mul (void)
 {
-    store ((zword) ((short) zargs[0] * (short) zargs[1]));
+    store ((zword) (sanitize_16( zargs[0] ) * sanitize_16( zargs[1])) );
 
 }/* z_mul */
 
@@ -226,7 +226,7 @@ void z_or (void)
  */
 void z_sub (void)
 {
-    store ((zword) ((short) zargs[0] - (short) zargs[1]));
+    store ((zword) (sanitize_16( zargs[0] ) - sanitize_16( zargs[1])) );
 
 }/* z_sub */
 

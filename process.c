@@ -483,7 +483,7 @@ void branch (bool flag)
 	if (offset > 1) {		/* normal branch */
 
 	    GET_PC (pc)
-	    pc += (short) offset - 2;
+	    pc += sanitize_16( offset ) - 2;
 	    SET_PC (pc)
 
 	} else ret (offset);		/* special case, return 0 or 1 */
@@ -559,7 +559,7 @@ int direct_call (zword addr)
 
     /* Resulting value lies on top of the stack */
 
-    return (short) *sp++;
+    return sanitize_16( *sp++ );
 
 }/* direct_call */
 
@@ -697,7 +697,7 @@ void z_jump (void)
 
     GET_PC (pc)
 
-    pc += (short) zargs[0] - 2;
+    pc += sanitize_16( zargs[0] ) - 2;
 
     if (pc >= story_size)
 	runtime_error (ERR_ILL_JUMP_ADDR);

@@ -735,13 +735,13 @@ void z_restore (void)
 
 	success = restore_quetzal (gfp, story_fp);
 
-	if ((short) success >= 0) {
+	if (sanitize_16( success ) >= 0) {
 
 	    /* Close game file */
 
 	    fclose (gfp);
 
-	    if ((short) success > 0) {
+	    if (sanitize_16( success ) > 0) {
 		zbyte old_screen_rows;
 		zbyte old_screen_cols;
 

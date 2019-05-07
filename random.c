@@ -57,9 +57,9 @@ void seed_random (int value)
  */
 void z_random ()
 {
-    if ((short) zargs[0] <= 0) {	/* set random seed */
+    if (sanitize_16( zargs[0] ) <= 0) {	/* set random seed */
 
-	seed_random (- (short) zargs[0]);
+	seed_random (- sanitize_16( zargs[0]) );
 	store (0);
 
     } else {				/* generate random number */

@@ -64,7 +64,7 @@ Zwindow * curwinrec() { return cwp;}
  */
 static zword winarg0 (void)
 {
-    if (h_version == V6 && (short) zargs[0] == -3)
+    if (h_version == V6 && sanitize_16( zargs[0] ) == -3)
 	return cwin;
 
     if (zargs[0] >= ((h_version == V6) ? 8 : 2))
@@ -85,7 +85,7 @@ static zword winarg0 (void)
  */
 static zword winarg2 (void)
 {
-    if (zargc < 3 || (short) zargs[2] == -3)
+    if (zargc < 3 || sanitize_16( zargs[2] ) == -3)
 	return cwin;
 
     if (zargs[2] >= 8)
@@ -249,14 +249,14 @@ void screen_new_line (void)
     /* See if we need to print a more prompt (unless the game has set
        the line counter to -999 in order to suppress more prompts). */
 
-    if (enable_scrolling && (short) cwp->line_count != -999) {
+    if (enable_scrolling && sanitize_16( cwp->line_count ) != -999) {
 
 	zword above = (cwp->y_cursor - 1) / font_height;
 	zword below = (cwp->y_size - cwp->y_cursor + 1) / font_height;
 
 	cwp->line_count++;
 
-	if ((short) cwp->line_count >= (short) above + below - 1) {
+	if (sanitize_16( cwp->line_count ) >= sanitize_16( above ) + below - 1) {
 
 	    if (more_prompts)
 		os_more_prompt ();
@@ -632,7 +632,7 @@ void split_window (zword height)
     wp[1].y_pos = 1 + stat_height;
     wp[1].y_size = height;
 
-    if ((short) wp[1].y_cursor > (short) wp[1].y_size)
+    if (sanitize_16( wp[1].y_cursor ) > sanitize_16( wp[1].y_size) )
 	reset_cursor (1);
 
     /* Cursor of lower window mustn't be swallowed by the upper window */
@@ -642,7 +642,7 @@ void split_window (zword height)
     wp[0].y_pos = 1 + stat_height + height;
     wp[0].y_size = h_screen_height - stat_height - height;
 
-    if ((short) wp[0].y_cursor < 1)
+    if (sanitize_16( wp[0].y_cursor ) < 1)
 	reset_cursor (0);
 
     /* Erase the upper window in V3 only */
@@ -665,7 +665,7 @@ static void erase_screen (zword win)
 
     os_erase_area (1, 1, h_screen_height, h_screen_width, -2);
 
-    if ((short) win == -1) {
+    if (sanitize_16( win ) == -1) {
 	split_window (0);
 	set_window (0);
 	reset_cursor (0);
@@ -1046,7 +1046,7 @@ void z_erase_window (void)
 {
     flush_buffer ();
 
-    if ((short) zargs[0] == -1 || (short) zargs[0] == -2)
+    if (sanitize_16( zargs[0] ) == -1 || sanitize_16( zargs[0] ) == -2)
 	erase_screen (zargs[0]);
     else
 	erase_window (winarg0 ());
@@ -1107,7 +1107,7 @@ void z_get_wind_prop (void)
  */
 void z_mouse_window (void)
 {
-    mwin = ((short) zargs[0] == -1) ? -1 : winarg0 ();
+    mwin = (sanitize_16( zargs[0] ) == -1) ? -1 : winarg0 ();
 
 }/* z_mouse_window */
 
@@ -1299,7 +1299,7 @@ void z_scroll_window (void)
 		    x,
 		    y + wp[win].y_size - 1,
 		    x + wp[win].x_size - 1,
-		    (short) zargs[1]);
+		    sanitize_16( zargs[1]) );
 
     if (win != cwin && h_interpreter_number != INTERP_AMIGA)
 	os_set_colour (lo (cwp->colour), hi (cwp->colour));
@@ -1324,9 +1324,9 @@ void z_set_colour (void)
 
     flush_buffer ();
 
-    if ((short) fg == -1)	/* colour -1 is the colour at the cursor */
+    if (sanitize_16( fg ) == -1)	/* colour -1 is the colour at the cursor */
 	fg = os_peek_colour ();
-    if ((short) bg == -1)
+    if (sanitize_16( bg ) == -1)
 	bg = os_peek_colour ();
 
     if (fg == 0)		/* colour 0 means keep current colour */
@@ -1429,11 +1429,11 @@ void z_set_cursor (void)
 
     /* Handle cursor on/off */
 
-    if ((short) y < 0) {
+    if (sanitize_16( y ) < 0) {
 
-	if ((short) y == -2)
+	if (sanitize_16( y ) == -2)
 	    cursor = TRUE;
-	if ((short) y == -1)
+	if (sanitize_16( y ) == -1)
 	    cursor = FALSE;
 
 	return;

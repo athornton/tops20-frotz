@@ -44,9 +44,9 @@ void z_copy_table (void)
 	for (i = 0; i < size; i++)
 	    storeb ((zword) (zargs[0] + i), 0);
 
-    else if ((short) size < 0 || zargs[0] > zargs[1])	/* copy forwards */
+    else if (sanitize_16( size ) < 0 || zargs[0] > zargs[1])	/* copy forwards */
 
-	for (i = 0; i < (((short) size < 0) ? - (short) size : size); i++) {
+	for (i = 0; i < ((sanitize_16( size ) < 0) ? - sanitize_16( size ) : size); i++) {
 	    addr = zargs[0] + i;
 	    LOW_BYTE (addr, value)
 	    storeb ((zword) (zargs[1] + i), value);

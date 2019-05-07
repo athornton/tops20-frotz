@@ -625,9 +625,9 @@ void print_num (zword value)
 
     /* Print sign */
 
-    if ((short) value < 0) {
+    if (sanitize_16( value ) < 0) {
 	print_char ('-');
-	value = - (short) value;
+	value = - sanitize_16( value );
     }
 
     /* Print absolute value */
@@ -790,9 +790,9 @@ static zword lookup_text (int padding, zword dct)
     LOW_WORD (dct, entry_count)		/* get number of entries */
     dct += 2;
 
-    if ((short) entry_count < 0) {	/* bad luck, entries aren't sorted */
+    if (sanitize_16( entry_count ) < 0) {	/* bad luck, entries aren't sorted */
 
-	entry_count = - (short) entry_count;
+	entry_count = - sanitize_16( entry_count );
 	sorted = FALSE;
 
     } else sorted = TRUE;		/* entries are sorted */
