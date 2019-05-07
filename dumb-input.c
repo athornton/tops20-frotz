@@ -65,6 +65,7 @@ enum input_type {
 static int xgetchar(void)
 {
   int c = getchar();
+  fprintf(stderr,"DEBUG: Character received: %d\n", c);
   if (c == EOF) {
     if (feof(stdin)) {
       fprintf(stderr, "\nEOT\n");
