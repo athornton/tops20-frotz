@@ -5,9 +5,8 @@ short sanitize_16( zword z) {
 
     s = (short) (z & 0xffff) ;
     if ( ( s > 0 )  && ( s > 32767 ) ) {
-        s = - (65536 - s);
+        s = - ( 65536 - s );
     }
 
     return s;
-
 }
