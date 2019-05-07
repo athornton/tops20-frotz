@@ -70,6 +70,7 @@ static int xgetchar(void)
       fprintf(stderr, "\nEOT\n");
       exit(0);
     }
+    fprintf(stderr,"O HAI\n");
     os_fatal(strerror(errno));
   }
   return c;
@@ -82,6 +83,7 @@ static void d_getline(char *s)
 {
   int c;
   char *p = s;
+  fprintf(stderr,"DEBUG: d_getline entry\n");
   while (p < s + INPUT_BUFFER_SIZE - 1)
     if ((*p++ = xgetchar()) == '\n') {
       *p = '\0';
@@ -184,7 +186,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
 			   zchar *continued_line_chars)
 {
   time_t start_time;
-
+  fprintf(stderr,"DEBUG: enter dumb_read_line\n");
   if (timeout) {
     if (time_ahead >= timeout) {
       time_ahead -= timeout;
@@ -202,7 +204,9 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
       fputs(prompt, stdout);
     else
       dumb_show_prompt(show_cursor, (timeout ? "tTD" : ")>}")[type]);
+    fprintf(stderr,"DEBUG: about to d_getline: %s\n",s);
     d_getline(s);
+    fprintf(stderr,"DEBUG: gotline: %s\n",s);    
     if ((s[0] != '\\') || ((s[1] != '\0') && !islower(s[1]))) {
       /* Is not a command line.  */
       translate_special_chars(s);
