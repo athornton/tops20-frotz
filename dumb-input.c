@@ -65,14 +65,15 @@ enum input_type {
 static int xgetchar(void)
 {
   int c = getchar();
-  fprintf(stderr,"DEBUG: Character received: %d\n", c);
   if (c == EOF) {
     if (feof(stdin)) {
       fprintf(stderr, "\nEOT\n");
       exit(0);
     }
-    fprintf(stderr,"O HAI\n");
-    os_fatal(strerror(errno));
+    fprintf(stderr,"DEBUG: getchar() -> EOF, but feof(stdin) is false\n");
+    /* Curses seems to return this on TOPS-20.  Dunno why */
+    /* os_fatal(strerror(errno)); */
+    c = 0; /* Act as if string terminator */
   }
   return c;
 }
@@ -84,7 +85,6 @@ static void d_getline(char *s)
 {
   int c;
   char *p = s;
-  fprintf(stderr,"DEBUG: d_getline entry\n");
   while (p < s + INPUT_BUFFER_SIZE - 1)
     if ((*p++ = xgetchar()) == '\n') {
       *p = '\0';
@@ -187,7 +187,6 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
 			   zchar *continued_line_chars)
 {
   time_t start_time;
-  fprintf(stderr,"DEBUG: enter dumb_read_line\n");
   if (timeout) {
     if (time_ahead >= timeout) {
       time_ahead -= timeout;
@@ -205,9 +204,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
       fputs(prompt, stdout);
     else
       dumb_show_prompt(show_cursor, (timeout ? "tTD" : ")>}")[type]);
-    fprintf(stderr,"DEBUG: about to d_getline: %s\n",s);
     d_getline(s);
-    fprintf(stderr,"DEBUG: gotline: %s\n",s);    
     if ((s[0] != '\\') || ((s[1] != '\0') && !islower(s[1]))) {
       /* Is not a command line.  */
       translate_special_chars(s);
@@ -287,13 +284,9 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
  * filename requests).  */
 static void dumb_read_misc_line(char *s, char *prompt)
 {
-    fprintf(stderr,"DEBUG: enter dumb_read_misc_line\n");
   dumb_read_line(s, prompt, 0, 0, 0, 0);
   /* Remove terminating newline */
-    fprintf(stderr,"DEBUG: before strlen\n");  
   s[strlen(s) - 1] = '\0';
-    fprintf(stderr,"DEBUG: exit dumb_read_misc_line\n");  
-  
 }
 
 /* For allowing the user to input in a single line keys to be returned

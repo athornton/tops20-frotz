@@ -521,9 +521,7 @@ void dumb_init_output(void)
     show_line_types = h_version > 3;
 
   screen_data = malloc(screen_cells * sizeof(cell));
-  fprintf(stderr,"DEBUG: dumb_init_output: malloc() suceeded\n");
   screen_changes = malloc(screen_cells);
-  fprintf(stderr,"DEBUG: dumb_init_output: malloc() suceeded\n");  
   os_erase_area(1, 1, h_screen_rows, h_screen_cols);
   memset(screen_changes, 0, screen_cells);
 }

@@ -158,7 +158,7 @@ void init_memory (void)
 {
     long size;
     zword addr;
-    int i, j, idx;
+    int i, j;
 
     zword checksum = 0;
     long li;
