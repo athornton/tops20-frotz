@@ -357,7 +357,7 @@ void init_undo (void)
 
     while (undo_slots < option_undo_slots && undo_slots < MAX_UNDO_SLOTS) {
 
-	void far *mem = malloc ((long) sizeof (stack) + h_dynamic_size);
+	void far *mem = malloc ((long) sizeof (stack) + (h_dynamic_size & 0xffff));
 
 	if (mem == NULL)
 	    break;
