@@ -502,8 +502,6 @@ void dumb_init_output(void)
 {
     size_t sc;
     sc = sizeof(cell);
-    fprintf(stderr,"DEBUG:dumb_init_output: sizeof(cell) = %ld\n",sc);
-  
   if (h_version == V3) {
     h_config |= CONFIG_SPLITSCREEN;
     h_flags &= ~OLD_SOUND_FLAG;
@@ -517,16 +515,15 @@ void dumb_init_output(void)
   h_screen_width = h_screen_cols;
   screen_cells = h_screen_rows * h_screen_cols;
 
-  fprintf(stderr,"DEBUG: dumb_init_io: h = 0x%04x, w = 0x%04x, sc = 0x%x\n",
-          h_screen_height, h_screen_width, screen_cells);
-  
   h_font_width = 1; h_font_height = 1;
 
   if (show_line_types == -1)
     show_line_types = h_version > 3;
 
   screen_data = malloc(screen_cells * sizeof(cell));
+  fprintf(stderr,"DEBUG: dumb_init_output: malloc() suceeded\n");
   screen_changes = malloc(screen_cells);
+  fprintf(stderr,"DEBUG: dumb_init_output: malloc() suceeded\n");  
   os_erase_area(1, 1, h_screen_rows, h_screen_cols);
   memset(screen_changes, 0, screen_cells);
 }
