@@ -65,7 +65,7 @@ typedef unsigned char zchar;
 #define H_RESIDENT_SIZE 4
 #define H_START_PC 6
 #define H_DICTIONARY 8
-#define H_OBJECTS 10
+#define DH_OBJECTS 10
 #define H_GLOBALS 12
 #define H_DYNAMIC_SIZE 14
 #define H_FLAGS 16
@@ -248,6 +248,9 @@ extern zbyte *zmp;
 ***/
 
 /*** Non-macro versions ***/
+extern void sw(long addr, zword v);
+extern zword lw(long addr);
+extern zword hw(long addr);
 extern zword cw(void);
 extern long g_pc(void);
 extern void s_pc(long v);

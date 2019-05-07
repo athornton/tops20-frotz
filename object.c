@@ -27,12 +27,17 @@
  * Calculate the address of an object.
  *
  */
+#include <stdio.h>
 
 static zword object_address (zword obj)
 {
 
+    /***
+    fprintf(stderr,"DEBUG: object_address: h_o: %d, h_v: %d, obj = 0x%04x\n",
+            A00031,A00025, obj);
+    ***/
+    
     /* Check object number */
-
     if (obj > ((A00025 <= V3) ? 255 : MAX_OBJECT))
 	A00192 ("Illegal object");
 
@@ -66,7 +71,7 @@ zword A00268 (zword object)
     else
 	obj_addr += O4_PROPERTY_OFFSET;
 
-    LOW_WORD (obj_addr, name_addr)
+    name_addr=lw(obj_addr);
 
     return name_addr;
 
@@ -200,33 +205,33 @@ static void unlink_object (zword object)
 	/* Get parent of object, and return if no parent */
 
 	obj_addr += O4_PARENT;
-	LOW_WORD (obj_addr, parent)
+	parent=lw(obj_addr);
 	if (!parent)
 	    return;
 
 	/* Get (older) sibling of object and set both parent and sibling
 	   pointers to 0 */
 
-	SET_WORD (obj_addr, zero)
+	sw(obj_addr, zero);
 	obj_addr += O4_SIBLING - O4_PARENT;
-	LOW_WORD (obj_addr, older_sibling)
-	SET_WORD (obj_addr, zero)
+	older_sibling=lw(obj_addr);
+            sw(obj_addr, zero);
 
 	/* Get first child of parent (the youngest sibling of the object) */
 
 	parent_addr = object_address (parent) + O4_CHILD;
-	LOW_WORD (parent_addr, younger_sibling)
+	younger_sibling=lw(parent_addr);
 
 	/* Remove object from the list of siblings */
 
 	if (younger_sibling == object)
-	    SET_WORD (parent_addr, older_sibling)
+	    sw(parent_addr, older_sibling);
 	else {
 	    do {
 		sibling_addr = object_address (younger_sibling) + O4_SIBLING;
-		LOW_WORD (sibling_addr, younger_sibling)
+		younger_sibling=lw(sibling_addr);
 	    } while (younger_sibling != object);
-	    SET_WORD (sibling_addr, older_sibling)
+	    sw(sibling_addr, older_sibling);
 	}
 
     }
@@ -321,7 +326,7 @@ void z_jin (void)
 	/* Get parent id from object */
 
 	obj_addr += O4_PARENT;
-	LOW_WORD (obj_addr, parent)
+	parent=lw(obj_addr);
 
 	/* Branch if the parent is obj2 */
 
@@ -374,7 +379,7 @@ void A00105 (void)
 	/* Get child id from object */
 
 	obj_addr += O4_CHILD;
-	LOW_WORD (obj_addr, child)
+	child=lw(obj_addr);
 
 	/* Store child id and A00193 */
 
@@ -472,7 +477,7 @@ void A00108 (void)
 	/* Get parent id from object */
 
 	obj_addr += O4_PARENT;
-	LOW_WORD (obj_addr, parent)
+	parent=lw(obj_addr);
 
 	/* Store parent */
 
@@ -526,14 +531,14 @@ void A00109 (void)
 	    LOW_BYTE (prop_addr, bprop_val)
 	    wprop_val = bprop_val;
 
-	} else LOW_WORD (prop_addr, wprop_val)
+	} else wprop_val=lw(prop_addr);
 
     } else {	/* property not found */
 
 	/* Load default value */
 
 	prop_addr = A00031 + 2 * (zargs[1] - 1);
-	LOW_WORD (prop_addr, wprop_val)
+	wprop_val=lw(prop_addr);
 
     }
 
@@ -661,7 +666,7 @@ void A00112 (void)
 	/* Get sibling id from object */
 
 	obj_addr += O4_SIBLING;
-	LOW_WORD (obj_addr, sibling)
+	sibling=lw(obj_addr);
 
 	/* Store sibling and A00193 */
 
@@ -726,12 +731,12 @@ void A00116 (void)
 	zword child;
 
 	obj1_addr += O4_PARENT;
-	SET_WORD (obj1_addr, obj2)
+	sw(obj1_addr, obj2);
 	obj2_addr += O4_CHILD;
-	LOW_WORD (obj2_addr, child)
-	SET_WORD (obj2_addr, obj1)
+	child=lw(obj2_addr);
+            sw(obj2_addr, obj1);
 	obj1_addr += O4_SIBLING - O4_PARENT;
-	SET_WORD (obj1_addr, child)
+	sw(obj1_addr, child);
 
     }
 
@@ -783,7 +788,7 @@ void A00144 (void)
 	SET_BYTE (prop_addr, v)
     } else {
 	zword v = zargs[2];
-	SET_WORD (prop_addr, v)
+	sw(prop_addr, v);
     }
 
 }/* A00144 */

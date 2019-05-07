@@ -67,7 +67,7 @@ void A00247 (void)
 
     addr = redirect[depth].table;
 
-    LOW_WORD (addr, size)
+    size=lw(addr);
     addr += 2;
 
     if (redirect[depth].xsize != 0xffff) {
@@ -115,7 +115,7 @@ void A00246 (const zchar *s)
 
     addr = redirect[depth].table;
 
-    LOW_WORD (addr, size)
+    size=lw(addr);
     addr += 2;
 
     while ((c = *s++) != 0)
@@ -145,7 +145,7 @@ void A00245 (void)
 	    A00052 = (redirect[depth].xsize != 0xffff) ?
 		redirect[depth].total : redirect[depth].width;
 
-	    SET_WORD (H_LINE_WIDTH, A00052)
+	    sw(H_LINE_WIDTH, A00052);
 
 	}
 

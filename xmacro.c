@@ -31,7 +31,27 @@ zbyte cb(void) {
     return byte;
 }
 
-zword cw(void) {
+void sw(long addr, zword value) { /* replaces SET_WORD */
+    addr &= 0x7ffff;
+    zmp[addr] = hi(value);
+    zmp[addr+1] = lo(value);
+}
+
+zword lw(long addr) { /* replaces LOW_WORD */
+    zword value;
+
+    addr &= 0x7ffff;
+    value = (zword) ( ( (zword) (((zmp[addr]) & 0xff) * 256) +
+                        (zword) (((zmp[addr + 1]) & 0xff) ) ) & 0xffff );
+    return value;
+}
+
+zword hw(long addr) { /* replaces HIGH_WORD...although it's the same thing
+                         as LOW_WORD (?!?) */
+    return lw(addr);
+}
+    
+zword cw(void) { /* replaces CODE_WORD */
     extern zbyte *pcp;
     extern zbyte *zmp;
     long pc;
@@ -93,7 +113,7 @@ short s16(zword z) {
     sz = (short) (z & 0xffff);
     if ( ( sz > 0 ) && (sz > 32767 ) ) {
         sz = - (65536 - sz );
-    }
+        } 
     return sz;
 }
     

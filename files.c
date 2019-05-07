@@ -82,7 +82,7 @@ void A00020 (void)
 
 done:
 
-    SET_WORD (H_FLAGS, A00034)
+    sw(H_FLAGS, A00034);
 
 }/* A00020 */
 
@@ -97,7 +97,7 @@ void A00021 (void)
 {
 
     A00034 &= ~SCRIPTING_FLAG;
-    SET_WORD (H_FLAGS, A00034)
+    sw(H_FLAGS, A00034);
 
     fclose (sfp); A00066 = FALSE;
 

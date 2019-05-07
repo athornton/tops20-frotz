@@ -5,9 +5,6 @@
  *
  */
 
-#include "frotz.h"
-
-    
 /* A whole lot of masking here to cope with 36-bit systems */
 
 /*
@@ -17,15 +14,12 @@
  *	zargs[1] = second value
  *
  */
+#include "frotz.h"
 
 void z_add (void)
 {
-    short sz0, sz1;
-    
-    sz0 = s16(zargs[0]);
-    sz1 = s16(zargs[1]);
-    
-    store ((zword) (sz0 + sz1));
+    store ((zword) zargs[0] + zargs[1]);
+
 
 }/* z_add */
 
@@ -77,14 +71,18 @@ void z_div (void)
 {
 
     short sz0, sz1;
+    zword z;
     
     sz0 = s16(zargs[0]);
     sz1 = s16(zargs[1]);
+
     if (sz1 == 0)
 	A00192 ("Division by zero");
 
-    store ((zword) (sz0 / sz1));
+    z = (zword) (sz0 / sz1);
 
+    z &= 0xffff;
+    store (z);
 }/* z_div */
 
 /*

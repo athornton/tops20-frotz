@@ -78,10 +78,10 @@ void A00119 (void)
 
 void A00120 (void)
 {
-    zword addr = zargs[0] + 2 * zargs[1];
+    zword addr = (zargs[0] + 2 * zargs[1]) & 0xffff;
     zword value;
 
-    LOW_WORD (addr, value)
+    value=lw(addr);
 
     store (value);
 
@@ -118,7 +118,7 @@ void A00160 (void)
 
 	    zword wvalue;
 
-	    LOW_WORD (addr, wvalue)
+	    wvalue=lw(addr);
 
 	    if (wvalue == zargs[0])
 		goto finished;

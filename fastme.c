@@ -63,7 +63,7 @@ zword get_header_extension (int entry)
 	return 0;
 
     addr = A00056 + 2 * entry;
-    LOW_WORD (addr, val)
+    val=lw(addr);
 
     return val;
 
@@ -84,7 +84,7 @@ void A00240 (int entry, zword val)
 	return;
 
     addr = A00056 + 2 * entry;
-    SET_WORD (addr, val)
+    sw(addr, val);
 
 }/* A00240 */
 
@@ -158,8 +158,7 @@ void A00236 (void)
 {
     long size;
     zword addr;
-    unsigned n;
-    int i, j;
+    int i, j, idx;
 
     zword checksum = 0;
     long li;
@@ -219,22 +218,24 @@ void A00236 (void)
 
     LOW_BYTE (H_VERSION, A00025)
 
-    if (A00025 < V1 || A00025 > V8)
-	A00202 ("Unknown Z-code version");
+        if (A00025 < V1 || A00025 > V8) {
+            fprintf(stderr, "Z-code version %d!\n", A00025);
+            A00202 ("Unknown Z-code version");
+        }
 
     LOW_BYTE (H_CONFIG, A00026)
 
     if (A00025 == V3 && (A00026 & CONFIG_BYTE_SWAPPED))
 	A00202 ("Byte swapped story file");
 
-    LOW_WORD (H_RELEASE, A00027)
-    LOW_WORD (H_RESIDENT_SIZE, A00028)
-    LOW_WORD (H_START_PC, A00029)
-    LOW_WORD (H_DICTIONARY, A00030)
-    LOW_WORD (H_OBJECTS, A00031)
-    LOW_WORD (H_GLOBALS, A00032)
-    LOW_WORD (H_DYNAMIC_SIZE, A00033)
-    LOW_WORD (H_FLAGS, A00034)
+    A00027 = lw(H_RELEASE);
+    A00028 = lw(H_RESIDENT_SIZE);
+    A00029 = lw(H_START_PC);
+    A00030 = lw(H_DICTIONARY);
+    A00031 = lw(DH_OBJECTS);
+    A00032 = lw(H_GLOBALS);
+    A00033 = lw(H_DYNAMIC_SIZE);
+    A00034 = lw(H_FLAGS);
 
     for (i = 0, addr = H_SERIAL; i < 6; i++, addr++)
 	LOW_BYTE (addr, A00035[i])
@@ -257,8 +258,8 @@ void A00236 (void)
         (void) 0; /* Added to make modern compilers happy */
     }
 
-    LOW_WORD (H_ABBREVIATIONS, A00036)
-    LOW_WORD (H_FILE_SIZE, A00037)
+    A00036 = lw (H_ABBREVIATIONS);
+    A00037 = lw (H_FILE_SIZE);
 
     /* Calculate story file size in bytes */
 
@@ -279,12 +280,12 @@ void A00236 (void)
 
     }
 
-    LOW_WORD (H_CHECKSUM, A00038)
-    LOW_WORD (H_ALPHABET, A00055)
-    LOW_WORD (H_FUNCTIONS_OFFSET, A00047)
-    LOW_WORD (H_STRINGS_OFFSET, A00048)
-    LOW_WORD (H_TERMINATING_KEYS, A00051)
-    LOW_WORD (H_EXTENSION_TABLE, A00056)
+    A00038 = lw (H_CHECKSUM);
+    A00055 = lw (H_ALPHABET);
+    A00047 = lw (H_FUNCTIONS_OFFSET);
+    A00048 = lw (H_STRINGS_OFFSET);
+    A00051 = lw (H_TERMINATING_KEYS);
+    A00056 = lw (H_EXTENSION_TABLE);
 
     /* Zork Zero Macintosh doesn't have the graphics flag set */
 
@@ -334,12 +335,6 @@ void A00236 (void)
     if (checksum != A00038) {
         A00202("Checksum failed!");
     }
-
-    /*
-    fprintf(stderr, "DEBUG: checksum 0x%x; A00038 0x%x\n",\
-            checksum, A00038);
-    fprintf(stderr, "DEBUG: ZMP: %p\n", zmp);
-    */
 
 }/* A00236 */
 
@@ -405,6 +400,9 @@ void A00238 (void)
 void A00194 (zword addr, zbyte value)
 {
 
+    addr &= 0xffff;
+    value &= 0xff;
+    
     if (addr >= A00033)
 	A00192 ("Store out of dynamic memory");
 
@@ -439,6 +437,8 @@ void A00194 (zword addr, zbyte value)
 void A00195 (zword addr, zword value)
 {
 
+    addr &= 0xffff;
+    value &= 0xffff;
     A00194 ((zword) (addr + 0), hi (value));
     A00194 ((zword) (addr + 1), lo (value));
 
@@ -914,6 +914,7 @@ void A00179 (void)
 
     /* Branch if the checksums are equal */
 
+    checksum &= 0xffff;
     A00193 (checksum == A00038);
 
 }/* A00179 */
