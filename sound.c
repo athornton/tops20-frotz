@@ -12,7 +12,7 @@
 #define EFFECT_STOP 3
 #define EFFECT_FINISH_WITH 4
 
-extern int A00241 (zword);
+extern int A00242 (zword);
 
 static zword routine = 0;
 
@@ -88,7 +88,7 @@ void end_of_sound (void)
 	if (A00063 == LURKING_HORROR)
 	    start_next_sample ();
 
-	A00241 (routine);
+	A00242 (routine);
 
     }
 

@@ -223,13 +223,13 @@ static void load_all_operands (zbyte specifier)
 }/* load_all_operands */
 
 /*
- * A00235
+ * A00236
  *
- * Z-code A00235er main loop
+ * Z-code A00236er main loop
  *
  */
 
-void A00235 (void)
+void A00236 (void)
 {
 
     do {
@@ -284,7 +284,7 @@ void A00235 (void)
 
     finished--;
 
-}/* A00235 */
+}/* A00236 */
 
 /*
  * call
@@ -354,7 +354,7 @@ void call (zword routine, int argc, zword *args, int ct)
     /* Start main loop for direct calls */
 
     if (ct == 2)
-	A00235 ();
+	A00236 ();
 
 }/* call */
 
@@ -364,7 +364,7 @@ void call (zword routine, int argc, zword *args, int ct)
  * Return from the current subroutine and restore the previous stack
  * frame. The result may be stored (0), thrown away (1) or pushed on
  * the stack (2). In the latter case a direct call has been finished
- * and we must exit the A00235er loop.
+ * and we must exit the A00236er loop.
  *
  */
 
@@ -484,21 +484,22 @@ void store (zword value)
 }/* store */
 
 /*
- * A00241
+ * A00242
  *
- * Call the A00235er loop directly. This is necessary when
+ * Call the A00236er loop directly. This is necessary when
  *
  * - a sound effect has been finished
  * - a read instruction has timed out
  * - a newline countdown has hit zero
  *
- * The A00235er returns the result value on the stack.
+ * The A00236er returns the result value on the stack.
  *
  */
 
-int A00241 (zword addr)
+int A00242 (zword addr)
 {
     zword saved_zargs[8];
+    short sv;
     int saved_zargc;
     int i;
 
@@ -527,9 +528,11 @@ int A00241 (zword addr)
 
     /* Resulting value lies on top of the stack */
 
-    return (short) *sp++;
+    sv = s16(*sp);
+    sp += 1;
+    return ( ( (zword) sv) & 0xffff ) ;
 
-}/* A00241 */
+}/* A00242 */
 
 /*
  * __extended__
@@ -695,7 +698,7 @@ void z_nop (void)
 }/* z_nop */
 
 /*
- * A00146, stop game and exit A00235er.
+ * A00146, stop game and exit A00236er.
  *
  *	no zargs used
  *

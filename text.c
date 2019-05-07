@@ -11,7 +11,7 @@ enum string_type {
     LOW_STRING, ABBREVIATION, HIGH_STRING, EMBEDDED_STRING, VOCABULARY
 };
 
-extern zword A00268 (zword);
+extern zword A00269 (zword);
 extern zword cw (void);
 
 static zchar decoded[10];
@@ -603,12 +603,13 @@ void A00134 (void)
 void A00187 (zword value)
 {
     int i;
+    short sv;
 
     /* Print sign */
-
-    if ((short) value < 0) {
+    sv = s16(value);
+    if (sv < 0) {
 	A00186 ('-');
-	value = - (short) value;
+	value = -sv & 0xffff;
     }
 
     /* Print absolute value */
@@ -642,7 +643,7 @@ void A00135 (void)
 
 void A00188 (zword object)
 {
-    zword addr = A00268 (object);
+    zword addr = A00269 (object);
     zword code = 0x94a5;
     zbyte length;
 
@@ -766,6 +767,7 @@ static zword lookup_text (int padding, zword dct)
     int lower, upper;
     int i;
     bool sorted;
+    short sec;
 
     encode_text (padding);
 
@@ -776,9 +778,10 @@ static zword lookup_text (int padding, zword dct)
     entry_count = lw(dct);		/* get number of entries */
     dct += 2;
 
-    if ((short) entry_count < 0) {	/* bad luck, entries aren't sorted */
+    sec = s16(entry_count);
+    if (sec < 0) {	/* bad luck, entries aren't sorted */
 
-	entry_count = - (short) entry_count;
+	entry_count = (zword) ((-sec) & 0xffff);
 	sorted = FALSE;
 
     } else sorted = TRUE;		/* entries are sorted */
@@ -879,13 +882,13 @@ static void tokenise_text (zword text, zword length, zword from, zword parse, zw
 }/* tokenise_text */
 
 /*
- * A00234
+ * A00235
  *
  * Split an input line into words and translate the words to tokens.
  *
  */
 
-void A00234 (zword text, zword token, zword dct, bool flag)
+void A00235 (zword text, zword token, zword dct, bool flag)
 {
     zword addr1;
     zword addr2;
@@ -975,7 +978,7 @@ void A00234 (zword text, zword token, zword dct, bool flag)
 
     } while (c != 0);
 
-}/* A00234 */
+}/* A00235 */
 
 /*
  * A00178, make a lexical analysis of a ZSCII string.
@@ -997,9 +1000,9 @@ void A00178 (void)
     if (zargc < 4)
 	zargs[3] = 0;
 
-    /* Call A00234 to do the real work */
+    /* Call A00235 to do the real work */
 
-    A00234 (zargs[0], zargs[1], zargs[2], zargs[3] != 0);
+    A00235 (zargs[0], zargs[1], zargs[2], zargs[3] != 0);
 
 }/* A00178 */
 

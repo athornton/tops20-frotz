@@ -70,13 +70,13 @@ zword get_header_extension (int entry)
 }/* get_header_extension */
 
 /*
- * A00240
+ * A00241
  *
  * Set an entry in the header extension (former mouse table).
  *
  */
 
-void A00240 (int entry, zword val)
+void A00241 (int entry, zword val)
 {
     zword addr;
 
@@ -86,12 +86,12 @@ void A00240 (int entry, zword val)
     addr = A00056 + 2 * entry;
     sw(addr, val);
 
-}/* A00240 */
+}/* A00241 */
 
 /*
  * restart_header
  *
- * Set all header fields which hold information about the A00235er.
+ * Set all header fields which hold information about the A00236er.
  *
  */
 
@@ -148,17 +148,17 @@ void restart_header (void)
 }/* restart_header */
 
 /*
- * A00236
+ * A00237
  *
  * Allocate memory and load the story file.
  *
  */
 
-void A00236 (void)
+void A00237 (void)
 {
     long size;
     zword addr;
-    int i, j, idx;
+    int i, j;
 
     zword checksum = 0;
     long li;
@@ -336,10 +336,10 @@ void A00236 (void)
         A00202("Checksum failed!");
     }
 
-}/* A00236 */
+}/* A00237 */
 
 /*
- * A00237
+ * A00238
  *
  * Allocate memory for multiple undo. It is important not to occupy
  * all the memory available, since the IO interface may need memory
@@ -347,7 +347,7 @@ void A00236 (void)
  *
  */
 
-void A00237 (void)
+void A00238 (void)
 {
     void far *reserved;
 
@@ -357,7 +357,7 @@ void A00237 (void)
 
     while (undo_slots < A00086 && undo_slots < MAX_UNDO_SLOTS) {
 
-	void far *mem = malloc ((long) sizeof (stack) + A00033);
+	void far *mem = malloc ((long) sizeof (stack) + (A00033 & 0xffff));
 
 	if (mem == NULL)
 	    break;
@@ -369,16 +369,16 @@ void A00237 (void)
     if (A00089 != 0)
 	free (reserved);
 
-}/* A00237 */
+}/* A00238 */
 
 /*
- * A00238
+ * A00239
  *
  * Close the story file and deallocate memory.
  *
  */
 
-void A00238 (void)
+void A00239 (void)
 {
 
     fclose (story_fp);
@@ -388,7 +388,7 @@ void A00238 (void)
 
     free (zmp);
 
-}/* A00238 */
+}/* A00239 */
 
 /*
  * A00194
@@ -662,13 +662,13 @@ finished:
 }/* A00153 */
 
 /*
- * A00225
+ * A00226
  *
  * This function does the dirty work for A00154.
  *
  */
 
-int A00225 (void)
+int A00226 (void)
 {
 
     if (undo_slots == 0)	/* undo feature unavailable */
@@ -704,7 +704,7 @@ int A00225 (void)
 
     }
 
-}/* A00225 */
+}/* A00226 */
 
 /*
  * A00154, restore a Z-machine state from memory.
@@ -716,9 +716,9 @@ int A00225 (void)
 void A00154 (void)
 {
 
-    store ((zword) A00225 ());
+    store ((zword) A00226 ());
 
-}/* A00225 */
+}/* A00226 */
 
 /*
  * A00158, save [a part of] the Z-machine state to disk.
@@ -839,13 +839,13 @@ finished:
 }/* A00158 */
 
 /*
- * A00231
+ * A00232
  *
  * This function does the dirty work for A00159.
  *
  */
 
-int A00231 (void)
+int A00232 (void)
 {
     long pc;
 
@@ -877,7 +877,7 @@ int A00231 (void)
 
     }
 
-}/* A00231 */
+}/* A00232 */
 
 /*
  * A00159, save the current Z-machine state for a future undo.
@@ -889,7 +889,7 @@ int A00231 (void)
 void A00159 (void)
 {
 
-    store ((zword) A00231 ());
+    store ((zword) A00232 ());
 
 }/* A00159 */
 

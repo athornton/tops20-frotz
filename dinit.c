@@ -9,7 +9,7 @@
 
 static char usage[] = "\
 \n\
-FROTZ V2.32 - A00235er for all Infocom games. Complies with standard\n\
+FROTZ V2.32 - A00236er for all Infocom games. Complies with standard\n\
 1.0 of Graham Nelson's specification. Written by Stefan Jokisch in 1995-7.\n\
 \n\
 DUMB-FROTZ V2.32R1 - port for all platforms.  Somewhat complies with standard\n\
@@ -21,7 +21,7 @@ Syntax: frotz [options] story-file [graphics-file]\n\
   -A      watch attribute testing\n\
   -h #    screen height\n\
   -i      ignore runtime errors\n\
-  -I #    A00235er number to report to game\n\
+  -I #    A00236er number to report to game\n\
   -o      watch object movement\n\
   -O      watch object locating\n\
   -p      alter piracy opcode\n\
@@ -75,7 +75,7 @@ error:
 
 static int user_screen_width = 75;
 static int user_screen_height = 24;
-static int user_A00235er_number = -1;
+static int user_A00236er_number = -1;
 static int user_random_seed = -1;
 static int user_tandy_bit = 0;
 static char *graphics_filename = NULL;
@@ -93,7 +93,7 @@ void A00210(int argc, char *argv[])
 	  case 'A': A00078 = 1; break;
           case 'h': user_screen_height = atoi(zoptarg); break;
 	  case 'i': A00084 = 1; break;
-	  case 'I': user_A00235er_number = atoi(zoptarg); break;
+	  case 'I': user_A00236er_number = atoi(zoptarg); break;
 	  case 'o': A00080 = 1; break;
 	  case 'O': A00079 = 1; break;
 	  case 'p': A00085 = 1; break;
@@ -128,8 +128,8 @@ void A00205(void)
   A00041 = user_screen_height;
   A00042 = user_screen_width;
 
-  if (user_A00235er_number > 0)
-    A00039 = user_A00235er_number;
+  if (user_A00236er_number > 0)
+    A00039 = user_A00236er_number;
   else {
     /* Use ms-dos for v6 (because that's what most people have the
      * graphics files for), but don't use it for v5 (or Beyond Zork

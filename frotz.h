@@ -514,3 +514,6 @@ void 	A00221 (int);
 void 	A00222 (int, int, int);
 void 	A00223 (void);
 int  	A00224 (const zchar *);
+
+/* A weird little TOPS-20 accomodation */
+extern bool A00225;

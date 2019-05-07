@@ -9,7 +9,7 @@
 
 #define MAX_NESTING 16
 
-extern zword A00239 (zword);
+extern zword A00240 (zword);
 
 static depth = -1;
 
@@ -21,21 +21,23 @@ static struct {
 } redirect[MAX_NESTING];
 
 /*
- * A00244
+ * A00245
  *
  * Begin output redirection to the memory of the Z-machine.
  *
  */
 
-void A00244 (zword table, zword xsize, bool buffering)
+void A00245 (zword table, zword xsize, bool buffering)
 {
+    short sxs;
 
     if (++depth < MAX_NESTING) {
 
 	if (!buffering)
 	    xsize = 0xffff;
-	if (buffering && (short) xsize <= 0)
-	    xsize = A00239 ((zword) (- (short) xsize));
+        sxs = s16(xsize);
+	if (buffering && sxs <= 0)
+	    xsize = A00240 (((zword) (-sxs)) & 0xffff);
 
 	A00195 (table, 0);
 
@@ -48,16 +50,16 @@ void A00244 (zword table, zword xsize, bool buffering)
 
    } else A00192 ("Nesting stream #3 too deep");
 
-}/* A00244 */
+}/* A00245 */
 
 /*
- * A00247
+ * A00248
  *
  * Redirect a newline to the memory of the Z-machine.
  *
  */
 
-void A00247 (void)
+void A00248 (void)
 {
     zword size;
     zword addr;
@@ -79,16 +81,16 @@ void A00247 (void)
 
     A00195 (redirect[depth].table, size);
 
-}/* A00247 */
+}/* A00248 */
 
 /*
- * A00246
+ * A00247
  *
  * Redirect a string of characters to the memory of the Z-machine.
  *
  */
 
-void A00246 (const zchar *s)
+void A00247 (const zchar *s)
 {
     zword size;
     zword addr;
@@ -105,7 +107,7 @@ void A00246 (const zchar *s)
 		if (*s == ' ' || *s == ZC_INDENT || *s == ZC_GAP)
 		    width = A00224 (++s);
 
-		A00247 ();
+		A00248 ();
 
 	    }
 
@@ -123,22 +125,22 @@ void A00246 (const zchar *s)
 
     A00195 (redirect[depth].table, size);
 
-}/* A00246 */
+}/* A00247 */
 
 /*
- * A00245
+ * A00246
  *
  * End of output redirection.
  *
  */
 
-void A00245 (void)
+void A00246 (void)
 {
 
     if (depth >= 0) {
 
 	if (redirect[depth].xsize != 0xffff)
-	    A00247 ();
+	    A00248 ();
 
 	if (A00025 == V6) {
 
@@ -156,4 +158,4 @@ void A00245 (void)
 
     }
 
-}/* A00245 */
+}/* A00246 */

@@ -3,7 +3,7 @@
  *
  * Frotz V2.32 main function
  *
- * This is an A00235er for Infocom V1 to V6 games. It also supports
+ * This is an A00236er for Infocom V1 to V6 games. It also supports
  * the recently defined V7 and V8 games. Please report bugs to
  *
  *    s.jokisch@avu.de
@@ -15,10 +15,10 @@
 
 #include "frotz.h"
 
-extern void A00235 (void);
 extern void A00236 (void);
 extern void A00237 (void);
 extern void A00238 (void);
+extern void A00239 (void);
 
 /* Story file name, id number and size */
 
@@ -117,6 +117,9 @@ int A00088 = 80;
 
 long A00089 = 0;
 
+/* Strange little TOPS-20 accomodation */
+bool A00225 = FALSE;
+
 /*
  * A00192
  *
@@ -158,17 +161,17 @@ int main (int argc, char *argv[])
 
     A00210 (argc, argv);
 
-    A00236 ();
+    A00237 ();
 
     A00205 ();
 
-    A00237 ();
+    A00238 ();
 
     A00152 ();
 
-    A00235 ();
+    A00236 ();
 
-    A00238 ();
+    A00239 ();
 
     A00215 ();
 

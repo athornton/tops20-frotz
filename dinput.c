@@ -70,7 +70,15 @@ static int xgetchar(void)
       fprintf(stderr, "\nEOT\n");
       exit(0);
     }
-    A00202(strerror(errno));
+    if (! A00225) {
+        A00225 = TRUE;
+        return xgetchar();
+    } else {
+        /* fprintf(stderr,"DEBUG: getchar() -> EOF, but feof(stdin) is false\n"); */
+    /* Curses seems to return this on TOPS-20.  Dunno why */
+    /* c = 0;  Act as if string terminator */
+        A00202(strerror(errno));
+    }
   }
   return c;
 }
@@ -124,7 +132,7 @@ static void translate_special_chars(char *s)
       case '1': case '2': case '3': case '4':
       case '5': case '6': case '7': case '8': case '9':
 	*dest++ = ZC_FKEY_MIN + src[-1] - '0' - 1; break;
-      case '0': *dest++ = (char) (ZC_FKEY_MIN + 9); break;
+      case '0': *dest++ = (char) ( (ZC_FKEY_MIN + 9) & 0xff); break;
       default:
 	fprintf(stderr, "DUMB-FROTZ: unknown escape char: %c\n", src[-1]);
 	fprintf(stderr, "Enter \\help to see the list\n");
@@ -184,7 +192,6 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
 			   zchar *continued_line_chars)
 {
   time_t start_time;
-
   if (timeout) {
     if (time_ahead >= timeout) {
       time_ahead -= timeout;

@@ -21,24 +21,28 @@
 
 void A00098 (void)
 {
+    short ssz;
     zword addr;
     zword size = zargs[2];
     zbyte value;
     int i;
 
+    /* TODO : this looks like it could use some masking */
+    ssz=s16(size);
     if (zargs[1] == 0)      				/* zero table */
 
-	for (i = 0; i < size; i++)
-	    A00194 ((zword) (zargs[0] + i), 0);
+	for (i = 0; i < (size & 0xffff); i++)
+	    A00194 ((zword) ((zargs[0] + i) & 0xffff), 0);
 
-    else if ((short) size < 0 || zargs[0] > zargs[1])	/* copy forwards */
+    else if (ssz < 0 || (zargs[0] & 0xffff) > (zargs[1] & 0xffff)) {
+        /*copy forwards */
 
-	for (i = 0; i < (((short) size < 0) ? - (short) size : size); i++) {
-	    addr = zargs[0] + i;
+	for (i = 0; i < ((ssz < 0) ? - ssz : ssz); i++) {
+	    addr = ((zargs[0] + i) & 0xffff);
 	    LOW_BYTE (addr, value)
-	    A00194 ((zword) (zargs[1] + i), value);
+            A00194 ((zword) ((zargs[1] + i) & 0xfff), value);
 	}
-
+    }
     else						/* copy backwards */
 
 	for (i = size - 1; i >= 0; i--) {

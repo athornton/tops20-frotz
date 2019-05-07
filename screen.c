@@ -7,9 +7,9 @@
 
 #include "frotz.h"
 
-extern void A00240 (int, zword);
+extern void A00241 (int, zword);
 
-extern int A00241 (zword);
+extern int A00242 (zword);
 
 static struct {
     enum story A00063;
@@ -65,14 +65,17 @@ static struct {
 
 static zword winarg0 (void)
 {
+    short sz0;
 
-    if (A00025 == V6 && (short) zargs[0] == -3)
-	return cwin;
+    sz0 = s16(zargs[0]);
 
-    if (zargs[0] >= ((A00025 == V6) ? 8 : 2))
-	A00192 ("Illegal window");
+    if (A00025 == V6 && sz0 == -3)
+        return cwin;
 
-    return zargs[0];
+    if (sz0 >= ((A00025 == V6) ? 8 : 2))
+        A00192 ("Illegal window");
+
+    return (zargs[0] & 0xffff);
 
 }/* winarg0 */
 
@@ -87,14 +90,17 @@ static zword winarg0 (void)
 
 static zword winarg2 (void)
 {
+    short sz2;
 
-    if (zargc < 3 || (short) zargs[2] == -3)
-	return cwin;
+    sz2=s16(zargs[2]);
 
-    if (zargs[2] >= 8)
-	A00192 ("Illegal window");
+    if (zargc < 3 || sz2 == -3)
+        return cwin;
 
-    return zargs[2];
+    if (sz2 >= 8)
+        A00192 ("Illegal window");
+
+    return (zargs[2] & 0xffff);
 
 }/* winarg2 */
 
@@ -109,8 +115,8 @@ static void update_cursor (void)
 {
 
     A00219 (
-	cwp->y_pos + cwp->y_cursor - 1,
-	cwp->x_pos + cwp->x_cursor - 1);
+        cwp->y_pos + cwp->y_cursor - 1,
+        cwp->x_pos + cwp->x_cursor - 1);
 
 }/* update_cursor */
 
@@ -126,13 +132,13 @@ static void reset_cursor (zword win)
     int lines = 0;
 
     if (A00025 <= V4 && win == 0)
-	lines = wp[0].y_size / hi (wp[0].font_size) - 1;
+        lines = wp[0].y_size / hi (wp[0].font_size) - 1;
 
     wp[win].y_cursor = hi (wp[0].font_size) * lines + 1;
     wp[win].x_cursor = wp[win].left + 1;
 
     if (win == cwin)
-	update_cursor ();
+        update_cursor ();
 
 }/* reset_cursor */
 
@@ -147,7 +153,7 @@ void A00022 (bool flag)
 {
 
     if (flag && !more_prompts)
-	cwp->line_count = 0;
+        cwp->line_count = 0;
 
     more_prompts = flag;
 
@@ -168,32 +174,32 @@ static int units_left (void)
 }/* units_left */
 
 /*
- * A00239
+ * A00240
  *
  * Return maximum width of a line in the given window. This is used in
  * connection with the extended output stream #3 call in V6.
  *
  */
 
-zword A00239 (zword win)
+zword A00240 (zword win)
 {
 
     if (A00025 == V6) {
 
-	if (win >= 8)
-	    A00192 ("Illegal window");
+        if (win >= 8)
+            A00192 ("Illegal window");
 
-	return wp[win].x_size - wp[win].left - wp[win].right;
+        return wp[win].x_size - wp[win].left - wp[win].right;
 
     } else return 0xffff;
 
-}/* A00239 */
+}/* A00240 */
 
 /*
  * countdown
  *
  * Decrement the newline counter. Call the newline interrupt when the
- * counter hits zero. This is a helper function for A00259.
+ * counter hits zero. This is a helper function for A00260.
  *
  */
 
@@ -201,32 +207,32 @@ static void countdown (void)
 {
 
     if (cwp->nl_countdown != 0)
-	if (--cwp->nl_countdown == 0)
-	    A00241 (cwp->nl_routine);
+        if (--cwp->nl_countdown == 0)
+            A00242 (cwp->nl_routine);
 
 }/* countdown */
 
 /*
- * A00259
+ * A00260
  *
  * Print a newline to the screen.
  *
  */
 
-void A00259 (void)
+void A00260 (void)
 {
-
+    short slc, llc;
     if (discarding) return;
 
     /* Handle newline interrupts at the start (for most cases) */
 
     if (A00039 != INTERP_MSDOS || A00063 != ZORK_ZERO || A00027 != 393)
-	countdown ();
+        countdown ();
 
     /* Check whether the last input line gets destroyed */
 
     if (input_window == cwin)
-	input_redraw = TRUE;
+        input_redraw = TRUE;
 
     /* If the cursor has not reached the bottom line, then move it to
        the next line; otherwise scroll the window or reset the cursor
@@ -236,18 +242,18 @@ void A00259 (void)
 
     if (cwp->y_cursor + 2 * font_height - 1 > cwp->y_size)
 
-	if (A00075) {
+        if (A00075) {
 
-	    zword y = cwp->y_pos;
-	    zword x = cwp->x_pos;
+            zword y = cwp->y_pos;
+            zword x = cwp->x_pos;
 
-	    A00217 (y,
-			    x,
-			    y + cwp->y_size - 1,
-			    x + cwp->x_size - 1,
-			    font_height);
+            A00217 (y,
+                            x,
+                            y + cwp->y_size - 1,
+                            x + cwp->x_size - 1,
+                            font_height);
 
-	} else cwp->y_cursor = 1;
+        } else cwp->y_cursor = 1;
 
     else cwp->y_cursor += font_height;
 
@@ -255,63 +261,65 @@ void A00259 (void)
 
     /* See if we need to print a more prompt (unless the game has set
        the line counter to -999 in order to suppress more prompts). */
+    slc = s16(cwp->line_count);
+    if (A00075 && slc != -999) {
 
-    if (A00075 && (short) cwp->line_count != -999) {
+        zword above = (cwp->y_cursor - 1) / font_height;
+        zword below = (cwp->y_size - cwp->y_cursor + 1) / font_height;
 
-	zword above = (cwp->y_cursor - 1) / font_height;
-	zword below = (cwp->y_size - cwp->y_cursor + 1) / font_height;
+        cwp->line_count++; /* Assume it won't overflow */
 
-	cwp->line_count++;
+        slc = s16(cwp->line_count);
+        llc = s16(above + below -1);
+        if (slc >= llc) {
 
-	if ((short) cwp->line_count >= (short) above + below - 1) {
+            if (more_prompts)
+                A00206 ();
 
-	    if (more_prompts)
-		A00206 ();
+            cwp->line_count = A00081;
 
-	    cwp->line_count = A00081;
-
-	}
+        }
 
     }
 
     /* Handle newline interrupts at the end for Zork Zero under DOS */
 
     if (A00039 == INTERP_MSDOS && A00063 == ZORK_ZERO && A00027 == 393)
-	countdown ();
+        countdown ();
 
-}/* A00259 */
+}/* A00260 */
 
 /*
- * A00257
+ * A00258
  *
  * Display a single character on the screen.
  *
  */
 
-void A00257 (zchar c)
+void A00258 (zchar c)
 {
     int width;
 
     if (discarding) return;
 
     if (c == ZC_INDENT && cwp->x_cursor != cwp->left + 1)
-	c = ' ';
+        c = ' ';
 
     if (units_left () < (width = A00197 (c))) {
 
-	if (!A00073)
-	    { cwp->x_cursor = cwp->x_size - cwp->right; return; }
+        if (!A00073)
+            { cwp->x_cursor = cwp->x_size - cwp->right; return; }
 
-	A00259 ();
+        A00260 ();
 
     }
 
     A00198 (c); cwp->x_cursor += width;
 
-}/* A00257 */
+}/* A00258 */
 
 /*
- * A00258
+ * A00259
  *
  * Display a string of characters on the screen. If the word doesn't fit
  * then use wrapping or clipping depending on the current setting of the
@@ -319,76 +327,76 @@ void A00257 (zchar c)
  *
  */
 
-void A00258 (const zchar *s)
+void A00259 (const zchar *s)
 {
     int width;
 
     if (discarding) return;
 
     if (*s == ZC_INDENT && cwp->x_cursor != cwp->left + 1)
-	A00257 (*s++);
+        A00258 (*s++);
 
     if (units_left () < (width = A00224 (s))) {
 
-	if (!A00073) {
+        if (!A00073) {
 
-	    zchar c;
+            zchar c;
 
-	    while ((c = *s++) != 0)
+            while ((c = *s++) != 0)
 
-		if (c == ZC_NEW_FONT || c == ZC_NEW_STYLE) {
+                if (c == ZC_NEW_FONT || c == ZC_NEW_STYLE) {
 
-		    int arg = (int) *s++;
+                    int arg = (int) *s++;
 
-		    if (c == ZC_NEW_FONT)
-			A00220 (arg);
-		    if (c == ZC_NEW_STYLE)
-			A00221 (arg);
+                    if (c == ZC_NEW_FONT)
+                        A00220 (arg);
+                    if (c == ZC_NEW_STYLE)
+                        A00221 (arg);
 
-		} else A00257 (c);
+                } else A00258 (c);
 
-	    return;
+            return;
 
-	}
+        }
 
-	if (*s == ' ' || *s == ZC_INDENT || *s == ZC_GAP)
-	    width = A00224 (++s);
+        if (*s == ' ' || *s == ZC_INDENT || *s == ZC_GAP)
+            width = A00224 (++s);
 
 #ifdef AMIGA
-	if (cwin == 0) Justifiable ();
+        if (cwin == 0) Justifiable ();
 #endif
 
-	A00259 ();
+        A00260 ();
 
     }
 
     A00199 (s); cwp->x_cursor += width;
 
-}/* A00258 */
+}/* A00259 */
 
 /*
- * A00260
+ * A00261
  *
  * Display an input line on the screen. This is required during playback.
  *
  */
 
-void A00260 (const zchar *buf, zchar key)
+void A00261 (const zchar *buf, zchar key)
 {
     int width;
 
     if (units_left () < (width = A00224 (buf)))
-	A00259 ();
+        A00260 ();
 
     A00199 (buf); cwp->x_cursor += width;
 
     if (key == ZC_RETURN)
-	A00259 ();
+        A00260 ();
 
-}/* A00260 */
+}/* A00261 */
 
 /*
- * A00261
+ * A00262
  *
  * Remove an input line that has already been printed from the screen
  * as if it was deleted by the player. This could be necessary during
@@ -396,36 +404,36 @@ void A00260 (const zchar *buf, zchar key)
  *
  */
 
-void A00261 (const zchar *buf)
+void A00262 (const zchar *buf)
 {
 
     if (buf[0] != 0) {
 
-	int width = A00224 (buf);
+        int width = A00224 (buf);
 
-	zword y;
-	zword x;
+        zword y;
+        zword x;
 
-	cwp->x_cursor -= width;
+        cwp->x_cursor -= width;
 
-	y = cwp->y_pos + cwp->y_cursor - 1;
-	x = cwp->x_pos + cwp->x_cursor - 1;
+        y = cwp->y_pos + cwp->y_cursor - 1;
+        x = cwp->x_pos + cwp->x_cursor - 1;
 
-	A00201 (y, x, y + font_height - 1, x + width - 1);
-	A00219 (y, x);
+        A00201 (y, x, y + font_height - 1, x + width - 1);
+        A00219 (y, x);
 
     }
 
-}/* A00261 */
+}/* A00262 */
 
 /*
- * A00267
+ * A00268
  *
  * Read an input line from the keyboard and return the terminating key.
  *
  */
 
-zchar A00267 (int max, zchar *buf, zword timeout, bool continued)
+zchar A00268 (int max, zchar *buf, zword timeout, bool continued)
 {
     zchar key;
     int i;
@@ -433,12 +441,12 @@ zchar A00267 (int max, zchar *buf, zword timeout, bool continued)
     /* Make sure there is some space for input */
 
     if (cwin == 0 && units_left () + A00224 (buf) < 10 * font_width)
-	A00259 ();
+        A00260 ();
 
     /* Make sure the input line is visible */
 
     if (continued && input_redraw)
-	A00260 (buf, -1);
+        A00261 (buf, -1);
 
     input_window = cwin;
     input_redraw = FALSE;
@@ -450,26 +458,26 @@ zchar A00267 (int max, zchar *buf, zword timeout, bool continued)
     cwp->x_cursor += A00224 (buf);
 
     if (key != ZC_TIME_OUT)
-	for (i = 0; i < 8; i++)
-	    wp[i].line_count = 0;
+        for (i = 0; i < 8; i++)
+            wp[i].line_count = 0;
 
     /* Add a newline if the input was terminated normally */
 
     if (key == ZC_RETURN)
-	A00259 ();
+        A00260 ();
 
     return key;
 
-}/* A00267 */
+}/* A00268 */
 
 /*
- * A00266
+ * A00267
  *
  * Read a single keystroke and return it.
  *
  */
 
-zchar A00266 (zword timeout)
+zchar A00267 (zword timeout)
 {
     zchar key;
     int i;
@@ -477,12 +485,12 @@ zchar A00266 (zword timeout)
     key = A00213 (timeout, cursor);
 
     if (key != ZC_TIME_OUT)
-	for (i = 0; i < 8; i++)
-	    wp[i].line_count = 0;
+        for (i = 0; i < 8; i++)
+            wp[i].line_count = 0;
 
     return key;
 
-}/* A00266 */
+}/* A00267 */
 
 /*
  * update_attributes
@@ -504,11 +512,11 @@ static void update_attributes (void)
     /* Some story files forget to select wrapping for printing hints */
 
     if (A00063 == ZORK_ZERO && A00027 == 366)
-	if (cwin == 0)
-	    A00073 = TRUE;
+        if (cwin == 0)
+            A00073 = TRUE;
     if (A00063 == SHOGUN && A00027 <= 295)
-	if (cwin == 0)
-	    A00073 = TRUE;
+        if (cwin == 0)
+            A00073 = TRUE;
 
 }/* update_attributes */
 
@@ -527,17 +535,17 @@ void A00018 (void)
 
     if (A00025 != V6) {
 
-	style = wp[0].style;
+        style = wp[0].style;
 
-	if (cwin != 0 || A00034 & FIXED_FONT_FLAG)
-	    style |= FIXED_WIDTH_STYLE;
+        if (cwin != 0 || A00034 & FIXED_FONT_FLAG)
+            style |= FIXED_WIDTH_STYLE;
 
     } else style = cwp->style;
 
     if (!A00067 && A00065 && A00076) {
 
-	A00186 (ZC_NEW_STYLE);
-	A00186 (style);
+        A00186 (ZC_NEW_STYLE);
+        A00186 (style);
 
     } else A00221 (style);
 
@@ -562,18 +570,18 @@ static void set_window (zword win)
 
     if (A00025 == V6) {
 
-	A00218 (lo (cwp->colour), hi (cwp->colour));
+        A00218 (lo (cwp->colour), hi (cwp->colour));
 
-	if (A00204 (cwp->font, &font_height, &font_width))
-	    A00220 (cwp->font);
+        if (A00204 (cwp->font, &font_height, &font_width))
+            A00220 (cwp->font);
 
-	A00221 (cwp->style);
+        A00221 (cwp->style);
 
     } else A00018 ();
 
     if (A00025 != V6 && win != 0) {
-	wp[win].y_cursor = 1;
-	wp[win].x_cursor = 1;
+        wp[win].y_cursor = 1;
+        wp[win].x_cursor = 1;
     }
 
     update_cursor ();
@@ -593,15 +601,15 @@ static void erase_window (zword win)
     zword x = wp[win].x_pos;
 
     if (A00025 == V6 && win != cwin && A00039 != INTERP_AMIGA)
-	A00218 (lo (wp[win].colour), hi (wp[win].colour));
+        A00218 (lo (wp[win].colour), hi (wp[win].colour));
 
     A00201 (y,
-		   x,
-		   y + wp[win].y_size - 1,
-		   x + wp[win].x_size - 1);
+                   x,
+                   y + wp[win].y_size - 1,
+                   x + wp[win].x_size - 1);
 
     if (A00025 == V6 && win != cwin && A00039 != INTERP_AMIGA)
-	A00218 (lo (cwp->colour), hi (cwp->colour));
+        A00218 (lo (cwp->colour), hi (cwp->colour));
 
     reset_cursor (win);
 
@@ -620,16 +628,17 @@ static void erase_window (zword win)
 void A00019 (zword height)
 {
     zword stat_height = 0;
+    short syc, sys;
 
     A00184 ();
 
     /* Calculate height of status line and upper window */
 
     if (A00025 != V6)
-	height *= hi (wp[1].font_size);
+        height *= hi (wp[1].font_size);
 
     if (A00025 <= V3)
-	stat_height = hi (wp[7].font_size);
+        stat_height = hi (wp[7].font_size);
 
     /* Cursor of upper window mustn't be swallowed by the lower window */
 
@@ -638,8 +647,10 @@ void A00019 (zword height)
     wp[1].y_pos = 1 + stat_height;
     wp[1].y_size = height;
 
-    if ((short) wp[1].y_cursor > (short) wp[1].y_size)
-	reset_cursor (1);
+    syc=s16(wp[1].y_cursor);
+    sys=s16(wp[1].y_size);
+    if (syc > sys)
+        reset_cursor (1);
 
     /* Cursor of lower window mustn't be swallowed by the upper window */
 
@@ -648,13 +659,14 @@ void A00019 (zword height)
     wp[0].y_pos = 1 + stat_height + height;
     wp[0].y_size = A00044 - stat_height - height;
 
-    if ((short) wp[0].y_cursor < 1)
-	reset_cursor (0);
+    syc=s16(wp[0].y_cursor);
+    if (syc < 1)
+        reset_cursor (0);
 
     /* Erase the upper window in V3 only */
 
     if (A00025 == V3 && height != 0)
-	erase_window (1);
+        erase_window (1);
 
 }/* A00019 */
 
@@ -668,17 +680,19 @@ void A00019 (zword height)
 static void erase_screen (zword win)
 {
     int i;
+    short sw;
 
     A00201 (1, 1, A00044, A00043);
 
-    if ((short) win == -1) {
-	A00019 (0);
-	set_window (0);
-	reset_cursor (0);
+    sw=s16(win);
+    if (sw == -1) {
+        A00019 (0);
+        set_window (0);
+        reset_cursor (0);
     }
 
     for (i = 0; i < 8; i++)
-	wp[i].line_count = 0;
+        wp[i].line_count = 0;
 
 }/* erase_screen */
 
@@ -696,11 +710,11 @@ void resize_screen (void)
 
     if (A00025 != V6) {
 
-	wp[0].x_size = A00043;
-	wp[1].x_size = A00043;
-	wp[7].x_size = A00043;
+        wp[0].x_size = A00043;
+        wp[1].x_size = A00043;
+        wp[7].x_size = A00043;
 
-	wp[0].y_size = A00044 - wp[1].y_size - wp[7].y_size;
+        wp[0].y_size = A00044 - wp[1].y_size - wp[7].y_size;
 
     }
 
@@ -723,7 +737,7 @@ void A00017 (void)
     A00218 (A00050, A00049);
 
     if (A00204 (TEXT_FONT, &font_height, &font_width))
-	A00220 (TEXT_FONT);
+        A00220 (TEXT_FONT);
 
     A00221 (0);
 
@@ -734,21 +748,21 @@ void A00017 (void)
     mwin = 1;
 
     for (cwp = wp; cwp < wp + 8; cwp++) {
-	cwp->y_pos = 1;
-	cwp->x_pos = 1;
-	cwp->y_size = 0;
-	cwp->x_size = 0;
-	cwp->y_cursor = 1;
-	cwp->x_cursor = 1;
-	cwp->left = 0;
-	cwp->right = 0;
-	cwp->nl_routine = 0;
-	cwp->nl_countdown = 0;
-	cwp->style = 0;
-	cwp->colour = (A00049 << 8) | A00050;
-	cwp->font = TEXT_FONT;
-	cwp->font_size = (font_height << 8) | font_width;
-	cwp->attribute = 8;
+        cwp->y_pos = 1;
+        cwp->x_pos = 1;
+        cwp->y_size = 0;
+        cwp->x_size = 0;
+        cwp->y_cursor = 1;
+        cwp->x_cursor = 1;
+        cwp->left = 0;
+        cwp->right = 0;
+        cwp->nl_routine = 0;
+        cwp->nl_countdown = 0;
+        cwp->style = 0;
+        cwp->colour = (A00049 << 8) | A00050;
+        cwp->font = TEXT_FONT;
+        cwp->font_size = (font_height << 8) | font_width;
+        cwp->attribute = 8;
     }
 
     /* Prepare lower/upper windows and status line */
@@ -762,7 +776,7 @@ void A00017 (void)
     wp[1].x_size = A00043;
 
     if (A00025 <= V3)
-	wp[7].x_size = A00043;
+        wp[7].x_size = A00043;
 
     A00216 (RESTART_WPROP_SET);
 
@@ -773,7 +787,7 @@ void A00017 (void)
 }/* A00017 */
 
 /*
- * A00243
+ * A00244
  *
  * Return false if the last mouse click occured outside the current
  * mouse window; otherwise write the mouse arrow coordinates to the
@@ -781,72 +795,49 @@ void A00017 (void)
  *
  */
 
-bool A00243 (void)
+bool A00244 (void)
 {
 
     if (mwin >= 0) {
 
-	if (A00072 < wp[mwin].y_pos || A00072 >= wp[mwin].y_pos + wp[mwin].y_size)
-	    return FALSE;
-	if (A00071 < wp[mwin].x_pos || A00071 >= wp[mwin].x_pos + wp[mwin].x_size)
-	    return FALSE;
+        if (A00072 < wp[mwin].y_pos || A00072 >= wp[mwin].y_pos + wp[mwin].y_size)
+            return FALSE;
+        if (A00071 < wp[mwin].x_pos || A00071 >= wp[mwin].x_pos + wp[mwin].x_size)
+            return FALSE;
 
-	A00060 = A00072 - wp[mwin].y_pos + 1;
-	A00059 = A00071 - wp[mwin].x_pos + 1;
+        A00060 = A00072 - wp[mwin].y_pos + 1;
+        A00059 = A00071 - wp[mwin].x_pos + 1;
 
     } else {
 
-	if (A00072 < 1 || A00072 > A00044)
-	    return FALSE;
-	if (A00071 < 1 || A00071 > A00043)
-	    return FALSE;
+        if (A00072 < 1 || A00072 > A00044)
+            return FALSE;
+        if (A00071 < 1 || A00071 > A00043)
+            return FALSE;
 
-	A00060 = A00072;
-	A00059 = A00071;
+        A00060 = A00072;
+        A00059 = A00071;
 
     }
 
     if (A00025 != V6) {
-	A00060 = (A00060 - 1) / A00045 + 1;
-	A00059 = (A00059 - 1) / A00046 + 1;
+        A00060 = (A00060 - 1) / A00045 + 1;
+        A00059 = (A00059 - 1) / A00046 + 1;
     }
 
-    A00240 (HX_MOUSE_Y, A00060);
-    A00240 (HX_MOUSE_X, A00059);
+    A00241 (HX_MOUSE_Y, A00060);
+    A00241 (HX_MOUSE_X, A00059);
 
     return TRUE;
 
-}/* A00243 */
-
-/*
- * A00262
- *
- * Start printing a so-called debugging A00070. The contents of the
- * A00070 are passed to the A00070 stream, a Frotz specific output
- * stream with maximum priority.
- *
- */
-
-void A00262 (void)
-{
-
-    if (cwin == 0) {		/* A00070s in window 0 only */
-
-	A00221 (0);
-
-	if (cwp->x_cursor != cwp->left + 1)
-	    A00259 ();
-
-	A00257 (ZC_INDENT);
-
-    } else discarding = TRUE; 	/* discard A00070s in other windows */
-
-}/* A00262 */
+}/* A00244 */
 
 /*
  * A00263
  *
- * Stop printing a "debugging" A00070.
+ * Start printing a so-called debugging A00070. The contents of the
+ * A00070 are passed to the A00070 stream, a Frotz specific output
+ * stream with maximum priority.
  *
  */
 
@@ -855,13 +846,36 @@ void A00263 (void)
 
     if (cwin == 0) {		/* A00070s in window 0 only */
 
-	A00259 ();
+        A00221 (0);
 
-	A00018 ();
+        if (cwp->x_cursor != cwp->left + 1)
+            A00260 ();
 
-    } else discarding = FALSE; 	/* A00070 has been discarded */
+        A00258 (ZC_INDENT);
+
+    } else discarding = TRUE;   /* discard A00070s in other windows */
 
 }/* A00263 */
+
+/*
+ * A00264
+ *
+ * Stop printing a "debugging" A00070.
+ *
+ */
+
+void A00264 (void)
+{
+
+    if (cwin == 0) {		/* A00070s in window 0 only */
+
+        A00260 ();
+
+        A00018 ();
+
+    } else discarding = FALSE;  /* A00070 has been discarded */
+
+}/* A00264 */
 
 /*
  * A00091, turn text buffering on/off.
@@ -882,14 +896,14 @@ void A00091 (void)
 
     if (A00025 != V6) {
 
-	A00184 ();
+        A00184 ();
 
-	wp[0].attribute &= ~8;
+        wp[0].attribute &= ~8;
 
-	if (zargs[0] != 0)
-	    wp[0].attribute |= 8;
+        if (zargs[0] != 0)
+            wp[0].attribute |= 8;
 
-	update_attributes ();
+        update_attributes ();
 
     }
 
@@ -916,9 +930,9 @@ void A00100 (void)
     A00184 ();
 
     if (y == 0)			/* use cursor line if y-coordinate is 0 */
-	y = cwp->y_cursor;
-    if (x == 0)    		/* use cursor column if x-coordinate is 0 */
-	x = cwp->x_cursor;
+        y = cwp->y_cursor;
+    if (x == 0)                 /* use cursor column if x-coordinate is 0 */
+        x = cwp->x_cursor;
 
     y += cwp->y_pos - 1;
     x += cwp->x_pos - 1;
@@ -931,36 +945,36 @@ void A00100 (void)
 
     for (i = 0; mapper[i].A00063 != UNKNOWN; i++)
 
-	if (A00063 == mapper[i].A00063 && pic == mapper[i].pic) {
+        if (A00063 == mapper[i].A00063 && pic == mapper[i].pic) {
 
-	    int height1, width1;
-	    int height2, width2;
+            int height1, width1;
+            int height2, width2;
 
-	    int delta = 0;
+            int delta = 0;
 
-	    A00208 (pic, &height1, &width1);
-	    A00208 (mapper[i].pic2, &height2, &width2);
+            A00208 (pic, &height1, &width1);
+            A00208 (mapper[i].pic2, &height2, &width2);
 
-	    if (A00063 == ARTHUR && pic == 54)
-		delta = A00043 / 160;
+            if (A00063 == ARTHUR && pic == 54)
+                delta = A00043 / 160;
 
-	    A00200 (mapper[i].pic1, y + height1, x + delta);
-	    A00200 (mapper[i].pic2, y + height1, x + width1 - width2 - delta);
+            A00200 (mapper[i].pic1, y + height1, x + delta);
+            A00200 (mapper[i].pic2, y + height1, x + width1 - width2 - delta);
 
-	}
+        }
 
     A00200 (pic, y, x);
 
     if (A00063 == SHOGUN)
 
-	if (pic == 3) {
+        if (pic == 3) {
 
-	    int height, width;
+            int height, width;
 
-	    A00208 (59, &height, &width);
-	    A00200 (59, y, A00043 - width + 1);
+            A00208 (59, &height, &width);
+            A00200 (59, y, A00043 - width + 1);
 
-	}
+        }
 
 }/* A00100 */
 
@@ -981,7 +995,7 @@ void A00102 (void)
     /* Clipping at the right margin of the current window */
 
     if (--pixels == 0 || pixels > units_left ())
-	pixels = units_left ();
+        pixels = units_left ();
 
     /* Erase from cursor position */
 
@@ -1011,9 +1025,9 @@ void A00103 (void)
     A00184 ();
 
     if (y == 0)		/* use cursor line if y-coordinate is 0 */
-	y = cwp->y_cursor;
-    if (x == 0)    	/* use cursor column if x-coordinate is 0 */
-	x = cwp->x_cursor;
+        y = cwp->y_cursor;
+    if (x == 0)         /* use cursor column if x-coordinate is 0 */
+        x = cwp->x_cursor;
 
     A00208 (zargs[0], &height, &width);
 
@@ -1033,13 +1047,16 @@ void A00103 (void)
 
 void A00104 (void)
 {
+    short sz0, sz1;
 
     A00184 ();
+    sz0=s16(zargs[0]);
+    sz1=s16(zargs[1]);
 
-    if ((short) zargs[0] == -1 || (short) zargs[0] == -2)
-	erase_screen (zargs[0]);
+    if (sz0 == -1 || sz0 == -2)
+        erase_screen ( (zargs[0] & 0xffff) );
     else
-	erase_window (winarg0 ());
+        erase_window (winarg0 ());
 
 }/* A00104 */
 
@@ -1060,8 +1077,8 @@ void A00106 (void)
     x = cwp->x_cursor;
 
     if (A00025 != V6) {	/* convert to grid positions */
-	y = (y - 1) / A00045 + 1;
-	x = (x - 1) / A00046 + 1;
+        y = (y - 1) / A00045 + 1;
+        x = (x - 1) / A00046 + 1;
     }
 
     A00195 ((zword) (zargs[0] + 0), y);
@@ -1083,7 +1100,7 @@ void A00113 (void)
     A00184 ();
 
     if (zargs[1] >= 16)
-	A00192 ("Illegal window property");
+        A00192 ("Illegal window property");
 
     store (((zword *) (wp + winarg0 ())) [zargs[1]]);
 
@@ -1098,8 +1115,10 @@ void A00113 (void)
 
 void A00123 (void)
 {
+    short sz0;
+    sz0 = s16(zargs[0]);
 
-    mwin = ((short) zargs[0] == -1) ? -1 : winarg0 ();
+    mwin = (sz0 == -1) ? -1 : winarg0 ();
 
 }/* A00123 */
 
@@ -1122,7 +1141,7 @@ void A00124 (void)
     wp[win].x_pos = zargs[2];
 
     if (win == cwin)
-	update_cursor ();
+        update_cursor ();
 
 }/* A00124 */
 
@@ -1146,20 +1165,20 @@ void A00127 (void)
 
     for (i = 0; mapper[i].A00063 != UNKNOWN; i++)
 
-	if (A00063 == mapper[i].A00063)
+        if (A00063 == mapper[i].A00063)
 
-	    if (pic == mapper[i].pic) {
+            if (pic == mapper[i].pic) {
 
-		int height2, width2;
+                int height2, width2;
 
-		avail &= A00208 (mapper[i].pic1, &height2, &width2);
-		avail &= A00208 (mapper[i].pic2, &height2, &width2);
+                avail &= A00208 (mapper[i].pic1, &height2, &width2);
+                avail &= A00208 (mapper[i].pic2, &height2, &width2);
 
-		height += height2;
+                height += height2;
 
-	    } else if (pic == mapper[i].pic1 || pic == mapper[i].pic2)
+            } else if (pic == mapper[i].pic1 || pic == mapper[i].pic2)
 
-		avail = FALSE;
+                avail = FALSE;
 
     A00195 ((zword) (table + 0), (zword) (height));
     A00195 ((zword) (table + 2), (zword) (width));
@@ -1206,9 +1225,9 @@ void A00139 (void)
     /* Supply default arguments */
 
     if (zargc < 3)
-	zargs[2] = 1;
+        zargs[2] = 1;
     if (zargc < 4)
-	zargs[3] = 0;
+        zargs[3] = 0;
 
     /* Write text in width x height rectangle */
 
@@ -1216,29 +1235,29 @@ void A00139 (void)
 
     for (i = 0; i < zargs[2]; i++) {
 
-	if (i != 0) {
+        if (i != 0) {
 
-	    A00184 ();
+            A00184 ();
 
-	    cwp->y_cursor += font_height;
-	    cwp->x_cursor = x;
+            cwp->y_cursor += font_height;
+            cwp->x_cursor = x;
 
-	    update_cursor ();
+            update_cursor ();
 
-	}
+        }
 
-	for (j = 0; j < zargs[1]; j++) {
+        for (j = 0; j < zargs[1]; j++) {
 
-	    zbyte c;
+            zbyte c;
 
-	    LOW_BYTE (addr, c)
-	    addr++;
+            LOW_BYTE (addr, c)
+            addr++;
 
-	    A00186 (c);
+            A00186 (c);
 
-	}
+        }
 
-	addr += zargs[3];
+        addr += zargs[3];
 
     }
 
@@ -1259,7 +1278,7 @@ void A00145 (void)
     A00184 ();
 
     if (zargs[1] >= 16)
-	A00192 ("Illegal window property");
+        A00192 ("Illegal window property");
 
     ((zword *) (wp + winarg0 ())) [zargs[1]] = zargs[2];
 
@@ -1275,6 +1294,7 @@ void A00145 (void)
 
 void A00161 (void)
 {
+    short sz1;
     zword win = winarg0 ();
     zword y, x;
 
@@ -1283,19 +1303,20 @@ void A00161 (void)
     /* Use the correct set of colours when scrolling the window */
 
     if (win != cwin && A00039 != INTERP_AMIGA)
-	A00218 (lo (wp[win].colour), hi (wp[win].colour));
+        A00218 (lo (wp[win].colour), hi (wp[win].colour));
 
     y = wp[win].y_pos;
     x = wp[win].x_pos;
 
+    sz1 = s16(zargs[1]);
     A00217 (y,
-		    x,
-		    y + wp[win].y_size - 1,
-		    x + wp[win].x_size - 1,
-		    (short) zargs[1]);
+                    x,
+                    y + wp[win].y_size - 1,
+                    x + wp[win].x_size - 1,
+                    sz1);
 
     if (win != cwin && A00039 != INTERP_AMIGA)
-	A00218 (lo (cwp->colour), hi (cwp->colour));
+        A00218 (lo (cwp->colour), hi (cwp->colour));
 
 }/* A00161 */
 
@@ -1310,63 +1331,66 @@ void A00161 (void)
 
 void A00164 (void)
 {
+    short sfg, sbg;
     zword win = (A00025 == V6) ? winarg2 () : 0;
 
     zword fg = zargs[0];
     zword bg = zargs[1];
 
-    A00184 ();
 
-    if ((short) fg == -1)	/* colour -1 is the colour at the cursor */
-	fg = A00207 ();
-    if ((short) bg == -1)
-	bg = A00207 ();
+    A00184 ();
+    sfg=s16(fg);
+    sbg=s16(bg);
+    if (sfg == -1)	/* colour -1 is the colour at the cursor */
+        fg = A00207 ();
+    if (sbg == -1)
+        bg = A00207 ();
 
     if (fg == 0)		/* colour 0 means keep current colour */
-	fg = lo (wp[win].colour);
+        fg = lo (wp[win].colour);
     if (bg == 0)
-	bg = hi (wp[win].colour);
+        bg = hi (wp[win].colour);
 
     if (fg == 1)		/* colour 1 is the system default colour */
-	fg = A00050;
+        fg = A00050;
     if (bg == 1)
-	bg = A00049;
+        bg = A00049;
 
     if (A00025 == V6 && A00039 == INTERP_AMIGA)
 
-	/* Changing colours of window 0 affects the entire screen */
+        /* Changing colours of window 0 affects the entire screen */
 
-	if (win == 0) {
+        if (win == 0) {
 
-	    int i;
+            int i;
 
-	    for (i = 1; i < 8; i++) {
+            for (i = 1; i < 8; i++) {
 
-		zword bg2 = hi (wp[i].colour);
-		zword fg2 = lo (wp[i].colour);
+                zword bg2 = hi (wp[i].colour);
+                zword fg2 = lo (wp[i].colour);
 
-		if (bg2 < 16)
-		    bg2 = (bg2 == lo (wp[0].colour)) ? fg : bg;
-		if (fg2 < 16)
-		    fg2 = (fg2 == lo (wp[0].colour)) ? fg : bg;
+                if (bg2 < 16)
+                    bg2 = (bg2 == lo (wp[0].colour)) ? fg : bg;
+                if (fg2 < 16)
+                    fg2 = (fg2 == lo (wp[0].colour)) ? fg : bg;
 
-		wp[i].colour = (bg2 << 8) | fg2;
+                wp[i].colour = (bg2 << 8) | fg2;
 
-	    }
+            }
 
-	}
+        }
 
     wp[win].colour = (bg << 8) | fg;
 
     if (win == cwin || A00025 != V6)
-	A00218 (fg, bg);
+        A00218 (fg, bg);
 
 }/* A00164 */
 
 /*
  * A00163, set the font for text output and store the previous font.
  *
- * 	zargs[0] = number of font or 0 to keep current font
+ *      zargs[0] = number of font or 0 to keep current font
  *
  */
 
@@ -1377,24 +1401,24 @@ void A00163 (void)
 
     if (font != 0) {
 
-	if (A00063 == JOURNEY && font == 4)	/* Journey uses fixed fonts */
-	    font = 1;				/* for most A00235er #'s */
+        if (A00063 == JOURNEY && font == 4)	/* Journey uses fixed fonts */
+            font = 1;				/* for most A00236er #'s */
 
-	if (A00204 (font, &font_height, &font_width)) {
+        if (A00204 (font, &font_height, &font_width)) {
 
-	    store (wp[win].font);
+            store (wp[win].font);
 
-	    wp[win].font = font;
-	    wp[win].font_size = (font_height << 8) | font_width;
+            wp[win].font = font;
+            wp[win].font_size = (font_height << 8) | font_width;
 
-	    if (!A00067 && A00065 && A00076) {
+            if (!A00067 && A00065 && A00076) {
 
-		A00186 (ZC_NEW_FONT);
-		A00186 (font);
+                A00186 (ZC_NEW_FONT);
+                A00186 (font);
 
-	    } else A00220 (font);
+            } else A00220 (font);
 
-	} else store (0);
+        } else store (0);
 
     } else store (wp[win].font);
 
@@ -1411,28 +1435,32 @@ void A00163 (void)
 
 void A00165 (void)
 {
+    short sy;
     zword win = (A00025 == V6) ? winarg2 () : 1;
 
     zword y = zargs[0];
     zword x = zargs[1];
+    sy=s16(y);
 
     A00184 ();
 
     /* Supply default arguments */
 
-    if (zargc < 3)
-	zargs[2] = -3;
+    if (zargc < 3) {
+        zargs[2] = -3;
+        zargs[2] &= 0xffff;
+    }
 
     /* Handle cursor on/off */
 
-    if ((short) y < 0) {
+    if (sy < 0) {
 
-	if ((short) y == -2)
-	    cursor = TRUE;
-	if ((short) y == -1)
-	    cursor = FALSE;
+        if (sy == -2)
+            cursor = TRUE;
+        if (sy == -1)
+            cursor = FALSE;
 
-	return;
+        return;
 
     }
 
@@ -1440,18 +1468,18 @@ void A00165 (void)
 
     if (A00025 != V6) {
 
-	if (cwin == 0)
-	    return;
+        if (cwin == 0)
+            return;
 
-	y = (y - 1) * A00045 + 1;
-	x = (x - 1) * A00046 + 1;
+        y = (y - 1) * A00045 + 1;
+        x = (x - 1) * A00046 + 1;
 
     }
 
     /* Protect the margins */
 
     if (x <= wp[win].left || x > wp[win].x_size - wp[win].right)
-	x = wp[win].left + 1;
+        x = wp[win].left + 1;
 
     /* Move the cursor */
 
@@ -1459,7 +1487,7 @@ void A00165 (void)
     wp[win].x_cursor = x;
 
     if (win == cwin)
-	update_cursor ();
+        update_cursor ();
 
 }/* A00165 */
 
@@ -1485,10 +1513,10 @@ void A00166 (void)
 
     if (wp[win].x_cursor <= zargs[0] || wp[win].x_cursor > wp[win].x_size - zargs[1]) {
 
-	wp[win].x_cursor = zargs[0] + 1;
+        wp[win].x_cursor = zargs[0] + 1;
 
-	if (win == cwin)
-	    update_cursor ();
+        if (win == cwin)
+            update_cursor ();
 
     }
 
@@ -1497,7 +1525,7 @@ void A00166 (void)
 /*
  * A00168, set the style for text output.
  *
- * 	zargs[0] = style flags to set or 0 to reset text style
+ *      zargs[0] = style flags to set or 0 to reset text style
  *
  */
 
@@ -1509,7 +1537,7 @@ void A00168 (void)
     wp[win].style |= style;
 
     if (style == 0)
-	wp[win].style = 0;
+        wp[win].style = 0;
 
     A00018 ();
 
@@ -1545,7 +1573,7 @@ static void pad_status_line (int column)
     spaces = units_left () / A00197 (' ') - column;
 
     while (spaces--)
-	A00257 (' ');
+        A00258 (' ');
 
 }/* pad_status_line */
 
@@ -1569,7 +1597,7 @@ void A00169 (void)
        accident, so just return if the version number does not fit */
 
     if (A00025 >= V4)
-	return;
+        return;
 
     /* Read all relevant global variables from the memory of the
        Z-machine into local variables */
@@ -1577,9 +1605,9 @@ void A00169 (void)
     addr = A00032;
     global0 = lw(addr);
     addr += 2;
-    global1 = lw(addr);    
+    global1 = lw(addr);
     addr += 2;
-    global2 = lw(addr);    
+    global2 = lw(addr);
 
     /* Frotz uses window 7 for the status line. Don't forget to select
        reverse and fixed width text style */
@@ -1593,7 +1621,7 @@ void A00169 (void)
        the brief status line format */
 
     if (A00042 < 55)
-	brief = TRUE;
+        brief = TRUE;
 
     /* Print the object description for the global variable 0 */
 
@@ -1605,38 +1633,38 @@ void A00169 (void)
 
     if (A00026 & CONFIG_TIME) {	/* print hours and minutes */
 
-	zword hours = (global1 + 11) % 12 + 1;
+        zword hours = (global1 + 11) % 12 + 1;
 
-	pad_status_line (brief ? 15 : 20);
+        pad_status_line (brief ? 15 : 20);
 
-	A00189 ("Time: ");
+        A00189 ("Time: ");
 
-	if (hours < 10)
-	    A00186 (' ');
-	A00187 (hours);
+        if (hours < 10)
+            A00186 (' ');
+        A00187 (hours);
 
-	A00186 (':');
+        A00186 (':');
 
-	if (global2 < 10)
-	    A00186 ('0');
-	A00187 (global2);
+        if (global2 < 10)
+            A00186 ('0');
+        A00187 (global2);
 
-	A00186 (' ');
+        A00186 (' ');
 
-	A00186 ((global1 >= 12) ? 'p' : 'a');
-	A00186 ('m');
+        A00186 ((global1 >= 12) ? 'p' : 'a');
+        A00186 ('m');
 
     } else {				/* print score and moves */
 
-	pad_status_line (brief ? 15 : 30);
+        pad_status_line (brief ? 15 : 30);
 
-	A00189 (brief ? "S: " : "Score: ");
-	A00187 (global1);
+        A00189 (brief ? "S: " : "Score: ");
+        A00187 (global1);
 
-	pad_status_line (brief ? 8 : 14);
+        pad_status_line (brief ? 8 : 14);
 
-	A00189 (brief ? "M: " : "Moves: ");
-	A00187 (global2);
+        A00189 (brief ? "M: " : "Moves: ");
+        A00187 (global2);
 
     }
 
@@ -1685,7 +1713,7 @@ void A00180 (void)
     /* Keep the cursor within the window */
 
     if (wp[win].y_cursor > zargs[1] || wp[win].x_cursor > zargs[2])
-	reset_cursor (win);
+        reset_cursor (win);
 
 }/* A00180 */
 
@@ -1708,18 +1736,18 @@ void A00181 (void)
     /* Supply default arguments */
 
     if (zargc < 3)
-	zargs[2] = 0;
+        zargs[2] = 0;
 
     /* Set window style */
 
     switch (zargs[2]) {
-	case 0: wp[win].attribute = flags; break;
-	case 1: wp[win].attribute |= flags; break;
-	case 2: wp[win].attribute &= ~flags; break;
-	case 3: wp[win].attribute ^= flags; break;
+        case 0: wp[win].attribute = flags; break;
+        case 1: wp[win].attribute |= flags; break;
+        case 2: wp[win].attribute &= ~flags; break;
+        case 3: wp[win].attribute ^= flags; break;
     }
 
     if (cwin == win)
-	update_attributes ();
+        update_attributes ();
 
 }/* A00181 */

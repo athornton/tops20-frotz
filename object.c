@@ -51,13 +51,13 @@ static zword object_address (zword obj)
 }/* object_address */
 
 /*
- * A00268
+ * A00269
  *
  * Return the address of the given object's name.
  *
  */
 
-zword A00268 (zword object)
+zword A00269 (zword object)
 {
     zword obj_addr;
     zword name_addr;
@@ -75,7 +75,7 @@ zword A00268 (zword object)
 
     return name_addr;
 
-}/* A00268 */
+}/* A00269 */
 
 /*
  * first_property
@@ -92,7 +92,7 @@ static zword first_property (zword obj)
 
     /* Fetch address of object name */
 
-    prop_addr = A00268 (obj);
+    prop_addr = A00269 (obj);
 
     /* Get length of object name */
 

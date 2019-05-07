@@ -500,6 +500,8 @@ bool A00007(const char *setting, bool show_cursor,
 
 void A00006(void)
 {
+    size_t sc;
+    sc = sizeof(cell);
   if (A00025 == V3) {
     A00026 |= CONFIG_SPLITSCREEN;
     A00034 &= ~OLD_SOUND_FLAG;

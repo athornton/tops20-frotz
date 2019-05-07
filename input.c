@@ -7,12 +7,12 @@
 
 #include "frotz.h"
 
-extern int A00231 (void);
+extern int A00232 (void);
 
-extern zchar A00232 (zword, zword, bool);
-extern zchar A00233 (int, zchar *, zword, zword, bool, bool);
+extern zchar A00233 (zword, zword, bool);
+extern zchar A00234 (int, zchar *, zword, zword, bool, bool);
 
-extern void A00234 (zword, zword, zword, bool);
+extern void A00235 (zword, zword, zword, bool);
 
 /*
  * A00003
@@ -84,7 +84,7 @@ bool A00023 (const char *s)
     A00189 (s);
     A00189 ("? (y/n) >");
 
-    key = A00232 (0, 0, FALSE);
+    key = A00233 (0, 0, FALSE);
 
     if (key == 'y' || key == 'Y') {
 	A00189 ("y\n");
@@ -111,20 +111,20 @@ void read_string (int max, zchar *buffer)
 
     do {
 
-	key = A00233 (max, buffer, 0, 0, FALSE, FALSE);
+	key = A00234 (max, buffer, 0, 0, FALSE, FALSE);
 
     } while (key != ZC_RETURN);
 
 }/* read_string */
 
 /*
- * A00226
+ * A00227
  *
  * Ask the user to type in a number and return it.
  *
  */
 
-int A00226 (void)
+int A00227 (void)
 {
     zchar buffer[6];
     int value = 0;
@@ -138,7 +138,7 @@ int A00226 (void)
 
     return value;
 
-}/* A00226 */
+}/* A00227 */
 
 /*
  * A00148, read a line of input and (in V5+) store the terminating key.
@@ -200,7 +200,7 @@ void A00148 (void)
 
     /* Read input from current input stream */
 
-    key = A00233 (
+    key = A00234 (
 	max, buffer,		/* buffer and size */
 	zargs[2],		/* timeout value   */
 	zargs[3],		/* timeout routine */
@@ -210,10 +210,10 @@ void A00148 (void)
     if (key == ZC_BAD)
 	return;
 
-    /* Perform A00231 for V1 to V4 games */
+    /* Perform A00232 for V1 to V4 games */
 
     if (A00025 <= V4)
-	A00231 ();
+	A00232 ();
 
     /* Copy local buffer back to dynamic memory */
 
@@ -242,7 +242,7 @@ void A00148 (void)
     /* Tokenise line if a token buffer is present */
 
     if (key == ZC_RETURN && zargs[1] != 0)
-	A00234 (zargs[0], zargs[1], 0, FALSE);
+	A00235 (zargs[0], zargs[1], 0, FALSE);
 
     /* Store key */
 
@@ -271,7 +271,7 @@ void A00149 (void)
 
     /* Read input from the current input stream */
 
-    key = A00232 (
+    key = A00233 (
 	zargs[1],	/* timeout value   */
 	zargs[2],	/* timeout routine */
 	TRUE);  	/* enable hot keys */

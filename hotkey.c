@@ -7,16 +7,16 @@
 
 #include "frotz.h"
 
-extern int A00225 (void);
-
 extern int A00226 (void);
+
+extern int A00227 (void);
 
 extern bool A00023 (const char *);
 
-extern void A00227 (void);
 extern void A00228 (void);
 extern void A00229 (void);
 extern void A00230 (void);
+extern void A00231 (void);
 
 extern void A00016 (int);
 
@@ -80,7 +80,7 @@ static bool hot_key_playback (void)
     A00189 ("Playback on\n");
 
     if (!A00069)
-	A00227 ();
+	A00228 ();
 
     return FALSE;
 
@@ -98,13 +98,13 @@ static bool hot_key_recording (void)
 
     if (A00069) {
 	A00189 ("Playback off\n");
-	A00228 ();
+	A00229 ();
     } else if (A00068) {
 	A00189 ("Recording off\n");
-	A00230 ();
+	A00231 ();
     } else {
 	A00189 ("Recording on\n");
-	A00229 ();
+	A00230 ();
     }
 
     return FALSE;
@@ -124,7 +124,7 @@ static bool hot_key_seed (void)
     A00189 ("Seed random numbers\n");
 
     A00189 ("Enter seed value (or return to randomize): ");
-    A00016 (A00226 ());
+    A00016 (A00227 ());
 
     return FALSE;
 
@@ -142,7 +142,7 @@ static bool hot_key_undo (void)
 
     A00189 ("Undo one turn\n");
 
-    if (A00225 ()) {
+    if (A00226 ()) {
 
 	if (A00025 >= V5) {		/* for V5+ games we must */
 	    store (2);			/* store 2 (for success) */
@@ -203,14 +203,14 @@ static bool hot_key_quit (void)
 }/* hot_key_quit */
 
 /*
- * A00242
+ * A00243
  *
  * Perform the action associated with a so-called hot key. Return
  * true to abort the current input action.
  *
  */
 
-bool A00242 (zchar key)
+bool A00243 (zchar key)
 {
 
     if (cwin == 0) {
@@ -239,4 +239,4 @@ bool A00242 (zchar key)
 
     return FALSE;
 
-}/* A00242 */
+}/* A00243 */

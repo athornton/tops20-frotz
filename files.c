@@ -40,8 +40,8 @@ static FILE *pfp = NULL;
  * Open the transscript file. 'AMFV' makes this more complicated as it
  * turns transscription on/off several times to exclude some text from
  * the transscription file. This wasn't a problem for the original V4
- * A00235ers which always sent transscription to the printer, but it
- * means a problem to modern A00235ers that offer to open a new file
+ * A00236ers which always sent transscription to the printer, but it
+ * means a problem to modern A00236ers that offer to open a new file
  * every time transscription is turned on. Our solution is to append to
  * the old transscription file in V1 to V4, and to ask for a new file
  * name in V5+.
@@ -65,7 +65,7 @@ void A00020 (void)
 
     }
 
-    /* Opening in "at" mode doesn't work for A00254... */
+    /* Opening in "at" mode doesn't work for A00255... */
 
     if ((sfp = fopen (script_name, "r+t")) != NULL || (sfp = fopen (script_name, "w+t")) != NULL) {
 
@@ -104,13 +104,13 @@ void A00021 (void)
 }/* A00021 */
 
 /*
- * A00252
+ * A00253
  *
  * Write a newline to the transscript file.
  *
  */
 
-void A00252 (void)
+void A00253 (void)
 {
 
     if (fputc ('\n', sfp) == EOF)
@@ -118,25 +118,25 @@ void A00252 (void)
 
     script_width = 0;
 
-}/* A00252 */
+}/* A00253 */
 
 /*
- * A00250
+ * A00251
  *
  * Write a single character to the transscript file.
  *
  */
 
-void A00250 (zchar c)
+void A00251 (zchar c)
 {
 
     if (c == ZC_INDENT && script_width != 0)
 	c = ' ';
 
     if (c == ZC_INDENT)
-	{ A00250 (' '); A00250 (' '); A00250 (' '); return; }
+	{ A00251 (' '); A00251 (' '); A00251 (' '); return; }
     if (c == ZC_GAP)
-	{ A00250 (' '); A00250 (' '); return; }
+	{ A00251 (' '); A00251 (' '); return; }
 
 #ifdef __MSDOS__
     if (c >= ZC_LATIN1_MIN)
@@ -145,22 +145,22 @@ void A00250 (zchar c)
 
     fputc (c, sfp); script_width++;
 
-}/* A00250 */
+}/* A00251 */
 
 /*
- * A00251
+ * A00252
  *
  * Write a string to the transscript file.
  *
  */
 
-void A00251 (const zchar *s)
+void A00252 (const zchar *s)
 {
     int width;
     int i;
 
     if (*s == ZC_INDENT && script_width != 0)
-	A00250 (*s++);
+	A00251 (*s++);
 
     for (i = 0, width = 0; s[i] != 0; i++)
 
@@ -178,7 +178,7 @@ void A00251 (const zchar *s)
 	if (*s == ' ' || *s == ZC_INDENT || *s == ZC_GAP)
 	    s++;
 
-	A00252 ();
+	A00253 ();
 
     }
 
@@ -187,18 +187,18 @@ void A00251 (const zchar *s)
 	if (s[i] == ZC_NEW_FONT || s[i] == ZC_NEW_STYLE)
 	    i++;
 	else
-	    A00250 (s[i]);
+	    A00251 (s[i]);
 
-}/* A00251 */
+}/* A00252 */
 
 /*
- * A00253
+ * A00254
  *
  * Send an input line to the transscript file.
  *
  */
 
-void A00253 (const zchar *buf, zchar key)
+void A00254 (const zchar *buf, zchar key)
 {
     int width;
     int i;
@@ -207,24 +207,24 @@ void A00253 (const zchar *buf, zchar key)
 	width++;
 
     if (A00088 != 0 && script_width + width > A00088)
-	A00252 ();
+	A00253 ();
 
     for (i = 0; buf[i] != 0; i++)
-	A00250 (buf[i]);
+	A00251 (buf[i]);
 
     if (key == ZC_RETURN)
-	A00252 ();
+	A00253 ();
 
-}/* A00253 */
+}/* A00254 */
 
 /*
- * A00254
+ * A00255
  *
  * Remove an input line from the transscript file.
  *
  */
 
-void A00254 (const zchar *buf)
+void A00255 (const zchar *buf)
 {
     int width;
     int i;
@@ -234,47 +234,47 @@ void A00254 (const zchar *buf)
 
     fseek (sfp, -width, SEEK_CUR); script_width -= width;
 
-}/* A00254 */
-
-/*
- * A00255
- *
- * Start sending a "debugging" A00070 to the transscript file.
- *
- */
-
-void A00255 (void)
-{
-
-    if (script_width != 0)
-	A00252 ();
-
-    A00250 (ZC_INDENT);
-
 }/* A00255 */
 
 /*
  * A00256
  *
- * Stop writing a "debugging" A00070.
+ * Start sending a "debugging" A00070 to the transscript file.
  *
  */
 
 void A00256 (void)
 {
 
-    A00252 ();
+    if (script_width != 0)
+	A00253 ();
+
+    A00251 (ZC_INDENT);
 
 }/* A00256 */
 
 /*
- * A00229
+ * A00257
+ *
+ * Stop writing a "debugging" A00070.
+ *
+ */
+
+void A00257 (void)
+{
+
+    A00253 ();
+
+}/* A00257 */
+
+/*
+ * A00230
  *
  * Open a file to record the player's input.
  *
  */
 
-void A00229 (void)
+void A00230 (void)
 {
     char new_name[MAX_FILE_NAME + 1];
 
@@ -289,21 +289,21 @@ void A00229 (void)
 
     }
 
-}/* A00229 */
+}/* A00230 */
 
 /*
- * A00230
+ * A00231
  *
  * Stop recording the player's input.
  *
  */
 
-void A00230 (void)
+void A00231 (void)
 {
 
     fclose (rfp); A00068 = FALSE;
 
-}/* A00230 */
+}/* A00231 */
 
 /*
  * record_code
@@ -357,30 +357,30 @@ static void record_char (zchar c)
 }/* record_char */
 
 /*
- * A00248
+ * A00249
  *
  * Copy a keystroke to the command file.
  *
  */
 
-void A00248 (zchar key)
+void A00249 (zchar key)
 {
 
     record_char (key);
 
     if (fputc ('\n', rfp) == EOF)
-	A00230 ();
+	A00231 ();
 
-}/* A00248 */
+}/* A00249 */
 
 /*
- * A00249
+ * A00250
  *
  * Copy a line of input to a command file.
  *
  */
 
-void A00249 (const zchar *buf, zchar key)
+void A00250 (const zchar *buf, zchar key)
 {
     zchar c;
 
@@ -390,18 +390,18 @@ void A00249 (const zchar *buf, zchar key)
     record_char (key);
 
     if (fputc ('\n', rfp) == EOF)
-	A00230 ();
+	A00231 ();
 
-}/* A00249 */
+}/* A00250 */
 
 /*
- * A00227
+ * A00228
  *
  * Open a file of commands for playback.
  *
  */
 
-void A00227 (void)
+void A00228 (void)
 {
     char new_name[MAX_FILE_NAME + 1];
 
@@ -419,23 +419,23 @@ void A00227 (void)
 
     }
 
-}/* A00227 */
+}/* A00228 */
 
 /*
- * A00228
+ * A00229
  *
  * Stop playback of commands.
  *
  */
 
-void A00228 (void)
+void A00229 (void)
 {
 
     A00022 (TRUE);
 
     fclose (pfp); A00069 = FALSE;
 
-}/* A00228 */
+}/* A00229 */
 
 /*
  * replay_code
@@ -500,13 +500,13 @@ static zchar replay_char (void)
 }/* replay_char */
 
 /*
- * A00264
+ * A00265
  *
  * Read a keystroke from a command file.
  *
  */
 
-zchar A00264 (void)
+zchar A00265 (void)
 {
     zchar key;
 
@@ -514,21 +514,21 @@ zchar A00264 (void)
 
     if (fgetc (pfp) != '\n') {
 
-	A00228 ();
+	A00229 ();
 	return ZC_BAD;
 
     } else return key;
 
-}/* A00264 */
+}/* A00265 */
 
 /*
- * A00265
+ * A00266
  *
  * Read a line of input from a command file.
  *
  */
 
-zchar A00265 (zchar *buf)
+zchar A00266 (zchar *buf)
 {
     zchar c;
 
@@ -547,9 +547,9 @@ zchar A00265 (zchar *buf)
 
     if (fgetc (pfp) != '\n') {
 
-	A00228 ();
+	A00229 ();
 	return ZC_BAD;
 
     } else return c;
 
-}/* A00265 */
+}/* A00266 */
