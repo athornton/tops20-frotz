@@ -41,6 +41,7 @@ zbyte cb(void) { /* replaces CODE_BYTE */
 }
 
 void sw(long addr, zword value) { /* replaces SET_WORD */
+    addr &= 0x7ffff;
     zmp[addr] = hi(value);
     zmp[addr+1] = lo(value);
 }
@@ -48,8 +49,9 @@ void sw(long addr, zword value) { /* replaces SET_WORD */
 zword lw(long addr) { /* replaces LOW_WORD */
     zword value;
 
-    value = (zword) ( ( (zword) ((zmp[addr] & 0xff) * 256) +
-                        (zword) ((zmp[addr + 1] & 0xff) ) ) & 0xffff );
+    addr &= 0x7ffff;
+    value = (zword) ( ( (zword) (((zmp[addr]) & 0xff) * 256) +
+                        (zword) (((zmp[addr + 1]) & 0xff) ) ) & 0xffff );
     return value;
 }
 

@@ -65,7 +65,7 @@ typedef unsigned char zchar;
 #define H_RESIDENT_SIZE 4
 #define H_START_PC 6
 #define H_DICTIONARY 8
-#define H_OBJECTS 10
+#define DH_OBJECTS 10
 #define H_GLOBALS 12
 #define H_DYNAMIC_SIZE 14
 #define H_FLAGS 16

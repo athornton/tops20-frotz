@@ -227,14 +227,14 @@ void init_memory (void)
     if (h_version == V3 && (h_config & CONFIG_BYTE_SWAPPED))
 	os_fatal ("Byte swapped story file");
 
-    h_release = lw (H_RELEASE);
-    h_resident_size = lw (H_RESIDENT_SIZE);
-    h_start_pc = lw (H_START_PC);
-    h_dictionary = lw (H_DICTIONARY);
-    h_objects = lw (H_OBJECTS);
-    h_globals = lw (H_GLOBALS);
-    h_dynamic_size = lw (H_DYNAMIC_SIZE);
-    h_flags = lw (H_FLAGS);
+    h_release = lw(H_RELEASE);
+    h_resident_size = lw(H_RESIDENT_SIZE);
+    h_start_pc = lw(H_START_PC);
+    h_dictionary = lw(H_DICTIONARY);
+    h_objects = lw(DH_OBJECTS);
+    h_globals = lw(H_GLOBALS);
+    h_dynamic_size = lw(H_DYNAMIC_SIZE);
+    h_flags = lw(H_FLAGS);
 
     for (i = 0, addr = H_SERIAL; i < 6; i++, addr++)
 	h_serial[i] = lb(addr);
