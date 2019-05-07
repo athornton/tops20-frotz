@@ -117,6 +117,9 @@ int option_script_cols = 80;
 
 long reserve_mem = 0;
 
+/* Strange little TOPS-20 accomodation */
+bool spurious_getchar = FALSE;
+
 /*
  * runtime_error
  *

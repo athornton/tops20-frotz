@@ -514,3 +514,6 @@ void 	os_set_text_style (int);
 void 	os_start_sample (int, int, int);
 void 	os_stop_sample (void);
 int  	os_string_width (const zchar *);
+
+/* A weird little TOPS-20 accomodation */
+extern bool spurious_getchar;

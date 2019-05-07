@@ -70,10 +70,15 @@ static int xgetchar(void)
       fprintf(stderr, "\nEOT\n");
       exit(0);
     }
-    fprintf(stderr,"DEBUG: getchar() -> EOF, but feof(stdin) is false\n");
+    if (! spurious_getchar) {
+        spurious_getchar = TRUE;
+        return xgetchar();
+    } else {
+        /* fprintf(stderr,"DEBUG: getchar() -> EOF, but feof(stdin) is false\n"); */
     /* Curses seems to return this on TOPS-20.  Dunno why */
-    /* os_fatal(strerror(errno)); */
-    c = 0; /* Act as if string terminator */
+    /* c = 0;  Act as if string terminator */
+        os_fatal(strerror(errno));
+    }
   }
   return c;
 }
