@@ -1,8 +1,21 @@
-/*
- * text.c
+/* text.c - Text manipulation functions
+ *	Copyright (c) 1995-1997 Stefan Jokisch
  *
- * Text manipulation functions
+ * This file is part of Frotz.
  *
+ * Frotz is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Frotz is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include "frotz.h"
@@ -11,34 +24,37 @@ enum string_type {
     LOW_STRING, ABBREVIATION, HIGH_STRING, EMBEDDED_STRING, VOCABULARY
 };
 
-extern zword A00269 (zword);
-extern zword cw (void);
+extern zword object_name (zword);
 
 static zchar decoded[10];
 static zword encoded[3];
 
+/*
+ * According to Matteo De Luigi <matteo.de.luigi@libero.it>,
+ * 0xab and 0xbb were in each other's proper positions.
+ *   Sat Apr 21, 2001
+ */
 static zchar zscii_to_latin1[] = {
-    0xe4, 0xf6, 0xfc, 0xc4, 0xd6, 0xdc, 0xdf, 0xab,
-    0xbb, 0xeb, 0xef, 0xff, 0xcb, 0xcf, 0xe1, 0xe9,
+    0xe4, 0xf6, 0xfc, 0xc4, 0xd6, 0xdc, 0xdf, 0xbb,
+    0xab, 0xeb, 0xef, 0xff, 0xcb, 0xcf, 0xe1, 0xe9,
     0xed, 0xf3, 0xfa, 0xfd, 0xc1, 0xc9, 0xcd, 0xd3,
     0xda, 0xdd, 0xe0, 0xe8, 0xec, 0xf2, 0xf9, 0xc0,
     0xc8, 0xcc, 0xd2, 0xd9, 0xe2, 0xea, 0xee, 0xf4,
     0xfb, 0xc2, 0xca, 0xce, 0xd4, 0xdb, 0xe5, 0xc5,
     0xf8, 0xd8, 0xe3, 0xf1, 0xf5, 0xc3, 0xd1, 0xd5,
     0xe6, 0xc6, 0xe7, 0xc7, 0xfe, 0xf0, 0xde, 0xd0,
-    0xa3, 0x00, 0x00, 0xa1, 0xbf
+    0xa3, 0xf6, 0xd6, 0xa1, 0xbf
 };
 
+
 /*
- * A00182
+ * translate_from_zscii
  *
  * Map a ZSCII character onto the ISO Latin-1 alphabet.
  *
  */
-
-zchar A00182 (zbyte c)
+zchar translate_from_zscii (zbyte c)
 {
-
     if (c == 0xfc)
 	return ZC_MENU_CLICK;
     if (c == 0xfd)
@@ -46,20 +62,20 @@ zchar A00182 (zbyte c)
     if (c == 0xfe)
 	return ZC_SINGLE_CLICK;
 
-    if (c >= 0x9b && A00063 != BEYOND_ZORK)
+    if (c >= 0x9b && story_id != BEYOND_ZORK) {
 
-	if (A00061 != 0) {	/* game has its own Unicode table */
+	if (hx_unicode_table != 0) {	/* game has its own Unicode table */
 
 	    zbyte N;
 
-	    LOW_BYTE (A00061, N)
+	    LOW_BYTE (hx_unicode_table, N)
 
 	    if (c - 0x9b < N) {
 
-		zword addr = A00061 + 1 + 2 * (c - 0x9b);
+		zword addr = hx_unicode_table + 1 + 2 * (c - 0x9b);
 		zword unicode;
 
-		unicode=lw(addr);
+		LOW_WORD (addr, unicode)
 
 		return (unicode < 0x100) ? (zchar) unicode : '?';
 
@@ -69,25 +85,28 @@ zchar A00182 (zbyte c)
 
 	    if (c <= 0xdf) {
 
+#ifndef HANDLE_OE_DIPTHONG
 		if (c == 0xdc || c == 0xdd)	/* Oe and oe ligatures */
 		    return '?';			/* are not ISO-Latin 1 */
+#endif /* HANDLE_OE_DIPTHONG */
 
 		return zscii_to_latin1[c - 0x9b];
 
 	    } else return '?';
+    }
 
     return c;
 
-}/* A00182 */
+}/* translate_from_zscii */
+
 
 /*
- * A00183
+ * translate_to_zscii
  *
  * Map an ISO Latin-1 character onto the ZSCII alphabet.
  *
  */
-
-zbyte A00183 (zchar c)
+zbyte translate_to_zscii (zchar c)
 {
     int i;
 
@@ -98,21 +117,21 @@ zbyte A00183 (zchar c)
     if (c == ZC_MENU_CLICK)
 	return 0xfc;
 
-    if (c >= ZC_LATIN1_MIN)
+    if (c >= ZC_LATIN1_MIN) {
 
-	if (A00061 != 0) {	/* game has its own Unicode table */
+	if (hx_unicode_table != 0) {	/* game has its own Unicode table */
 
 	    zbyte N;
 	    int i;
 
-	    LOW_BYTE (A00061, N)
+	    LOW_BYTE (hx_unicode_table, N)
 
 	    for (i = 0x9b; i < 0x9b + N; i++) {
 
-		zword addr = A00061 + 1 + 2 * (i - 0x9b);
+		zword addr = hx_unicode_table + 1 + 2 * (i - 0x9b);
 		zword unicode;
 
-		unicode=lw(addr);
+		LOW_WORD (addr, unicode)
 
 		if (c == unicode)
 		    return (zbyte) i;
@@ -130,10 +149,16 @@ zbyte A00183 (zchar c)
 	    return '?';
 
 	}
+    }
+
+    if (c == 0)		/* Safety thing from David Kinder */
+	c = '?';	/* regarding his Unicode patches */
+			/* Sept 15, 2002 */
 
     return c;
 
-}/* A00183 */
+}/* translate_to_zscii */
+
 
 /*
  * alphabet
@@ -141,18 +166,16 @@ zbyte A00183 (zchar c)
  * Return a character from one of the three character sets.
  *
  */
-
 static zchar alphabet (int set, int index)
 {
-
-    if (A00055 != 0) {	/* game uses its own alphabet */
+    if (h_alphabet != 0) {	/* game uses its own alphabet */
 
 	zbyte c;
 
-	zword addr = A00055 + 26 * set + index;
+	zword addr = h_alphabet + 26 * set + index;
 	LOW_BYTE (addr, c)
 
-	return A00182 (c);
+	return translate_from_zscii (c);
 
     } else			/* game uses default alphabet */
 
@@ -160,12 +183,13 @@ static zchar alphabet (int set, int index)
 	    return 'a' + index;
 	else if (set == 1)
 	    return 'A' + index;
-	else if (A00025 == V1)
+	else if (h_version == V1)
 	    return " 0123456789.,!?_#'\"/\\<-:()"[index];
 	else
 	    return " ^0123456789.,!?_#'\"/\\-:()"[index];
 
 }/* alphabet */
+
 
 /*
  * load_string
@@ -173,10 +197,9 @@ static zchar alphabet (int set, int index)
  * Copy a ZSCII string from the memory to the global "decoded" string.
  *
  */
-
 static void load_string (zword addr, zword length)
 {
-    int resolution = (A00025 <= V3) ? 2 : 3;
+    int resolution = (h_version <= V3) ? 2 : 3;
     int i = 0;
 
     while (i < 3 * resolution)
@@ -188,11 +211,12 @@ static void load_string (zword addr, zword length)
 	    LOW_BYTE (addr, c)
 	    addr++;
 
-	    decoded[i++] = A00182 (c);
+	    decoded[i++] = translate_from_zscii (c);
 
 	} else decoded[i++] = 0;
 
 }/* load_string */
+
 
 /*
  * encode_text
@@ -207,7 +231,6 @@ static void load_string (zword addr, zword length)
  * the minimum and maximum Z-characters.
  *
  */
-
 static void encode_text (int padding)
 {
     static zchar again[] = { 'a', 'g', 'a', 'i', 'n', 0 };
@@ -217,12 +240,12 @@ static void encode_text (int padding)
     zbyte zchars[12];
     const zchar *ptr = decoded;
     zchar c;
-    int resolution = (A00025 <= V3) ? 2 : 3;
+    int resolution = (h_version <= V3) ? 2 : 3;
     int i = 0;
 
     /* Expand abbreviations that some old Infocom games lack */
 
-    if (A00087)
+    if (f_setup.expand_abbreviations)
 
 	if (padding == 0x05 && decoded[1] == 0)
 
@@ -250,7 +273,7 @@ static void encode_text (int padding)
 
 	    /* Character not found, store its ZSCII value */
 
-	    c2 = A00183 (c);
+	    c2 = translate_to_zscii (c);
 
 	    zchars[i++] = 5;
 	    zchars[i++] = 6;
@@ -264,7 +287,7 @@ static void encode_text (int padding)
 	    /* Character found, store its index */
 
 	    if (set != 0)
-		zchars[i++] = ((A00025 <= V2) ? 1 : 3) + set;
+		zchars[i++] = ((h_version <= V2) ? 1 : 3) + set;
 
 	    zchars[i++] = index + 6;
 
@@ -283,16 +306,16 @@ static void encode_text (int padding)
 
 }/* encode_text */
 
+
 /*
- * A00096, test if a unicode character can be read and printed.
+ * z_check_unicode, test if a unicode character can be read and printed.
  *
  * 	zargs[0] = Unicode
  *
  */
-
-void A00096 (void)
+void z_check_unicode (void)
 {
-    zword c = zargs[0] & 0xffff;
+    zword c = zargs[0];
 
     if (c >= 0x20 && c <= 0x7e)
 	store (3);
@@ -303,10 +326,11 @@ void A00096 (void)
     else
 	store (0);
 
-}/* A00096 */
+}/* z_check_unicode */
+
 
 /*
- * A00101, encode a ZSCII string for use in a dictionary.
+ * z_encode_text, encode a ZSCII string for use in a dictionary.
  *
  *	zargs[0] = address of text buffer
  *	zargs[1] = length of ASCII string
@@ -317,20 +341,19 @@ void A00096 (void)
  * three 16bit words.
  *
  */
-
-void A00101 (void)
+void z_encode_text (void)
 {
     int i;
 
-    load_string ((zword) ( (zargs[0] + zargs[2]) & 0xffff), \
-                 zargs[1] & 0xffff);
+    load_string ((zword) (zargs[0] + zargs[2]), zargs[1]);
 
     encode_text (0x05);
 
     for (i = 0; i < 3; i++)
-	A00195 ((zword) (zargs[3] + 2 * i), encoded[i]);
+	storew ((zword) (zargs[3] + 2 * i), encoded[i]);
 
-}/* A00101 */
+}/* z_encode_text */
+
 
 /*
  * decode_text
@@ -352,9 +375,7 @@ void A00101 (void)
  * The last type is only used for word completion.
  *
  */
-
-#define outchar(c)	if (st==VOCABULARY) *ptr++=c; else A00186(c)
-
+#define outchar(c)	if (st==VOCABULARY) *ptr++=c; else print_char(c)
 static void decode_text (enum string_type st, zword addr)
 {
     zchar *ptr;
@@ -366,6 +387,9 @@ static void decode_text (enum string_type st, zword addr)
     int shift_lock = 0;
     int status = 0;
 
+    ptr = NULL;		/* makes compilers shut up */
+    byte_addr = 0;
+
     /* Calculate the byte address if necessary */
 
     if (st == ABBREVIATION)
@@ -374,17 +398,17 @@ static void decode_text (enum string_type st, zword addr)
 
     else if (st == HIGH_STRING) {
 
-	if (A00025 <= V3)
+	if (h_version <= V3)
 	    byte_addr = (long) addr << 1;
-	else if (A00025 <= V5)
+	else if (h_version <= V5)
 	    byte_addr = (long) addr << 2;
-	else if (A00025 <= V7)
-	    byte_addr = ((long) addr << 2) + ((long) A00048 << 3);
-	else /* A00025 == V8 */
+	else if (h_version <= V7)
+	    byte_addr = ((long) addr << 2) + ((long) h_strings_offset << 3);
+	else /* h_version == V8 */
 	    byte_addr = (long) addr << 3;
 
-	if (byte_addr >= A00064)
-	    A00192 ("Print at illegal address");
+	if (byte_addr >= story_size)
+	    runtime_error (ERR_ILL_PRINT_ADDR);
 
     }
 
@@ -400,13 +424,13 @@ static void decode_text (enum string_type st, zword addr)
 	/* Fetch the next 16bit word */
 
 	if (st == LOW_STRING || st == VOCABULARY) {
-	    code=lw(addr);
+	    LOW_WORD (addr, code)
 	    addr += 2;
 	} else if (st == HIGH_STRING || st == ABBREVIATION) {
-	    code = hw(byte_addr);
+	    HIGH_WORD (byte_addr, code)
 	    byte_addr += 2;
 	} else
-            code=cw();
+	    CODE_WORD (code)
 
 	/* Read its three Z-characters */
 
@@ -424,11 +448,11 @@ static void decode_text (enum string_type st, zword addr)
 		if (shift_state == 2 && c == 6)
 		    status = 2;
 
-		else if (A00025 == V1 && c == 1)
-		    A00185 ();
+		else if (h_version == V1 && c == 1)
+		    new_line ();
 
-		else if (A00025 >= V2 && shift_state == 2 && c == 7)
-		    A00185 ();
+		else if (h_version >= V2 && shift_state == 2 && c == 7)
+		    new_line ();
 
 		else if (c >= 6)
 		    outchar (alphabet (shift_state, c - 6));
@@ -436,17 +460,17 @@ static void decode_text (enum string_type st, zword addr)
 		else if (c == 0)
 		    outchar (' ');
 
-		else if (A00025 >= V2 && c == 1)
+		else if (h_version >= V2 && c == 1)
 		    status = 1;
 
-		else if (A00025 >= V3 && c <= 3)
+		else if (h_version >= V3 && c <= 3)
 		    status = 1;
 
 		else {
 
 		    shift_state = (shift_lock + (c & 1) + 1) % 3;
 
-		    if (A00025 <= V2 && c >= 4)
+		    if (h_version <= V2 && c >= 4)
 			shift_lock = shift_state;
 
 		    break;
@@ -459,9 +483,9 @@ static void decode_text (enum string_type st, zword addr)
 
 	    case 1:	/* abbreviation */
 
-		ptr_addr = A00036 + 64 * (prev_c - 1) + 2 * c;
+		ptr_addr = h_abbreviations + 64 * (prev_c - 1) + 2 * c;
 
-		abbr_addr=lw(ptr_addr);
+		LOW_WORD (ptr_addr, abbr_addr)
 		decode_text (ABBREVIATION, abbr_addr);
 
 		status = 0;
@@ -474,7 +498,7 @@ static void decode_text (enum string_type st, zword addr)
 
 	    case 3:	/* ZSCII character - second part */
 
-		c2 = A00182 ((prev_c << 5) | c);
+		c2 = translate_from_zscii ((prev_c << 5) | c);
 		outchar (c2);
 
 		status = 0;
@@ -492,73 +516,68 @@ static void decode_text (enum string_type st, zword addr)
 	*ptr = 0;
 
 }/* decode_text */
-
 #undef outchar
 
+
 /*
- * A00125, print a new line.
+ * z_new_line, print a new line.
  *
  * 	no zargs used
  *
  */
-
-void A00125 (void)
+void z_new_line (void)
 {
+    new_line ();
 
-    A00185 ();
+}/* z_new_line */
 
-}/* A00125 */
 
 /*
- * A00131, print a string embedded in the instruction stream.
+ * z_print, print a string embedded in the instruction stream.
  *
  *	no zargs used
  *
  */
-
-void A00131 (void)
+void z_print (void)
 {
-
     decode_text (EMBEDDED_STRING, 0);
 
-}/* A00131 */
+}/* z_print */
+
 
 /*
- * A00132, print a string from the lower 64KB.
+ * z_print_addr, print a string from the lower 64KB.
  *
  *	zargs[0] = address of string to print
  *
  */
-
-void A00132 (void)
+void z_print_addr (void)
 {
-
     decode_text (LOW_STRING, zargs[0]);
 
-}/* A00132 */
+}/* z_print_addr */
+
 
 /*
- * A00133 print a single ZSCII character.
+ * z_print_char print a single ZSCII character.
  *
  *	zargs[0] = ZSCII character to be printed
  *
  */
-
-void A00133 (void)
+void z_print_char (void)
 {
+    print_char (translate_from_zscii (zargs[0]));
 
-    A00186 (A00182 (zargs[0]));
+}/* z_print_char */
 
-}/* A00133 */
 
 /*
- * A00134, print a formatted table.
+ * z_print_form, print a formatted table.
  *
  *	zargs[0] = address of formatted table to be printed
  *
  */
-
-void A00134 (void)
+void z_print_form (void)
 {
     zword count;
     zword addr = zargs[0];
@@ -567,14 +586,14 @@ void A00134 (void)
 
     for (;;) {
 
-	count=lw(addr);
+	LOW_WORD (addr, count)
 	addr += 2;
 
 	if (count == 0)
 	    break;
 
 	if (!first)
-	    A00185 ();
+	    new_line ();
 
 	while (count--) {
 
@@ -583,7 +602,7 @@ void A00134 (void)
 	    LOW_BYTE (addr, c)
 	    addr++;
 
-	    A00186 (A00182 (c));
+	    print_char (translate_from_zscii (c));
 
 	}
 
@@ -591,59 +610,57 @@ void A00134 (void)
 
     }
 
-}/* A00134 */
+}/* z_print_form */
+
 
 /*
- * A00187
+ * print_num
  *
  * Print a signed 16bit number.
  *
  */
-
-void A00187 (zword value)
+void print_num (zword value)
 {
     int i;
-    short sv;
 
     /* Print sign */
-    sv = s16(value);
-    if (sv < 0) {
-	A00186 ('-');
-	value = -sv & 0xffff;
+
+    if ((short) value < 0) {
+	print_char ('-');
+	value = - (short) value;
     }
 
     /* Print absolute value */
 
     for (i = 10000; i != 0; i /= 10)
 	if (value >= i || i == 1)
-	    A00186 ('0' + (value / i) % 10);
+	    print_char ('0' + (value / i) % 10);
 
-}/* A00187 */
+}/* print_num */
+
 
 /*
- * A00135, print a signed number.
+ * z_print_num, print a signed number.
  *
  * 	zargs[0] = number to print
  *
  */
-
-void A00135 (void)
+void z_print_num (void)
 {
+    print_num (zargs[0]);
 
-    A00187 (zargs[0]);
+}/* z_print_num */
 
-}/* A00135 */
 
 /*
- * A00188
+ * print_object
  *
  * Print an object description.
  *
  */
-
-void A00188 (zword object)
+void print_object (zword object)
 {
-    zword addr = A00269 (object);
+    zword addr = object_name (object);
     zword code = 0x94a5;
     zbyte length;
 
@@ -651,94 +668,91 @@ void A00188 (zword object)
     addr++;
 
     if (length != 0)
-	code=lw(addr);
+	LOW_WORD (addr, code)
 
     if (code == 0x94a5) { 	/* encoded text 0x94a5 == empty string */
 
-	A00189 ("object#");	/* supply a generic name */
-	A00187 (object);		/* for anonymous objects */
+	print_string ("object#");	/* supply a generic name */
+	print_num (object);		/* for anonymous objects */
 
     } else decode_text (LOW_STRING, addr);
 
-}/* A00188 */
+}/* print_object */
+
 
 /*
- * A00136, print an object description.
+ * z_print_obj, print an object description.
  *
  * 	zargs[0] = number of object to be printed
  *
  */
-
-void A00136 (void)
+void z_print_obj (void)
 {
+    print_object (zargs[0]);
 
-    A00188 (zargs[0] & 0xffff);
+}/* z_print_obj */
 
-}/* A00136 */
 
 /*
- * A00137, print the string at the given packed address.
+ * z_print_paddr, print the string at the given packed address.
  *
  * 	zargs[0] = packed address of string to be printed
  *
  */
-
-void A00137 (void)
+void z_print_paddr (void)
 {
+    decode_text (HIGH_STRING, zargs[0]);
 
-    decode_text (HIGH_STRING, zargs[0] & 0xffff);
+}/* z_print_paddr */
 
-}/* A00137 */
 
 /*
- * A00138, print the string at PC, print newline then return true.
+ * z_print_ret, print the string at PC, print newline then return true.
  *
  * 	no zargs used
  *
  */
-
-void A00138 (void)
+void z_print_ret (void)
 {
-
     decode_text (EMBEDDED_STRING, 0);
-    A00185 ();
+    new_line ();
     ret (1);
 
-}/* A00138 */
+}/* z_print_ret */
+
 
 /*
- * A00189
+ * print_string
  *
  * Print a string of ASCII characters.
  *
  */
-
-void A00189 (const char *s)
+void print_string (const char *s)
 {
     char c;
 
     while ((c = *s++) != 0)
 
 	if (c == '\n')
-	    A00185 ();
+	    new_line ();
 	else
-	    A00186 (c);
+	    print_char (c);
 
-}/* A00189 */
+}/* print_string */
+
 
 /*
- * A00140
+ * z_print_unicode
  *
  * 	zargs[0] = Unicode
  *
  */
-
-void A00140 (void)
+void z_print_unicode (void)
 {
+    print_char ((zargs[0] <= 0xff) ? zargs[0] : '?');
 
-    A00186 ((zargs[0] <= 0xff) ? zargs[0] : '?');
+}/* z_print_unicode */
 
-}/* A00140 */
 
 /*
  * lookup_text
@@ -753,7 +767,6 @@ void A00140 (void)
  * The return value is 0 if the search fails.
  *
  */
-
 static zword lookup_text (int padding, zword dct)
 {
     zword entry_addr;
@@ -762,12 +775,11 @@ static zword lookup_text (int padding, zword dct)
     zword addr;
     zbyte entry_len;
     zbyte sep_count;
-    int resolution = (A00025 <= V3) ? 2 : 3;
+    int resolution = (h_version <= V3) ? 2 : 3;
     int entry_number;
     int lower, upper;
     int i;
     bool sorted;
-    short sec;
 
     encode_text (padding);
 
@@ -775,13 +787,12 @@ static zword lookup_text (int padding, zword dct)
     dct += 1 + sep_count;
     LOW_BYTE (dct, entry_len)		/* get length of entries */
     dct += 1;
-    entry_count = lw(dct);		/* get number of entries */
+    LOW_WORD (dct, entry_count)		/* get number of entries */
     dct += 2;
 
-    sec = s16(entry_count);
-    if (sec < 0) {	/* bad luck, entries aren't sorted */
+    if ((short) entry_count < 0) {	/* bad luck, entries aren't sorted */
 
-	entry_count = (zword) ((-sec) & 0xffff);
+	entry_count = - (short) entry_count;
 	sorted = FALSE;
 
     } else sorted = TRUE;		/* entries are sorted */
@@ -803,7 +814,7 @@ static zword lookup_text (int padding, zword dct)
 	addr = entry_addr;
 
 	for (i = 0; i < resolution; i++) {
-	    entry=lw(addr);
+	    LOW_WORD (addr, entry)
 	    if (encoded[i] != entry)
 		goto continuing;
 	    addr += 2;
@@ -838,6 +849,7 @@ static zword lookup_text (int padding, zword dct)
 
 }/* lookup_text */
 
+
 /*
  * tokenise_text
  *
@@ -849,7 +861,6 @@ static zword lookup_text (int padding, zword dct)
  * times with different dictionaries); otherwise they are zero.
  *
  */
-
 static void tokenise_text (zword text, zword length, zword from, zword parse, zword dct, bool flag)
 {
     zword addr;
@@ -861,7 +872,7 @@ static void tokenise_text (zword text, zword length, zword from, zword parse, zw
 
     if (token_count < token_max) {	/* sufficient space left for token? */
 
-	A00194 (parse++, token_count + 1);
+	storeb (parse++, token_count + 1);
 
 	load_string ((zword) (text + from), length);
 
@@ -871,9 +882,9 @@ static void tokenise_text (zword text, zword length, zword from, zword parse, zw
 
 	    parse += 4 * token_count;
 
-	    A00195 ((zword) (parse + 0), addr);
-	    A00194 ((zword) (parse + 2), length);
-	    A00194 ((zword) (parse + 3), from);
+	    storew ((zword) (parse + 0), addr);
+	    storeb ((zword) (parse + 2), length);
+	    storeb ((zword) (parse + 3), from);
 
 	}
 
@@ -881,28 +892,30 @@ static void tokenise_text (zword text, zword length, zword from, zword parse, zw
 
 }/* tokenise_text */
 
+
 /*
- * A00235
+ * tokenise_line
  *
  * Split an input line into words and translate the words to tokens.
  *
  */
-
-void A00235 (zword text, zword token, zword dct, bool flag)
+void tokenise_line (zword text, zword token, zword dct, bool flag)
 {
     zword addr1;
     zword addr2;
     zbyte length;
     zbyte c;
 
+    length = 0;		/* makes compilers shut up */
+
     /* Use standard dictionary if the given dictionary is zero */
 
     if (dct == 0)
-	dct = A00030;
+	dct = h_dictionary;
 
     /* Remove all tokens before inserting new ones */
 
-    A00194 ((zword) (token + 1), 0);
+    storeb ((zword) (token + 1), 0);
 
     /* Move the first pointer across the text buffer searching for the
        beginning of a word. If this succeeds, store the position in a
@@ -913,7 +926,7 @@ void A00235 (zword text, zword token, zword dct, bool flag)
     addr1 = text;
     addr2 = 0;
 
-    if (A00025 >= V5) {
+    if (h_version >= V5) {
 	addr1++;
 	LOW_BYTE (addr1, length)
     }
@@ -928,7 +941,7 @@ void A00235 (zword text, zword token, zword dct, bool flag)
 
 	addr1++;
 
-	if (A00025 >= V5 && addr1 == text + 2 + length)
+	if (h_version >= V5 && addr1 == text + 2 + length)
 	    c = 0;
 	else
 	    LOW_BYTE (addr1, c)
@@ -978,10 +991,11 @@ void A00235 (zword text, zword token, zword dct, bool flag)
 
     } while (c != 0);
 
-}/* A00235 */
+}/* tokenise_line */
+
 
 /*
- * A00178, make a lexical analysis of a ZSCII string.
+ * z_tokenise, make a lexical analysis of a ZSCII string.
  *
  *	zargs[0] = address of string to analyze
  *	zargs[1] = address of token buffer
@@ -989,10 +1003,8 @@ void A00235 (zword text, zword token, zword dct, bool flag)
  *	zargs[3] = set when unknown words cause empty slots (optional)
  *
  */
-
-void A00178 (void)
+void z_tokenise (void)
 {
-
     /* Supply default arguments */
 
     if (zargc < 3)
@@ -1000,11 +1012,12 @@ void A00178 (void)
     if (zargc < 4)
 	zargs[3] = 0;
 
-    /* Call A00235 to do the real work */
+    /* Call tokenise_line to do the real work */
 
-    A00235 (zargs[0], zargs[1], zargs[2], zargs[3] != 0);
+    tokenise_line (zargs[0], zargs[1], zargs[2], zargs[3] != 0);
 
-}/* A00178 */
+}/* z_tokenise */
+
 
 /*
  * completion
@@ -1025,7 +1038,6 @@ void A00178 (void)
  * to the last word that results in the only possible completion.
  *
  */
-
 int completion (const zchar *buffer, zchar *result)
 {
     zword minaddr;
@@ -1054,8 +1066,8 @@ int completion (const zchar *buffer, zchar *result)
 
     /* Search the dictionary for first and last possible extensions */
 
-    minaddr = lookup_text (0x00, A00030);
-    maxaddr = lookup_text (0x1f, A00030);
+    minaddr = lookup_text (0x00, h_dictionary);
+    maxaddr = lookup_text (0x1f, h_dictionary);
 
     if (minaddr == 0 || maxaddr == 0 || minaddr > maxaddr)
 	return 2;

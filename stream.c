@@ -1,229 +1,233 @@
-/*
- * stream.c
+/* stream.c - IO stream implementation
+ *	Copyright (c) 1995-1997 Stefan Jokisch
  *
- * IO stream implementation
+ * This file is part of Frotz.
  *
+ * Frotz is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Frotz is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include "frotz.h"
 
-extern bool A00243 (zchar);
+extern bool handle_hot_key (zchar);
 
-extern bool A00244 (void);
+extern bool validate_click (void);
 
-extern void A00228 (void);
-extern void A00229 (void);
-extern void A00245 (zword, zword, bool);
-extern void A00246 (void);
-extern void A00230 (void);
-extern void A00231 (void);
-extern void A00020 (void);
-extern void A00021 (void);
+extern void replay_open (void);
+extern void replay_close (void);
+extern void memory_open (zword, zword, bool);
+extern void memory_close (void);
+extern void record_open (void);
+extern void record_close (void);
+extern void script_open (void);
+extern void script_close (void);
 
-extern void A00247 (const zchar *);
-extern void A00248 (void);
-extern void A00249 (zchar);
-extern void A00250 (const zchar *, zchar);
-extern void A00251 (zchar);
-extern void A00252 (const zchar *);
-extern void A00253 (void);
-extern void A00254 (const zchar *, zchar);
-extern void A00255 (const zchar *);
-extern void A00256 (void);
-extern void A00257 (void);
-extern void A00258 (zchar);
-extern void A00259 (const zchar *);
-extern void A00260 (void);
-extern void A00261 (const zchar *, zchar);
-extern void A00262 (const zchar *);
-extern void A00263 (void);
-extern void A00264 (void);
+extern void memory_word (const zchar *);
+extern void memory_new_line (void);
+extern void record_write_key (zchar);
+extern void record_write_input (const zchar *, zchar);
+extern void script_char (zchar);
+extern void script_word (const zchar *);
+extern void script_new_line (void);
+extern void script_write_input (const zchar *, zchar);
+extern void script_erase_input (const zchar *);
+extern void script_mssg_on (void);
+extern void script_mssg_off (void);
+extern void screen_char (zchar);
+extern void screen_word (const zchar *);
+extern void screen_new_line (void);
+extern void screen_write_input (const zchar *, zchar);
+extern void screen_erase_input (const zchar *);
+extern void screen_mssg_on (void);
+extern void screen_mssg_off (void);
 
-extern zchar A00265 (void);
-extern zchar A00266 (zchar *);
-extern zchar A00267 (zword);
-extern zchar A00268 (int, zchar *, zword, bool);
+extern zchar replay_read_key (void);
+extern zchar replay_read_input (zchar *);
+extern zchar console_read_key (zword);
+extern zchar console_read_input (int, zchar *, zword, bool);
 
-extern int A00242 (zword);
+extern int direct_call (zword);
+
 
 /*
- * A00190
+ * stream_mssg_on
  *
- * Start printing a "debugging" A00070.
+ * Start printing a "debugging" message.
  *
  */
-
-void A00190 (void)
+void stream_mssg_on (void)
 {
+    flush_buffer ();
 
-    A00184 ();
+    if (ostream_screen)
+	screen_mssg_on ();
+    if (ostream_script && enable_scripting)
+	script_mssg_on ();
 
-    if (A00065)
-	A00263 ();
-    if (A00066 && A00074)
-	A00256 ();
+    message = TRUE;
 
-    A00070 = TRUE;
+}/* stream_mssg_on */
 
-}/* A00190 */
 
 /*
- * A00191
+ * stream_mssg_off
  *
- * Stop printing a "debugging" A00070.
+ * Stop printing a "debugging" message.
  *
  */
-
-void A00191 (void)
+void stream_mssg_off (void)
 {
+    flush_buffer ();
 
-    A00184 ();
+    if (ostream_screen)
+	screen_mssg_off ();
+    if (ostream_script && enable_scripting)
+	script_mssg_off ();
 
-    if (A00065)
-	A00264 ();
-    if (A00066 && A00074)
-	A00257 ();
+    message = FALSE;
 
-    A00070 = FALSE;
+}/* stream_mssg_off */
 
-}/* A00191 */
 
 /*
- * A00126, open or close an output stream.
+ * z_output_stream, open or close an output stream.
  *
  *	zargs[0] = stream to open (positive) or close (negative)
  *	zargs[1] = address to redirect output to (stream 3 only)
  *	zargs[2] = width of redirected output (stream 3 only, optional)
  *
  */
-
-void A00126 (void)
+void z_output_stream (void)
 {
-
-    A00184 ();
+    flush_buffer ();
 
     switch ((short) zargs[0]) {
 
-    case  1: A00065 = TRUE;
+    case  1: ostream_screen = TRUE;
 	     break;
-    case -1: A00065 = FALSE;
+    case -1: ostream_screen = FALSE;
 	     break;
-    case  2: if (!A00066) A00020 ();
+    case  2: if (!ostream_script) script_open ();
 	     break;
-    case -2: if (A00066) A00021 ();
+    case -2: if (ostream_script) script_close ();
 	     break;
-    case  3: A00245 (zargs[1], zargs[2], zargc >= 3);
+    case  3: memory_open (zargs[1], zargs[2], zargc >= 3);
 	     break;
-    case -3: A00246 ();
+    case -3: memory_close ();
 	     break;
-    case  4: if (!A00068) A00230 ();
+    case  4: if (!ostream_record) record_open ();
 	     break;
-    case -4: if (A00068) A00231 ();
+    case -4: if (ostream_record) record_close ();
 	     break;
 
     }
 
-}/* A00126 */
+}/* z_output_stream */
+
 
 /*
- * A00000
+ * stream_char
  *
  * Send a single character to the output stream.
  *
  */
-
-void A00000 (zchar c)
+void stream_char (zchar c)
 {
+    if (ostream_screen)
+	screen_char (c);
+    if (ostream_script && enable_scripting)
+	script_char (c);
 
-    if (A00065)
-	A00258 (c);
-    if (A00066 && A00074)
-	A00251 (c);
+}/* stream_char */
 
-}/* A00000 */
 
 /*
- * A00001
+ * stream_word
  *
  * Send a string of characters to the output streams.
  *
  */
-
-void A00001 (const zchar *s)
+void stream_word (const zchar *s)
 {
+    if (ostream_memory && !message)
 
-    if (A00067 && !A00070)
-
-	A00247 (s);
+	memory_word (s);
 
     else {
 
-	if (A00065)
-	    A00259 (s);
-	if (A00066 && A00074)
-	    A00252 (s);
+	if (ostream_screen)
+	    screen_word (s);
+	if (ostream_script && enable_scripting)
+	    script_word (s);
 
     }
 
-}/* A00001 */
+}/* stream_word */
+
 
 /*
- * A00002
+ * stream_new_line
  *
  * Send a newline to the output streams.
  *
  */
-
-void A00002 (void)
+void stream_new_line (void)
 {
-
-    if (A00067 && !A00070)
-
-	A00248 ();
+    if (ostream_memory && !message)
+	memory_new_line ();
 
     else {
 
-	if (A00065)
-	    A00260 ();
-	if (A00066 && A00074)
-	    A00253 ();
+	if (ostream_screen)
+	    screen_new_line ();
+	if (ostream_script && enable_scripting)
+	    script_new_line ();
 
     }
 
-}/* A00002 */
+}/* stream_new_line */
+
 
 /*
- * A00115, select an input stream.
+ * z_input_stream, select an input stream.
  *
  *	zargs[0] = input stream to be selected
  *
  */
-
-void A00115 (void)
+void z_input_stream (void)
 {
+    flush_buffer ();
 
-    A00184 ();
+    if (zargs[0] == 0 && istream_replay)
+	replay_close ();
+    if (zargs[0] == 1 && !istream_replay)
+	replay_open ();
 
-    if (zargs[0] == 0 && A00069)
-	A00229 ();
-    if (zargs[0] == 1 && !A00069)
-	A00228 ();
+}/* z_input_stream */
 
-}/* A00115 */
 
 /*
- * A00233
+ * stream_read_key
  *
  * Read a single keystroke from the current input stream.
  *
  */
-
-zchar A00233 ( zword timeout, zword routine,
-			bool hot_keys )
+zchar stream_read_key ( zword timeout, zword routine, bool hot_keys )
 {
     zchar key = ZC_BAD;
 
-    A00184 ();
+    flush_buffer ();
 
     /* Read key from current input stream */
 
@@ -231,37 +235,37 @@ continue_input:
 
     do {
 
-	if (A00069)
-	    key = A00265 ();
+	if (istream_replay)
+	    key = replay_read_key ();
 	else
-	    key = A00267 (timeout);
+	    key = console_read_key (timeout);
 
     } while (key == ZC_BAD);
 
     /* Verify mouse clicks */
 
     if (key == ZC_SINGLE_CLICK || key == ZC_DOUBLE_CLICK)
-	if (!A00244 ())
+	if (!validate_click ())
 	    goto continue_input;
 
     /* Copy key to the command file */
 
-    if (A00068 && !A00069)
-	A00249 (key);
+    if (ostream_record && !istream_replay)
+	record_write_key (key);
 
     /* Handle timeouts */
 
     if (key == ZC_TIME_OUT)
-	if (A00242 (routine) == 0)
+	if (direct_call (routine) == 0)
 	    goto continue_input;
 
     /* Handle hot keys */
 
     if (hot_keys && key >= ZC_HKEY_MIN && key <= ZC_HKEY_MAX) {
 
-	if (A00025 == V4 && key == ZC_HKEY_UNDO)
+	if (h_version == V4 && key == ZC_HKEY_UNDO)
 	    goto continue_input;
-	if (!A00243 (key))
+	if (!handle_hot_key (key))
 	    goto continue_input;
 
 	return ZC_BAD;
@@ -272,30 +276,30 @@ continue_input:
 
     return key;
 
-}/* A00233 */
+}/* stream_read_key */
+
 
 /*
- * A00234
+ * stream_read_input
  *
  * Read a line of input from the current input stream.
  *
  */
-
-zchar A00234 ( int max, zchar *buf,
+zchar stream_read_input ( int max, zchar *buf,
 			  zword timeout, zword routine,
 			  bool hot_keys,
 			  bool no_scripting )
 {
     zchar key = ZC_BAD;
 
-    A00184 ();
+    flush_buffer ();
 
-    /* Remove initial input from the transscript file or from the screen */
+    /* Remove initial input from the transcript file or from the screen */
 
-    if (A00066 && A00074 && !no_scripting)
-	A00255 (buf);
-    if (A00069)
-	A00262 (buf);
+    if (ostream_script && enable_scripting && !no_scripting)
+	script_erase_input (buf);
+    if (istream_replay)
+	screen_erase_input (buf);
 
     /* Read input line from current input stream */
 
@@ -303,50 +307,50 @@ continue_input:
 
     do {
 
-	if (A00069)
-	    key = A00266 (buf);
+	if (istream_replay)
+	    key = replay_read_input (buf);
 	else
-	    key = A00268 (max, buf, timeout, key != ZC_BAD);
+	    key = console_read_input (max, buf, timeout, key != ZC_BAD);
 
     } while (key == ZC_BAD);
 
     /* Verify mouse clicks */
 
     if (key == ZC_SINGLE_CLICK || key == ZC_DOUBLE_CLICK)
-	if (!A00244 ())
+	if (!validate_click ())
 	    goto continue_input;
 
     /* Copy input line to the command file */
 
-    if (A00068 && !A00069)
-	A00250 (buf, key);
+    if (ostream_record && !istream_replay)
+	record_write_input (buf, key);
 
     /* Handle timeouts */
 
     if (key == ZC_TIME_OUT)
-	if (A00242 (routine) == 0)
+	if (direct_call (routine) == 0)
 	    goto continue_input;
 
     /* Handle hot keys */
 
     if (hot_keys && key >= ZC_HKEY_MIN && key <= ZC_HKEY_MAX) {
 
-	if (!A00243 (key))
+	if (!handle_hot_key (key))
 	    goto continue_input;
 
 	return ZC_BAD;
 
     }
 
-    /* Copy input line to transscript file or to the screen */
+    /* Copy input line to transcript file or to the screen */
 
-    if (A00066 && A00074 && !no_scripting)
-	A00254 (buf, key);
-    if (A00069)
-	A00261 (buf, key);
+    if (ostream_script && enable_scripting && !no_scripting)
+	script_write_input (buf, key);
+    if (istream_replay)
+	screen_write_input (buf, key);
 
     /* Return terminating key */
 
     return key;
 
-}/* A00234 */
+}/* stream_read_input */

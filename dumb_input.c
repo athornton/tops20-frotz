@@ -1,15 +1,34 @@
-/* dumb-input.c
- * $Id: dumb-input.c,v 1.5 1998/07/08 03:45:40 al Exp $
- * Copyright 1997,1998 Alpine Petrofsky <alpine@petrofsky.berkeley.ca.us>.
- * Any use permitted provided this notice stays intact.
+/*
+ * dumb_input.c - Dumb interface, input functions
+ *
+ * This file is part of Frotz.
+ *
+ * Frotz is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Frotz is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * Or visit http://www.fsf.org/
  */
 
-#include "dfrotz.h"
+#include <string.h>
+
+#include "dumb_frotz.h"
+
+f_setup_t f_setup;
 
 static char runtime_usage[] =
   "DUMB-FROTZ runtime help:\n"
   "  General Commands:\n"
-  "    \\help    Show this A00070.\n"
+  "    \\help    Show this message.\n"
   "    \\set     Show the current values of runtime settings.\n"
   "    \\s       Show the current contents of the whole screen.\n"
   "    \\d       Discard the part of the input before the cursor.\n"
@@ -53,52 +72,46 @@ static char runtime_usage[] =
 ;
 
 static float speed = 1;
-static bool do_more_prompts = TRUE;
 
 enum input_type {
-  INPUT_CHAR,
-  INPUT_LINE,
-  INPUT_LINE_CONTINUED,
+    INPUT_CHAR,
+    INPUT_LINE,
+    INPUT_LINE_CONTINUED,
 };
 
 /* get a character.  Exit with no fuss on EOF.  */
 static int xgetchar(void)
 {
-  int c = getchar();
-  if (c == EOF) {
-    if (feof(stdin)) {
-      fprintf(stderr, "\nEOT\n");
-      exit(0);
+    int c = getchar();
+    if (c == EOF) {
+	if (feof(stdin)) {
+	    fprintf(stderr, "\nEOT\n");
+	    exit(0);
+	}
+	os_fatal(strerror(errno));
     }
-    /* On TOPS-20 only, the very first getchar() may return EOF, even 
-       thought feof(stdin) is false.  No idea why, but... */
-    if (! A00225) {
-        A00225 = TRUE;
-        return xgetchar();
-    } else {
-        A00202(strerror(errno));
-    }
-  }
-  return c;
+    return c;
 }
 
 /* Read one line, including the newline, into s.  Safely avoids buffer
  * overruns (but that's kind of pointless because there are several
  * other places where I'm not so careful).  */
-static void d_getline(char *s)
+static void dumb_getline(char *s)
 {
-  int c;
-  char *p = s;
-  while (p < s + INPUT_BUFFER_SIZE - 1)
-    if ((*p++ = xgetchar()) == '\n') {
-      *p = '\0';
-      return;
+    int c;
+    char *p = s;
+    while (p < s + INPUT_BUFFER_SIZE - 1) {
+	if ((*p++ = xgetchar()) == '\n') {
+	    *p = '\0';
+	    return;
+	}
     }
-  p[-1] = '\n';
-  p[0] = '\0';
-  while ((c = xgetchar()) != '\n')
-    ;
-  printf("Line too long, truncated to %s\n", s - INPUT_BUFFER_SIZE);
+
+    p[-1] = '\n';
+    p[0] = '\0';
+    while ((c = xgetchar()) != '\n')
+ 	;
+    printf("Line too long, truncated to %s\n", s - INPUT_BUFFER_SIZE);
 }
 
 /* Translate in place all the escape characters in s.  */
@@ -128,10 +141,16 @@ static void translate_special_chars(char *s)
       case 'X': *dest++ = ZC_HKEY_QUIT; break;
       case 'D': *dest++ = ZC_HKEY_DEBUG; break;
       case 'H': *dest++ = ZC_HKEY_HELP; break;
-      case '1': case '2': case '3': case '4':
-      case '5': case '6': case '7': case '8': case '9':
-	*dest++ = ZC_FKEY_MIN + src[-1] - '0' - 1; break;
-      case '0': *dest++ = (char) ( (ZC_FKEY_MIN + 9) & 0xff); break;
+      case '1': *dest++ = ZC_FKEY_F1; break;
+      case '2': *dest++ = ZC_FKEY_F2; break;
+      case '3': *dest++ = ZC_FKEY_F3; break;
+      case '4': *dest++ = ZC_FKEY_F4; break;
+      case '5': *dest++ = ZC_FKEY_F5; break;
+      case '6': *dest++ = ZC_FKEY_F6; break;
+      case '7': *dest++ = ZC_FKEY_F7; break;
+      case '8': *dest++ = ZC_FKEY_F8; break;
+      case '9': *dest++ = ZC_FKEY_F9; break;
+      case '0': *dest++ = ZC_FKEY_F10; break;
       default:
 	fprintf(stderr, "DUMB-FROTZ: unknown escape char: %c\n", src[-1]);
 	fprintf(stderr, "Enter \\help to see the list\n");
@@ -144,42 +163,42 @@ static void translate_special_chars(char *s)
 /* The time in tenths of seconds that the user is ahead of z time.  */
 static int time_ahead = 0;
 
-/* Called from A00213 and A00214 if they have input from
+/* Called from os_read_key and os_read_line if they have input from
  * a previous call to dumb_read_line.
  * Returns TRUE if we should timeout rather than use the read-ahead.
  * (because the user is further ahead than the timeout).  */
 static bool check_timeout(int timeout)
 {
-  if ((timeout == 0) || (timeout > time_ahead))
-    time_ahead = 0;
-  else
-    time_ahead -= timeout;
-  return time_ahead != 0;
+    if ((timeout == 0) || (timeout > time_ahead))
+	time_ahead = 0;
+    else
+	time_ahead -= timeout;
+    return time_ahead != 0;
 }
 
 /* If val is '0' or '1', set *var accordingly, otherwise toggle it.  */
 static void toggle(bool *var, char val)
 {
-  *var = val == '1' || (val != '0' && !*var);
+    *var = val == '1' || (val != '0' && !*var);
 }
 
-/* Handle input-related user settings and call A00007.  */
-bool A00004(const char *setting, bool show_cursor, bool startup)
+/* Handle input-related user settings and call dumb_output_handle_setting.  */
+bool dumb_handle_setting(const char *setting, bool show_cursor, bool startup)
 {
-  if (!strncmp(setting, "sf", 2)) {
-    speed = atof(&setting[2]);
-    printf("Speed Factor %g\n", speed);
-  } else if (!strncmp(setting, "mp", 2)) {
-    toggle(&do_more_prompts, setting[2]);
-    printf("More prompts %s\n", do_more_prompts ? "ON" : "OFF");
-  } else {
-    if (!strcmp(setting, "set")) {
-      printf("Speed Factor %g\n", speed);
-      printf("More Prompts %s\n", do_more_prompts ? "ON" : "OFF");
+    if (!strncmp(setting, "sf", 2)) {
+	speed = atof(&setting[2]);
+	printf("Speed Factor %g\n", speed);
+    } else if (!strncmp(setting, "mp", 2)) {
+	toggle(&do_more_prompts, setting[2]);
+	printf("More prompts %s\n", do_more_prompts ? "ON" : "OFF");
+    } else {
+	if (!strcmp(setting, "set")) {
+	    printf("Speed Factor %g\n", speed);
+	    printf("More Prompts %s\n", do_more_prompts ? "ON" : "OFF");
+	}
+	return dumb_output_handle_setting(setting, show_cursor, startup);
     }
-    return A00007(setting, show_cursor, startup);
-  }
-  return TRUE;
+    return TRUE;
 }
 
 /* Read a line, processing commands (lines that start with a backslash
@@ -191,6 +210,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
 			   zchar *continued_line_chars)
 {
   time_t start_time;
+
   if (timeout) {
     if (time_ahead >= timeout) {
       time_ahead -= timeout;
@@ -201,14 +221,16 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
   }
   time_ahead = 0;
 
-  A00008(show_cursor);
+  dumb_show_screen(show_cursor);
   for (;;) {
     char *command;
     if (prompt)
       fputs(prompt, stdout);
     else
-      A00009(show_cursor, (timeout ? "tTD" : ")>}")[type]);
-    d_getline(s);
+      dumb_show_prompt(show_cursor, (timeout ? "tTD" : ")>}")[type]);
+    /* Prompt only shows up after user input if we don't flush stdout */
+    fflush(stdout);
+    dumb_getline(s);
     if ((s[0] != '\\') || ((s[1] != '\0') && !islower(s[1]))) {
       /* Is not a command line.  */
       translate_special_chars(s);
@@ -251,7 +273,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
       if (type != INPUT_LINE_CONTINUED)
 	fprintf(stderr, "DUMB-FROTZ: No input to discard\n");
       else {
-          A00012(strlen((char *)continued_line_chars));
+	dumb_discard_old_input(strlen((char*) continued_line_chars));
 	continued_line_chars[0] = '\0';
 	type = INPUT_LINE;
       }
@@ -263,21 +285,23 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
 	current_page = next_page = runtime_usage;
 	for (;;) {
 	  int i;
-	  for (i = 0; (i < A00041 - 2) && *next_page; i++)
+	  for (i = 0; (i < h_screen_rows - 2) && *next_page; i++)
 	    next_page = strchr(next_page, '\n') + 1;
+	  /* next_page - current_page is width */
 	  printf("%.*s", (int) (next_page - current_page), current_page);
 	  current_page = next_page;
 	  if (!*current_page)
 	    break;
 	  printf("HELP: Type <return> for more, or q <return> to stop: ");
-	  d_getline(s);
+	  fflush(stdout);
+	  dumb_getline(s);
 	  if (!strcmp(s, "q\n"))
 	    break;
 	}
       }
     } else if (!strcmp(command, "s")) {
-	A00010();
-    } else if (!A00004(command, show_cursor, FALSE)) {
+	dumb_dump_screen();
+    } else if (!dumb_handle_setting(command, show_cursor, FALSE)) {
       fprintf(stderr, "DUMB-FROTZ: unknown command: %s\n", s);
       fprintf(stderr, "Enter \\help to see the list of commands\n");
     }
@@ -301,7 +325,7 @@ static char read_key_buffer[INPUT_BUFFER_SIZE];
 /* Similar.  Useful for using function key abbreviations.  */
 static char read_line_buffer[INPUT_BUFFER_SIZE];
 
-zchar A00213 (int timeout, bool show_cursor)
+zchar os_read_key (int timeout, bool show_cursor)
 {
   char c;
   int timed_out;
@@ -326,12 +350,12 @@ zchar A00213 (int timeout, bool show_cursor)
   c = read_key_buffer[0];
   memmove(read_key_buffer, read_key_buffer + 1, strlen(read_key_buffer));
 
-  /* TODO: error A00070s for invalid special chars.  */
+  /* TODO: error messages for invalid special chars.  */
 
   return c;
 }
 
-zchar A00214 (int max, zchar *buf, int timeout, int width, int continued)
+zchar os_read_line (int UNUSED (max), zchar *buf, int timeout, int UNUSED(width), int continued)
 {
   char *p;
   int terminator;
@@ -359,7 +383,7 @@ zchar A00214 (int max, zchar *buf, int timeout, int width, int continued)
 
   /* find the terminating character.  */
   for (p = read_line_buffer;; p++) {
-    if (A00003(*p)) {
+    if (is_terminator(*p)) {
       terminator = *p;
       *p++ = '\0';
       break;
@@ -369,10 +393,10 @@ zchar A00214 (int max, zchar *buf, int timeout, int width, int continued)
   /* TODO: Truncate to width and max.  */
 
   /* copy to screen */
-  A00011(read_line_buffer);
+  dumb_display_user_input(read_line_buffer);
 
   /* copy to the buffer and save the rest for next time.  */
-  strcat((char *)buf, read_line_buffer);
+  strncat((char*) buf, read_line_buffer, (INPUT_BUFFER_SIZE - strlen((char *)buf)) - 2);
   p = read_line_buffer + strlen(read_line_buffer) + 1;
   memmove(read_line_buffer, p, strlen(p) + 1);
 
@@ -385,44 +409,99 @@ zchar A00214 (int max, zchar *buf, int timeout, int width, int continued)
   return terminator;
 }
 
-int A00212 (char *file_name, const char *default_name, int flag)
+char *os_read_file_name (const char *default_name, int flag)
 {
+  char file_name[FILENAME_MAX + 1];
   char buf[INPUT_BUFFER_SIZE], prompt[INPUT_BUFFER_SIZE];
   FILE *fp;
+  char *tempname;
+  char path_separator[2];
+  int i;
 
-  sprintf(prompt, "Please enter a filename [%s]: ", default_name);
-  dumb_read_misc_line(buf, prompt);
-  if (strlen(buf) > MAX_FILE_NAME) {
-    printf("Filename too long\n");
-    return FALSE;
+  path_separator[0] = PATH_SEPARATOR;
+  path_separator[1] = 0;
+
+  /* If we're restoring a game before the interpreter starts,
+   * our filename is already provided.  Just go ahead silently.
+   */
+  if (f_setup.restore_mode) {
+    return strdup(default_name);
+  } else {
+    if (f_setup.restricted_path) {
+      for (i = strlen(default_name); i > 0; i--) {
+	if (default_name[i] == PATH_SEPARATOR) {
+	  i++;
+	  break;
+	}
+      }
+      tempname = strdup(default_name + i);
+      sprintf(prompt, "Please enter a filename [%s]: ", tempname);
+    } else
+      sprintf(prompt, "Please enter a filename [%s]: ", default_name);
+    dumb_read_misc_line(buf, prompt);
+    if (strlen(buf) > MAX_FILE_NAME) {
+      printf("Filename too long\n");
+      return NULL;
+    }
   }
 
-  strcpy (file_name, buf[0] ? buf : default_name);
+  if (buf[0])
+    strncpy(file_name, buf, FILENAME_MAX);
+  else
+    strncpy(file_name, default_name, FILENAME_MAX);
+
+  /* Check if we're restricted to one directory. */
+  if (f_setup.restricted_path != NULL) {
+    for (i = strlen(file_name); i > 0; i--) {
+      if (file_name[i] == PATH_SEPARATOR) {
+        i++;
+        break;
+      }
+    }
+    tempname = strdup(file_name + i);
+    strncpy(file_name, f_setup.restricted_path, FILENAME_MAX);
+
+    /* Make sure the final character is the path separator. */
+    if (file_name[strlen(file_name)-1] != PATH_SEPARATOR) {
+      strncat(file_name, path_separator, FILENAME_MAX - strlen(file_name) - 2);
+    }
+    strncat(file_name, tempname, strlen(file_name) - strlen(tempname) - 1);
+  }
 
   /* Warn if overwriting a file.  */
   if ((flag == FILE_SAVE || flag == FILE_SAVE_AUX || flag == FILE_RECORD)
       && ((fp = fopen(file_name, "rb")) != NULL)) {
     fclose (fp);
     dumb_read_misc_line(buf, "Overwrite existing file? ");
-    return(tolower(buf[0]) == 'y');
+    if (tolower(buf[0]) != 'y')
+	return NULL;
   }
-  return TRUE;
+  return strdup(file_name);
 }
 
-void A00206 (void)
+void os_more_prompt (void)
 {
   if (do_more_prompts) {
     char buf[INPUT_BUFFER_SIZE];
     dumb_read_misc_line(buf, "***MORE***");
   } else
-    A00013();
+    dumb_elide_more_prompt();
 }
 
-void A00005(void)
+void dumb_init_input(void)
 {
-  if ((A00025 >= V4) && (speed != 0))
-    A00026 |= CONFIG_TIMEDINPUT;
+  if ((h_version >= V4) && (speed != 0))
+    h_config |= CONFIG_TIMEDINPUT;
 
-  if (A00025 >= V5)
-    A00034 &= ~(MOUSE_FLAG | MENU_FLAG);
+  if (h_version >= V5)
+    h_flags &= ~(MOUSE_FLAG | MENU_FLAG);
 }
+
+zword os_read_mouse(void)
+{
+	/* NOT IMPLEMENTED */
+    return 0;
+}
+
+void os_tick()
+{}

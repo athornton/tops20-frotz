@@ -1,24 +1,37 @@
-/*
- * hotkey.c
+/* hotkey.c - Hot key functions
+ *	Copyright (c) 1995-1997 Stefan Jokisch
  *
- * Hot key functions
+ * This file is part of Frotz.
  *
+ * Frotz is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Frotz is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include "frotz.h"
 
-extern int A00226 (void);
+extern int restore_undo (void);
 
-extern int A00227 (void);
+extern int read_number (void);
 
-extern bool A00023 (const char *);
+extern bool read_yes_or_no (const char *);
 
-extern void A00228 (void);
-extern void A00229 (void);
-extern void A00230 (void);
-extern void A00231 (void);
+extern void replay_open (void);
+extern void replay_close (void);
+extern void record_open (void);
+extern void record_close (void);
 
-extern void A00016 (int);
+extern void seed_random (int);
 
 /*
  * hot_key_debugging
@@ -26,20 +39,21 @@ extern void A00016 (int);
  * ...allows user to toggle cheating options on/off.
  *
  */
-
 static bool hot_key_debugging (void)
 {
 
-    A00189 ("Debugging options\n");
+    print_string ("Debugging options\n");
 
-    A00077 = A00023 ("Watch attribute assignment");
-    A00078 = A00023 ("Watch attribute testing");
-    A00080 = A00023 ("Watch object movement");
-    A00079 = A00023 ("Watch object locating");
+    f_setup.attribute_assignment = read_yes_or_no ("Watch attribute assignment");
+    f_setup.attribute_testing = read_yes_or_no ("Watch attribute testing");
+
+    f_setup.object_movement = read_yes_or_no ("Watch object movement");
+    f_setup.object_locating = read_yes_or_no ("Watch object locating");
 
     return FALSE;
 
 }/* hot_key_debugging */
+
 
 /*
  * hot_key_help
@@ -47,12 +61,11 @@ static bool hot_key_debugging (void)
  * ...displays a list of all hot keys.
  *
  */
-
 static bool hot_key_help (void) {
 
-    A00189 ("Help\n");
+    print_string ("Help\n");
 
-    A00189 (
+    print_string (
 	"\n"
 	"Alt-D  debugging options\n"
 	"Alt-H  help\n"
@@ -67,24 +80,24 @@ static bool hot_key_help (void) {
 
 }/* hot_key_help */
 
+
 /*
  * hot_key_playback
  *
  * ...allows user to turn playback on.
  *
  */
-
 static bool hot_key_playback (void)
 {
+    print_string ("Playback on\n");
 
-    A00189 ("Playback on\n");
-
-    if (!A00069)
-	A00228 ();
+    if (!istream_replay)
+	replay_open ();
 
     return FALSE;
 
 }/* hot_key_playback */
+
 
 /*
  * hot_key_recording
@@ -92,24 +105,24 @@ static bool hot_key_playback (void)
  * ...allows user to turn recording on/off.
  *
  */
-
 static bool hot_key_recording (void)
 {
 
-    if (A00069) {
-	A00189 ("Playback off\n");
-	A00229 ();
-    } else if (A00068) {
-	A00189 ("Recording off\n");
-	A00231 ();
+    if (istream_replay) {
+	print_string ("Playback off\n");
+	replay_close ();
+    } else if (ostream_record) {
+	print_string ("Recording off\n");
+	record_close ();
     } else {
-	A00189 ("Recording on\n");
-	A00230 ();
+	print_string ("Recording on\n");
+	record_open ();
     }
 
     return FALSE;
 
 }/* hot_key_recording */
+
 
 /*
  * hot_key_seed
@@ -117,18 +130,18 @@ static bool hot_key_recording (void)
  * ...allows user to seed the random number seed.
  *
  */
-
 static bool hot_key_seed (void)
 {
 
-    A00189 ("Seed random numbers\n");
+    print_string ("Seed random numbers\n");
 
-    A00189 ("Enter seed value (or return to randomize): ");
-    A00016 (A00227 ());
+    print_string ("Enter seed value (or return to randomize): ");
+    seed_random (read_number ());
 
     return FALSE;
 
 }/* hot_key_seed */
+
 
 /*
  * hot_key_undo
@@ -136,29 +149,29 @@ static bool hot_key_seed (void)
  * ...allows user to undo the previous turn.
  *
  */
-
 static bool hot_key_undo (void)
 {
 
-    A00189 ("Undo one turn\n");
+    print_string ("Undo one turn\n");
 
-    if (A00226 ()) {
+    if (restore_undo ()) {
 
-	if (A00025 >= V5) {		/* for V5+ games we must */
+	if (h_version >= V5) {		/* for V5+ games we must */
 	    store (2);			/* store 2 (for success) */
 	    return TRUE;		/* and abort the input   */
 	}
 
-	if (A00025 <= V3) {		/* for V3- games we must */
-	    A00169 ();		/* draw the status line  */
+	if (h_version <= V3) {		/* for V3- games we must */
+	    z_show_status ();		/* draw the status line  */
 	    return FALSE;		/* and continue input    */
 	}
 
-    } else A00189 ("No more undo information available.\n");
+    } else print_string ("No more undo information available.\n");
 
     return FALSE;
 
 }/* hot_key_undo */
+
 
 /*
  * hot_key_restart
@@ -166,20 +179,19 @@ static bool hot_key_undo (void)
  * ...allows user to start a new game.
  *
  */
-
 static bool hot_key_restart (void)
 {
+    print_string ("New game\n");
 
-    A00189 ("New game\n");
+    if (read_yes_or_no ("Do you wish to restart")) {
 
-    if (A00023 ("Do you wish to restart")) {
-
-	A00152 ();
+	z_restart ();
 	return TRUE;
 
     } else return FALSE;
 
 }/* hot_key_restart */
+
 
 /*
  * hot_key_quit
@@ -187,37 +199,37 @@ static bool hot_key_restart (void)
  * ...allows user to exit the game.
  *
  */
-
 static bool hot_key_quit (void)
 {
 
-    A00189 ("Exit game\n");
+    print_string ("Exit game\n");
 
-    if (A00023 ("Do you wish to quit")) {
+    if (read_yes_or_no ("Do you wish to quit")) {
 
-	A00146 ();
+	z_quit ();
 	return TRUE;
 
     } else return FALSE;
 
 }/* hot_key_quit */
 
+
 /*
- * A00243
+ * handle_hot_key
  *
  * Perform the action associated with a so-called hot key. Return
  * true to abort the current input action.
  *
  */
-
-bool A00243 (zchar key)
+bool handle_hot_key (zchar key)
 {
-
     if (cwin == 0) {
 
 	bool aborting;
 
-	A00189 ("\nHot key -- ");
+	aborting = FALSE;
+
+	print_string ("\nHot key -- ");
 
 	switch (key) {
 	    case ZC_HKEY_RECORD: aborting = hot_key_recording (); break;
@@ -233,10 +245,10 @@ bool A00243 (zchar key)
 	if (aborting)
 	    return TRUE;
 
-	A00189 ("\nContinue input...\n");
+	print_string ("\nContinue input...\n");
 
     }
 
     return FALSE;
 
-}/* A00243 */
+}/* handle_hot_key */
