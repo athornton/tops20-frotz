@@ -499,6 +499,7 @@ void store (zword value)
 int direct_call (zword addr)
 {
     zword saved_zargs[8];
+    short sv;
     int saved_zargc;
     int i;
 
@@ -527,7 +528,9 @@ int direct_call (zword addr)
 
     /* Resulting value lies on top of the stack */
 
-    return (short) *sp++;
+    sv = s16(*sp);
+    sp += 1;
+    return ( ( (zword) sv) & 0xffff ) ;
 
 }/* direct_call */
 

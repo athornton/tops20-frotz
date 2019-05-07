@@ -603,12 +603,13 @@ void z_print_form (void)
 void print_num (zword value)
 {
     int i;
+    short sv;
 
     /* Print sign */
-
-    if ((short) value < 0) {
+    sv = s16(value);
+    if (sv < 0) {
 	print_char ('-');
-	value = - (short) value;
+	value = -sv & 0xffff;
     }
 
     /* Print absolute value */
@@ -766,6 +767,7 @@ static zword lookup_text (int padding, zword dct)
     int lower, upper;
     int i;
     bool sorted;
+    short sec;
 
     encode_text (padding);
 
@@ -776,9 +778,10 @@ static zword lookup_text (int padding, zword dct)
     entry_count = lw(dct);		/* get number of entries */
     dct += 2;
 
-    if ((short) entry_count < 0) {	/* bad luck, entries aren't sorted */
+    sec = s16(entry_count);
+    if (sec < 0) {	/* bad luck, entries aren't sorted */
 
-	entry_count = - (short) entry_count;
+	entry_count = (zword) ((-sec) & 0xffff);
 	sorted = FALSE;
 
     } else sorted = TRUE;		/* entries are sorted */

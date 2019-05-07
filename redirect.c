@@ -29,13 +29,15 @@ static struct {
 
 void memory_open (zword table, zword xsize, bool buffering)
 {
+    short sxs;
 
     if (++depth < MAX_NESTING) {
 
 	if (!buffering)
 	    xsize = 0xffff;
-	if (buffering && (short) xsize <= 0)
-	    xsize = get_max_width ((zword) (- (short) xsize));
+        sxs = s16(xsize);
+	if (buffering && sxs <= 0)
+	    xsize = get_max_width (((zword) (-sxs)) & 0xffff);
 
 	storew (table, 0);
 
