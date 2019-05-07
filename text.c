@@ -52,7 +52,7 @@ zchar translate_from_zscii (zbyte c)
 
 	    zbyte N;
 
-	    N=lb(hx_unicode_table);
+	    LOW_BYTE (hx_unicode_table, N)
 
 	    if (c - 0x9b < N) {
 
@@ -105,7 +105,7 @@ zbyte translate_to_zscii (zchar c)
 	    zbyte N;
 	    int i;
 
-	    N=lb(hx_unicode_table);
+	    LOW_BYTE (hx_unicode_table, N)
 
 	    for (i = 0x9b; i < 0x9b + N; i++) {
 
@@ -150,7 +150,7 @@ static zchar alphabet (int set, int index)
 	zbyte c;
 
 	zword addr = h_alphabet + 26 * set + index;
-	c=lb(addr);
+	LOW_BYTE (addr, c)
 
 	return translate_from_zscii (c);
 
@@ -185,7 +185,7 @@ static void load_string (zword addr, zword length)
 
 	    zbyte c;
 
-	    c = lb(addr);
+	    LOW_BYTE (addr, c)
 	    addr++;
 
 	    decoded[i++] = translate_from_zscii (c);
@@ -580,7 +580,7 @@ void z_print_form (void)
 
 	    zbyte c;
 
-	    c=lb(addr);
+	    LOW_BYTE (addr, c)
 	    addr++;
 
 	    print_char (translate_from_zscii (c));
@@ -646,7 +646,7 @@ void print_object (zword object)
     zword code = 0x94a5;
     zbyte length;
 
-    length=lb(addr);
+    LOW_BYTE (addr, length)
     addr++;
 
     if (length != 0)
@@ -769,9 +769,9 @@ static zword lookup_text (int padding, zword dct)
 
     encode_text (padding);
 
-    sep_count=lb(dct);		/* skip word separators */
+    LOW_BYTE (dct, sep_count)		/* skip word separators */
     dct += 1 + sep_count;
-    entry_len=lb(dct);		/* get length of entries */
+    LOW_BYTE (dct, entry_len)		/* get length of entries */
     dct += 1;
     entry_count = lw(dct);		/* get number of entries */
     dct += 2;
@@ -852,9 +852,9 @@ static void tokenise_text (zword text, zword length, zword from, zword parse, zw
     zword addr;
     zbyte token_max, token_count;
 
-    token_max=lb(parse);
+    LOW_BYTE (parse, token_max)
     parse++;
-    token_count=lb(parse);
+    LOW_BYTE (parse, token_count)
 
     if (token_count < token_max) {	/* sufficient space left for token? */
 
@@ -912,7 +912,7 @@ void tokenise_line (zword text, zword token, zword dct, bool flag)
 
     if (h_version >= V5) {
 	addr1++;
-	length=lb(addr1);
+	LOW_BYTE (addr1, length)
     }
 
     do {
@@ -928,18 +928,18 @@ void tokenise_line (zword text, zword token, zword dct, bool flag)
 	if (h_version >= V5 && addr1 == text + 2 + length)
 	    c = 0;
 	else
-	    c=lb(addr1);
+	    LOW_BYTE (addr1, c)
 
 	/* Check for separator */
 
 	sep_addr = dct;
 
-	sep_count=lb(sep_addr);
+	LOW_BYTE (sep_addr, sep_count)
 	sep_addr++;
 
 	do {
 
-	    sep_addr=lb(separator);
+	    LOW_BYTE (sep_addr, separator)
 	    sep_addr++;
 
 	} while (c != separator && --sep_count != 0);
