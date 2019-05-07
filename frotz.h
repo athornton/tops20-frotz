@@ -493,6 +493,8 @@ extern zbyte *zmp;
 
 #endif
 
+/*** For systems where word sizes are not a power of 2 ***/
+extern short sanitize_16( zword );
 
 /*** Story file header data ***/
 extern zbyte h_version;
