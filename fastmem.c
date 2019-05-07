@@ -304,8 +304,6 @@ void init_memory (void)
 
     /* Allocate memory for story data */
 
-    fprintf(stderr,"DEBUG: story_size: 0x%lx (%ld)\n",story_size,story_size);
-    
     if ((zmp = (zbyte far *) realloc (zmp, story_size)) == NULL)
 	os_fatal ("Out of memory");
 
