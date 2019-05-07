@@ -8,7 +8,7 @@
  * Any use permitted provided this notice stays intact.
  */
 
-#include "../common/frotz.h"
+#include "frotz.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>

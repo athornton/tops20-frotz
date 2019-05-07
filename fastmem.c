@@ -712,10 +712,12 @@ void z_restore (void)
 
     } else {
 
+        /***
 //	long pc;
 //	zword release;
 //	zword addr;
 //	int i;
+***/
 
 	/* Get the file name */
 
@@ -954,11 +956,13 @@ void z_save (void)
 
     } else {
 
+        /***
 //	long pc;
 //	zword addr;
 //	zword nsp, nfp;
 //	int skip;
 //	int i;
+***/
 
 	/* Get the file name */
 

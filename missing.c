@@ -35,11 +35,11 @@ void *my_memmove(void *dest, const void *src, size_t n)
 
 	if(s == d) return dest;
 
-	if(s < d) {	// copy from back
+	if(s < d) { /* copy from back */
 		s=s+n-1;
 		d=d+n-1;
 		while(n--) *d-- = *s--;
-	} else		// copy from front
+	} else		/* copy from front */
 		while(n--) *d++=*s++;
 
 	return dest;
