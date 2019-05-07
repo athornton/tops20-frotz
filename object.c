@@ -31,12 +31,6 @@
 
 static zword object_address (zword obj)
 {
-
-    /***
-    fprintf(stderr,"DEBUG: object_address: h_o: %d, h_v: %d, obj = 0x%04x\n",
-            A00031,A00025, obj);
-    ***/
-    
     /* Check object number */
     if (obj > ((A00025 <= V3) ? 255 : MAX_OBJECT))
 	A00192 ("Illegal object");

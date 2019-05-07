@@ -70,13 +70,12 @@ static int xgetchar(void)
       fprintf(stderr, "\nEOT\n");
       exit(0);
     }
+    /* On TOPS-20 only, the very first getchar() may return EOF, even 
+       thought feof(stdin) is false.  No idea why, but... */
     if (! A00225) {
         A00225 = TRUE;
         return xgetchar();
     } else {
-        /* fprintf(stderr,"DEBUG: getchar() -> EOF, but feof(stdin) is false\n"); */
-    /* Curses seems to return this on TOPS-20.  Dunno why */
-    /* c = 0;  Act as if string terminator */
         A00202(strerror(errno));
     }
   }
