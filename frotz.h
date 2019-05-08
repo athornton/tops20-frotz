@@ -823,7 +823,7 @@ void 	os_set_cursor (int, int);
 void 	os_set_font (int);
 void 	os_set_text_style (int);
 void 	os_start_sample (int, int, int, zword);
-void 	os_stop_sample ();
+void 	os_stop_sample (int);
 int	os_storyfile_seek (FILE *, long, int);
 int	os_storyfile_tell (FILE *);
 int  	os_string_width (const zchar *);
