@@ -493,9 +493,6 @@ extern zbyte *zmp;
 
 #endif
 
-/*** For systems where word sizes are not a power of 2 ***/
-extern short sanitize_16( zword );
-
 /*** Story file header data ***/
 extern zbyte h_version;
 extern zbyte h_config;
@@ -847,4 +844,7 @@ void    resize_screen(void);
 bool    os_repaint_window (int win, int ypos_old, int ypos_new, int xpos,
                            int ysize, int xsize);
 
-#endif
+/* This is for systems whose word size is not a power of two. */
+short   sanitize_16(zword);
+
+#endif /* FROTZ_H_ */
