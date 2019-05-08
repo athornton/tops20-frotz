@@ -86,3 +86,15 @@ char *my_strndup(const char *src, size_t n)
 	return str;
 }
 #endif /* NO_STRDUP */
+
+#ifdef NO_LIBGEN_H
+/*
+ * TOPS-20/KCC doesn't have libgen.h, and therefore no basename
+ *
+ */
+
+char * my_basename(const char *filename) {
+    char *p = strrchr(filename,'/');
+    return p ? p + 1 : (char *) filename;
+}
+#endif /* NO_LIBGEN_H */

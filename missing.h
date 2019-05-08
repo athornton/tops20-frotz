@@ -21,4 +21,9 @@ char *my_strndup(const char *, size_t);
 #define strndup	my_strndup
 #endif
 
+#ifdef NO_LIBGEN_H
+char *my_basename(const char *);
+#define basename my_basename
+#endif
+
 #endif /* MISSING_H */

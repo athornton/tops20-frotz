@@ -19,7 +19,9 @@
  * Or visit http://www.fsf.org/
  */
 
+#ifndef NO_LIBGEN_H
 #include <libgen.h>
+#endif
 #include "dumb_frotz.h"
 #include "dumb_blorb.h"
 

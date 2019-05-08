@@ -95,6 +95,8 @@ CURSES ?= ncursesw
 # For missing strrchr()
 #NO_STRRCHR = yes
 
+# For missing libgen.h
+#NO_LIBGEN_H = yes
 
 #########################################################################
 # This section is where Frotz is actually built.
@@ -264,6 +266,9 @@ ifdef NO_MEMMOVE
 endif
 ifdef NO_STRDUP
 	@echo "#define NO_STRDUP" >> $@
+endif
+ifdef NO_LIBGEN_H
+	@echo "#define NO_LIBGEN_H" >> $@
 endif
 ifdef HANDLE_OE_DIPTHONG
 	@echo "#define HANDLE_OE_DIPTHONG" >> $@
