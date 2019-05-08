@@ -19,11 +19,12 @@
  * Or visit http://www.fsf.org/
  */
 
+#include "dumb_frotz.h"
+#include "dumb_blorb.h"
+#include "defs.h"
 #ifndef NO_LIBGEN_H
 #include <libgen.h>
 #endif
-#include "dumb_frotz.h"
-#include "dumb_blorb.h"
 
 f_setup_t f_setup;
 

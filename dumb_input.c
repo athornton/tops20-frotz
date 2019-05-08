@@ -23,7 +23,8 @@
 
 #include "dumb_frotz.h"
 
-f_setup_t f_setup;
+extern f_setup_t f_setup;
+extern bool do_more_prompts;
 
 static char runtime_usage[] =
   "DUMB-FROTZ runtime help:\n"
