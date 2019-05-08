@@ -20,6 +20,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "frotz.h"
 
 #ifdef NO_MEMMOVE
