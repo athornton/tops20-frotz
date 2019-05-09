@@ -99,7 +99,7 @@ void z_loadw (void)
 
     LOW_WORD (addr, value)
 
-    store (value);
+    store (truncate_zword(value));
 
 }/* z_loadw */
 
