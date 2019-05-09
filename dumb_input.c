@@ -19,12 +19,8 @@
  * Or visit http://www.fsf.org/
  */
 
-#include <string.h>
-
 #include "dumb_frotz.h"
-
-extern f_setup_t f_setup;
-extern bool do_more_prompts;
+#include <string.h>
 
 static char runtime_usage[] =
   "DUMB-FROTZ runtime help:\n"

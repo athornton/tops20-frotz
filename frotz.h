@@ -553,6 +553,9 @@ extern zword frame_count;
 extern zword zargs[8];
 extern int zargc;
 
+extern bool do_more_prompts;
+extern f_setup_t f_setup;
+
 extern bool ostream_screen;
 extern bool ostream_script;
 extern bool ostream_memory;

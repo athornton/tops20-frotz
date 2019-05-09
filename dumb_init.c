@@ -21,13 +21,9 @@
 
 #include "dumb_frotz.h"
 #include "dumb_blorb.h"
-#include "defs.h"
 #ifndef NO_LIBGEN_H
 #include <libgen.h>
 #endif
-
-f_setup_t f_setup;
-bool do_more_prompts;
 
 static void print_version(void);
 
@@ -95,6 +91,8 @@ static int user_tandy_bit = 0;
 static char *graphics_filename = NULL;
 static bool plain_ascii = FALSE;
 
+f_setup_t f_setup;
+bool do_more_prompts;
 /*
  * os_process_arguments
  *
