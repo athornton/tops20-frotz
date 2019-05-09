@@ -543,7 +543,7 @@ void reset_memory (void)
  */
 void storeb (zword addr, zbyte value)
 {
-    addr = truncate_zword(addr);
+    addr = TRUNCATE_ZWORD(addr);
     if (addr >= h_dynamic_size)
 	runtime_error (ERR_STORE_RANGE);
 
@@ -577,8 +577,8 @@ void storeb (zword addr, zbyte value)
  */
 void storew (zword addr, zword value)
 {
-    storeb (truncate_zword(addr + 0), hi (value));
-    storeb (truncate_zword(addr + 1), lo (value));
+    storeb (TRUNCATE_ZWORD(addr + 0), hi (value));
+    storeb (TRUNCATE_ZWORD(addr + 1), lo (value));
 
 }/* storew */
 

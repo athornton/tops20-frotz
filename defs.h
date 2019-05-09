@@ -1,4 +1,5 @@
 #ifndef COMMON_DEFINES_H
 #define COMMON_DEFINES_H
 #define NO_BLORB 1
+#define WEIRD_WORDSIZE 1
 #endif /* COMMON_DEFINES_H */

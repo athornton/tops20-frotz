@@ -10,7 +10,3 @@ short sanitize_16 ( zword z ) {
 
     return s;
 }
-
-zword truncate_zword ( zword z ) {
-    return ( z & 0xffff);
-}

@@ -486,7 +486,11 @@ extern zbyte *pcp;
 extern zbyte *zmp;
 
 #define lo(v)	(v & 0xff)
+#ifdef WEIRD_WORDSIZE
+#define hi(v)	((v & 0xffff) >> 8)
+#else
 #define hi(v)	(v >> 8)
+#endif /* WEIRD_WORDSIZE */
 
 #define SET_WORD(addr,v)  { zmp[addr] = hi(v); zmp[addr+1] = lo(v); }
 #define LOW_WORD(addr,v)  { v = ((zword) zmp[addr] << 8) | zmp[addr+1]; }
@@ -853,6 +857,12 @@ bool    os_repaint_window (int win, int ypos_old, int ypos_new, int xpos,
 
 /* This is for systems whose word size is not a power of two. */
 short   sanitize_16(zword);
-zword   truncate_zword(zword);
+zword   TRUNCATE_ZWORD(zword);
+
+#ifdef WEIRD_WORDSIZE
+#define TRUNCATE_ZWORD(v) ((zword) ((v) & 0xffff))
+#else
+#define TRUNCATE_ZWORD(v) (v)
+#endif /* WEIRD_WORDSIZE */
 
 #endif /* FROTZ_H_ */

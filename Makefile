@@ -98,6 +98,9 @@ CURSES ?= ncursesw
 # For missing libgen.h
 #NO_LIBGEN_H = yes
 
+# For word sizes that are now a power of two
+#WEIRD_WORDSIZE = yes
+
 #########################################################################
 # This section is where Frotz is actually built.
 # Under normal circumstances, nothing in this section should be changed.
@@ -269,6 +272,9 @@ ifdef NO_STRDUP
 endif
 ifdef NO_LIBGEN_H
 	@echo "#define NO_LIBGEN_H" >> $@
+endif
+ifdef WEIRD_WORDSIZE
+	@echo "#define WEIRD_WORDSIZE" >> $@
 endif
 ifdef HANDLE_OE_DIPTHONG
 	@echo "#define HANDLE_OE_DIPTHONG" >> $@
