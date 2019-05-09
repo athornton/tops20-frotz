@@ -27,6 +27,7 @@
 #endif
 
 f_setup_t f_setup;
+bool do_more_prompts;
 
 static void print_version(void);
 
@@ -105,7 +106,6 @@ void os_process_arguments(int argc, char *argv[])
 {
     int c;
     char *p = NULL;
-    extern bool do_more_prompts;
     
     do_more_prompts = TRUE;
     /* Parse the options */
