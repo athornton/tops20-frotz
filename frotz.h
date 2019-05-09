@@ -36,7 +36,11 @@ typedef int bool;
 #    if FILENAME_MAX > 255         /* used like PATH_MAX on some systems */
 #      define PATH_MAX    FILENAME_MAX
 #    else
-#      define PATH_MAX    (FILNAMSIZ - 1)
+#      ifdef FILNAMSIZ
+#        define PATH_MAX    (FILNAMSIZ - 1)
+#      else
+#        define PATH_MAX  255
+#      endif
 #    endif
 #  endif /* ?MAXPATHLEN */
 #endif /* !PATH_MAX */

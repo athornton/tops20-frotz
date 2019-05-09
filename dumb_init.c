@@ -105,7 +105,8 @@ void os_process_arguments(int argc, char *argv[])
 {
     int c;
     char *p = NULL;
-
+    extern bool do_more_prompts;
+    
     do_more_prompts = TRUE;
     /* Parse the options */
     do {
