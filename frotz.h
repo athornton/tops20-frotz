@@ -857,7 +857,6 @@ bool    os_repaint_window (int win, int ypos_old, int ypos_new, int xpos,
 
 /* This is for systems whose word size is not a power of two. */
 short   sanitize_16(zword);
-zword   TRUNCATE_ZWORD(zword);
 
 #ifdef WEIRD_WORDSIZE
 #define TRUNCATE_ZWORD(v) ((zword) ((v) & 0xffff))
