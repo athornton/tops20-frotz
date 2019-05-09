@@ -72,7 +72,7 @@ void z_copy_table (void)
  */
 void z_loadb (void)
 {
-    zword addr = zargs[0] + zargs[1];
+    zword addr = truncate_zword(zargs[0] + zargs[1]);
     zbyte value;
 
     LOW_BYTE (addr, value)
@@ -91,7 +91,10 @@ void z_loadb (void)
  */
 void z_loadw (void)
 {
-    zword addr = zargs[0] + 2 * zargs[1];
+    zword z0=truncate_zword(zargs[0]);
+    zword z1=truncate_zword(zargs[1]);
+    
+    zword addr = truncate_zword(z0 + truncate_zword(2 * z1));
     zword value;
 
     LOW_WORD (addr, value)
@@ -171,7 +174,8 @@ finished:
  */
 void z_storeb (void)
 {
-    storeb ((zword) (zargs[0] + zargs[1]), zargs[2]);
+    storeb (truncate_zword((zargs[0] + zargs[1])),
+            truncate_zword(zargs[2]));
 
 }/* z_storeb */
 
@@ -186,6 +190,10 @@ void z_storeb (void)
  */
 void z_storew (void)
 {
-    storew ((zword) (zargs[0] + 2 * zargs[1]), zargs[2]);
+    zword z0 = truncate_zword(zargs[0]);
+    zword z1 = truncate_zword(zargs[1]);
+    zword z2 = truncate_zword(zargs[2]);
+
+    storew (truncate_zword(z0 + truncate_zword(2*z1)), z2);
 
 }/* z_storew */
