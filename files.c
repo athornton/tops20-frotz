@@ -1,12 +1,26 @@
-/*
- * files.c
+/* files.c - Transcription, recording and playback
+ *	Copyright (c) 1995-1997 Stefan Jokisch
  *
- * Transscription, recording and playback
+ * This file is part of Frotz.
  *
+ * Frotz is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Frotz is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "frotz.h"
 
 #ifndef SEEK_SET
@@ -15,152 +29,180 @@
 #define SEEK_END 2
 #endif
 
-extern void A00022 (bool);
+extern void A00031 (bool);
 
-extern bool A00003 (zchar);
+extern bool A00009 (zchar);
 
-extern bool A00023 (const char *);
+extern bool A00032 (const char *);
 
-char script_name[MAX_FILE_NAME + 1] = DEFAULT_SCRIPT_NAME;
-char command_name[MAX_FILE_NAME + 1] = DEFAULT_COMMAND_NAME;
+/* char script_name[MAX_FILE_NAME + 1] = DEFAULT_SCRIPT_NAME; */
+/* char command_name[MAX_FILE_NAME + 1] = DEFAULT_COMMAND_NAME; */
 
 #ifdef __MSDOS__
-extern char A00024[];
+extern char A00033[];
 #endif
 
-static script_width = 0;
+static int script_width = 0;
 
 static FILE *sfp = NULL;
 static FILE *rfp = NULL;
 static FILE *pfp = NULL;
 
 /*
- * A00020
+ * A00026
  *
- * Open the transscript file. 'AMFV' makes this more complicated as it
- * turns transscription on/off several times to exclude some text from
- * the transscription file. This wasn't a problem for the original V4
- * A00236ers which always sent transscription to the printer, but it
- * means a problem to modern A00236ers that offer to open a new file
- * every time transscription is turned on. Our solution is to append to
- * the old transscription file in V1 to V4, and to ask for a new file
+ * Open the transcript file. 'AMFV' makes this more complicated as it
+ * turns transcription on/off several times to exclude some text from
+ * the transcription file. This wasn't a problem for the original V4
+ * A00259ers which always sent transcription to the printer, but it
+ * means a problem to modern A00259ers that offer to open a new file
+ * every time transcription is turned on. Our solution is to append to
+ * the old transcription file in V1 to V4, and to ask for a new file
  * name in V5+.
  *
  */
 
-void A00020 (void)
+void A00026 (void)
 {
     static bool script_valid = FALSE;
 
-    char new_name[MAX_FILE_NAME + 1];
+    char *new_name;
 
-    A00034 &= ~SCRIPTING_FLAG;
+    A00044 &= ~SCRIPTING_FLAG;
 
-    if (A00025 >= V5 || !script_valid) {
+    if (A00035 >= V5 || !script_valid) {
 
-	if (!A00212 (new_name, script_name, FILE_SCRIPT))
+	new_name = A00226(A00003.script_name, FILE_SCRIPT);
+	if (new_name == NULL)
 	    goto done;
 
-	strcpy (script_name, new_name);
-
+	free(A00003.script_name);
+	A00003.script_name = strdup(new_name);
     }
 
-    /* Opening in "at" mode doesn't work for A00255... */
+    /* Opening in "at" mode doesn't work for A00283... */
 
-    if ((sfp = fopen (script_name, "r+t")) != NULL || (sfp = fopen (script_name, "w+t")) != NULL) {
+    if ((sfp = fopen (A00003.script_name, "r+t")) != NULL ||
+		(sfp = fopen (A00003.script_name, "w+t")) != NULL) {
 
 	fseek (sfp, 0, SEEK_END);
 
-	A00034 |= SCRIPTING_FLAG;
+	A00044 |= SCRIPTING_FLAG;
 
 	script_valid = TRUE;
-	A00066 = TRUE;
+	A00080 = TRUE;
 
 	script_width = 0;
 
-    } else A00189 ("Cannot open file\n");
+    } else A00199 ("Cannot open file\n");
 
 done:
 
-    sw(H_FLAGS, A00034);
+    SET_WORD (H_FLAGS, A00044);
 
-}/* A00020 */
+}/* A00026 */
 
 /*
- * A00021
+ * A00027
  *
- * Stop transscription.
+ * Stop transcription.
  *
  */
 
-void A00021 (void)
+void A00027 (void)
 {
 
-    A00034 &= ~SCRIPTING_FLAG;
-    sw(H_FLAGS, A00034);
+    A00044 &= ~SCRIPTING_FLAG;
+    SET_WORD (H_FLAGS, A00044);
 
-    fclose (sfp); A00066 = FALSE;
+    fclose (sfp); A00080 = FALSE;
 
-}/* A00021 */
+}/* A00027 */
 
 /*
- * A00253
+ * A00281
  *
- * Write a newline to the transscript file.
+ * Write a newline to the transcript file.
  *
  */
 
-void A00253 (void)
+void A00281 (void)
 {
 
     if (fputc ('\n', sfp) == EOF)
-	A00021 ();
+	A00027 ();
 
     script_width = 0;
 
-}/* A00253 */
+}/* A00281 */
 
 /*
- * A00251
+ * A00279
  *
- * Write a single character to the transscript file.
+ * Write a single character to the transcript file.
  *
  */
 
-void A00251 (zchar c)
+void A00279 (zchar c)
 {
 
     if (c == ZC_INDENT && script_width != 0)
 	c = ' ';
 
     if (c == ZC_INDENT)
-	{ A00251 (' '); A00251 (' '); A00251 (' '); return; }
+	{ A00279 (' '); A00279 (' '); A00279 (' '); return; }
     if (c == ZC_GAP)
-	{ A00251 (' '); A00251 (' '); return; }
+	{ A00279 (' '); A00279 (' '); return; }
 
 #ifdef __MSDOS__
     if (c >= ZC_LATIN1_MIN)
-	c = A00024[c - ZC_LATIN1_MIN];
+	c = A00033[c - ZC_LATIN1_MIN];
 #endif
 
-    fputc (c, sfp); script_width++;
+#ifdef USE_UTF8
+    if (c >= ZC_LATIN1_MIN)
+    {
+      if ( c < 0xc0) {
+	fputc (0xc2, sfp); 
+	fputc (c, sfp);
+#ifdef HANDLE_OE_DIPTHONG
+      } else if (c == 0xd6) {
+	fputc (0xc5, sfp);
+	fputc (0x92, sfp);
+      } else if (c == 0xf6) {
+	fputc (0xc5, sfp);
+	fputc (0x93, sfp);
+#endif /* HANDLE_OE_DIPTHONG */
+      } else {
+	fputc (0xc3, sfp);
+	fputc (c - 0x40, sfp);
+      }
+    }
+    else
+    {
+	fputc (c, sfp);
+    }
+#else
+    fputc (c, sfp);
+#endif
+    script_width++;
 
-}/* A00251 */
+}/* A00279 */
 
 /*
- * A00252
+ * A00280
  *
- * Write a string to the transscript file.
+ * Write a string to the transcript file.
  *
  */
 
-void A00252 (const zchar *s)
+void A00280 (const zchar *s)
 {
     int width;
     int i;
 
     if (*s == ZC_INDENT && script_width != 0)
-	A00251 (*s++);
+	A00279 (*s++);
 
     for (i = 0, width = 0; s[i] != 0; i++)
 
@@ -173,12 +215,12 @@ void A00252 (const zchar *s)
 	else
 	    width += 1;
 
-    if (A00088 != 0 && script_width + width > A00088) {
+    if (A00003.script_cols != 0 && script_width + width > A00003.script_cols) {
 
 	if (*s == ' ' || *s == ZC_INDENT || *s == ZC_GAP)
 	    s++;
 
-	A00253 ();
+	A00281 ();
 
     }
 
@@ -187,18 +229,18 @@ void A00252 (const zchar *s)
 	if (s[i] == ZC_NEW_FONT || s[i] == ZC_NEW_STYLE)
 	    i++;
 	else
-	    A00251 (s[i]);
+	    A00279 (s[i]);
 
-}/* A00252 */
+}/* A00280 */
 
 /*
- * A00254
+ * A00282
  *
- * Send an input line to the transscript file.
+ * Send an input line to the transcript file.
  *
  */
 
-void A00254 (const zchar *buf, zchar key)
+void A00282 (const zchar *buf, zchar key)
 {
     int width;
     int i;
@@ -206,25 +248,25 @@ void A00254 (const zchar *buf, zchar key)
     for (i = 0, width = 0; buf[i] != 0; i++)
 	width++;
 
-    if (A00088 != 0 && script_width + width > A00088)
-	A00253 ();
+    if (A00003.script_cols != 0 && script_width + width > A00003.script_cols)
+	A00281 ();
 
     for (i = 0; buf[i] != 0; i++)
-	A00251 (buf[i]);
+	A00279 (buf[i]);
 
     if (key == ZC_RETURN)
-	A00253 ();
+	A00281 ();
 
-}/* A00254 */
+}/* A00282 */
 
 /*
- * A00255
+ * A00283
  *
- * Remove an input line from the transscript file.
+ * Remove an input line from the transcript file.
  *
  */
 
-void A00255 (const zchar *buf)
+void A00283 (const zchar *buf)
 {
     int width;
     int i;
@@ -234,76 +276,78 @@ void A00255 (const zchar *buf)
 
     fseek (sfp, -width, SEEK_CUR); script_width -= width;
 
-}/* A00255 */
+}/* A00283 */
 
 /*
- * A00256
+ * A00284
  *
- * Start sending a "debugging" A00070 to the transscript file.
+ * Start sending a "debugging" A00084 to the transcript file.
  *
  */
 
-void A00256 (void)
+void A00284 (void)
 {
 
     if (script_width != 0)
-	A00253 ();
+	A00281 ();
 
-    A00251 (ZC_INDENT);
+    A00279 (ZC_INDENT);
 
-}/* A00256 */
+}/* A00284 */
 
 /*
- * A00257
+ * A00285
  *
- * Stop writing a "debugging" A00070.
+ * Stop writing a "debugging" A00084.
  *
  */
 
-void A00257 (void)
+void A00285 (void)
 {
 
-    A00253 ();
+    A00281 ();
 
-}/* A00257 */
+}/* A00285 */
 
 /*
- * A00230
+ * A00253
  *
  * Open a file to record the player's input.
  *
  */
 
-void A00230 (void)
+void A00253 (void)
 {
-    char new_name[MAX_FILE_NAME + 1];
+    char *new_name;
 
-    if (A00212 (new_name, command_name, FILE_RECORD)) {
+    new_name = A00226(A00003.command_name, FILE_RECORD);
+    if (new_name != NULL) {
 
-	strcpy (command_name, new_name);
+	free(A00003.command_name);
+	A00003.command_name = strdup(new_name);
 
 	if ((rfp = fopen (new_name, "wt")) != NULL)
-	    A00068 = TRUE;
+	    A00082 = TRUE;
 	else
-	    A00189 ("Cannot open file\n");
+	    A00199 ("Cannot open file\n");
 
     }
 
-}/* A00230 */
+}/* A00253 */
 
 /*
- * A00231
+ * A00254
  *
  * Stop recording the player's input.
  *
  */
 
-void A00231 (void)
+void A00254 (void)
 {
 
-    fclose (rfp); A00068 = FALSE;
+    fclose (rfp); A00082 = FALSE;
 
-}/* A00231 */
+}/* A00254 */
 
 /*
  * record_code
@@ -341,46 +385,43 @@ static void record_code (int c, bool force_encoding)
 static void record_char (zchar c)
 {
 
-    if (c != ZC_RETURN)
-
+    if (c != ZC_RETURN) {
 	if (c < ZC_HKEY_MIN || c > ZC_HKEY_MAX) {
-
-	    record_code (A00183 (c), FALSE);
-
+	    record_code (A00193 (c), FALSE);
 	    if (c == ZC_SINGLE_CLICK || c == ZC_DOUBLE_CLICK) {
-		record_code (A00071, TRUE);
-		record_code (A00072, TRUE);
+		record_code (A00085, TRUE);
+		record_code (A00086, TRUE);
 	    }
-
 	} else record_code (1000 + c - ZC_HKEY_MIN, TRUE);
+    }
 
 }/* record_char */
 
 /*
- * A00249
+ * A00277
  *
  * Copy a keystroke to the command file.
  *
  */
 
-void A00249 (zchar key)
+void A00277 (zchar key)
 {
 
     record_char (key);
 
     if (fputc ('\n', rfp) == EOF)
-	A00231 ();
+	A00254 ();
 
-}/* A00249 */
+}/* A00277 */
 
 /*
- * A00250
+ * A00278
  *
  * Copy a line of input to a command file.
  *
  */
 
-void A00250 (const zchar *buf, zchar key)
+void A00278 (const zchar *buf, zchar key)
 {
     zchar c;
 
@@ -390,52 +431,54 @@ void A00250 (const zchar *buf, zchar key)
     record_char (key);
 
     if (fputc ('\n', rfp) == EOF)
-	A00231 ();
+	A00254 ();
 
-}/* A00250 */
+}/* A00278 */
 
 /*
- * A00228
+ * A00251
  *
  * Open a file of commands for playback.
  *
  */
 
-void A00228 (void)
+void A00251 (void)
 {
-    char new_name[MAX_FILE_NAME + 1];
+    char *new_name;
 
-    if (A00212 (new_name, command_name, FILE_PLAYBACK)) {
+    new_name = A00226(A00003.command_name, FILE_PLAYBACK);
+    if (new_name != NULL) {
 
-	strcpy (command_name, new_name);
+	free(A00003.command_name);
+	A00003.command_name = strdup(new_name);
 
 	if ((pfp = fopen (new_name, "rt")) != NULL) {
 
-	    A00022 (A00023 ("Do you want MORE prompts"));
+	    A00031 (A00032 ("Do you want MORE prompts"));
 
-	    A00069 = TRUE;
+	    A00083 = TRUE;
 
-	} else A00189 ("Cannot open file\n");
+	} else A00199 ("Cannot open file\n");
 
     }
 
-}/* A00228 */
+}/* A00251 */
 
 /*
- * A00229
+ * A00252
  *
  * Stop playback of commands.
  *
  */
 
-void A00229 (void)
+void A00252 (void)
 {
 
-    A00022 (TRUE);
+    A00031 (TRUE);
 
-    fclose (pfp); A00069 = FALSE;
+    fclose (pfp); A00083 = FALSE;
 
-}/* A00229 */
+}/* A00252 */
 
 /*
  * replay_code
@@ -476,20 +519,21 @@ static zchar replay_char (void)
 
     if ((c = replay_code ()) != EOF) {
 
-	if (c != '\n')
+	if (c != '\n') {
 
 	    if (c < 1000) {
 
-		c = A00182 (c);
+		c = A00192 (c);
 
 		if (c == ZC_SINGLE_CLICK || c == ZC_DOUBLE_CLICK) {
-		    A00071 = replay_code ();
-		    A00072 = replay_code ();
+		    A00085 = replay_code ();
+		    A00086 = replay_code ();
 		}
 
 		return c;
 
 	    } else return ZC_HKEY_MIN + c - 1000;
+	}
 
 	ungetc ('\n', pfp);
 
@@ -500,13 +544,13 @@ static zchar replay_char (void)
 }/* replay_char */
 
 /*
- * A00265
+ * A00292
  *
  * Read a keystroke from a command file.
  *
  */
 
-zchar A00265 (void)
+zchar A00292 (void)
 {
     zchar key;
 
@@ -514,21 +558,21 @@ zchar A00265 (void)
 
     if (fgetc (pfp) != '\n') {
 
-	A00229 ();
+	A00252 ();
 	return ZC_BAD;
 
     } else return key;
 
-}/* A00265 */
+}/* A00292 */
 
 /*
- * A00266
+ * A00293
  *
  * Read a line of input from a command file.
  *
  */
 
-zchar A00266 (zchar *buf)
+zchar A00293 (zchar *buf)
 {
     zchar c;
 
@@ -536,7 +580,7 @@ zchar A00266 (zchar *buf)
 
 	c = replay_char ();
 
-	if (c == ZC_BAD || A00003 (c))
+	if (c == ZC_BAD || A00009 (c))
 	    break;
 
 	*buf++ = c;
@@ -547,9 +591,9 @@ zchar A00266 (zchar *buf)
 
     if (fgetc (pfp) != '\n') {
 
-	A00229 ();
+	A00252 ();
 	return ZC_BAD;
 
     } else return c;
 
-}/* A00266 */
+}/* A00293 */

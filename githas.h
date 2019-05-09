@@ -1,0 +1,5 @@
+#define VERSION "2.45pre"
+#define GIT_HASH "408c0a8972abdfd04d9f6f045890f0d4245d1c4f"
+#define GIT_HASH_SHORT "408c0a8"
+#define GIT_BRANCH "current-unix"
+#define GIT_DATE "2019-05-08 21:34:02 -0700"

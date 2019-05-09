@@ -1,26 +1,60 @@
-/*
- * sound.c
+/* sound.c - Sound effect function
+ *	Copyright (c) 1995-1997 Stefan Jokisch
  *
- * Sound effect function
+ * This file is part of Frotz.
  *
+ * Frotz is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Frotz is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include "frotz.h"
+
+#ifdef DJGPP
+#include "djfrotz.h"
+#endif
 
 #define EFFECT_PREPARE 1
 #define EFFECT_PLAY 2
 #define EFFECT_STOP 3
 #define EFFECT_FINISH_WITH 4
 
-extern int A00242 (zword);
+extern int A00269 (zword);
 
 static zword routine = 0;
 
-static next_sample = 0;
-static next_volume = 0;
+static int next_sample = 0;
+static int next_volume = 0;
 
 static bool locked = FALSE;
 static bool playing = FALSE;
+
+
+/*
+ * A00191
+ *
+ * Initialize sound variables.
+ *
+ */
+void A00191 (void)
+{
+    locked = FALSE;
+    playing = FALSE;
+
+    A00219();
+
+} /* A00191 */
+
 
 /*
  * start_sample
@@ -28,10 +62,8 @@ static bool playing = FALSE;
  * Call the IO interface to play a sample.
  *
  */
-
 static void start_sample (int number, int volume, int repeats, zword eos)
 {
-
     static zbyte lh_repeats[] = {
 	0x00, 0x00, 0x00, 0x01, 0xff,
 	0x00, 0x01, 0x01, 0x01, 0x01,
@@ -39,15 +71,16 @@ static void start_sample (int number, int volume, int repeats, zword eos)
 	0xff, 0xff, 0xff, 0xff, 0xff
     };
 
-    if (A00063 == LURKING_HORROR)
+    if (A00075 == LURKING_HORROR)
 	repeats = lh_repeats[number];
 
-    A00222 (number, volume, repeats);
+    A00236 (number, volume, repeats, eos);
 
     routine = eos;
     playing = TRUE;
 
 }/* start_sample */
+
 
 /*
  * start_next_sample
@@ -57,10 +90,8 @@ static void start_sample (int number, int volume, int repeats, zword eos)
  * immediately follow other samples.
  *
  */
-
 static void start_next_sample (void)
 {
-
     if (next_sample != 0)
 	start_sample (next_sample, next_volume, 0, 0);
 
@@ -69,33 +100,37 @@ static void start_next_sample (void)
 
 }/* start_next_sample */
 
+
 /*
- * end_of_sound
+ * A00205
  *
  * Call the Z-code routine which was given as the last parameter of
  * a sound_effect call. This function may be called from a hardware
  * interrupt (which requires extremely careful programming).
  *
  */
-
-void end_of_sound (void)
+void A00205 (void)
 {
+#if defined(DJGPP) && defined(SOUND_SUPPORT)
+    A00205_flag = 0;
+#endif
 
     playing = FALSE;
 
     if (!locked) {
 
-	if (A00063 == LURKING_HORROR)
+	if (A00075 == LURKING_HORROR)
 	    start_next_sample ();
 
-	A00242 (routine);
+	A00269 (routine);
 
     }
 
-}/* end_of_sound */
+}/* A00205 */
+
 
 /*
- * A00170, load / play / stop / discard a sound effect.
+ * A00175, load / play / stop / discard a sound effect.
  *
  *   	zargs[0] = number of bleep (1 or 2) or sample
  *	zargs[1] = operation to perform (samples only)
@@ -106,18 +141,25 @@ void end_of_sound (void)
  *	 Repeats are stored in the high byte, 255 is infinite loop.
  *
  */
-
-void A00170 (void)
+void A00175 (void)
 {
     zword number = zargs[0];
     zword effect = zargs[1];
     zword volume = zargs[2];
 
-    if (number >= 3) {
+    /* By default play sound 1 at volume 8 */
+    if (zargc < 1)
+	number = 1;
+    if (zargc < 2)
+	effect = EFFECT_PLAY;
+    if (zargc < 3)
+	volume = 8;
+
+    if (number >= 3 || number == 0) {
 
 	locked = TRUE;
 
-	if (A00063 == LURKING_HORROR && (number == 9 || number == 16)) {
+	if (A00075 == LURKING_HORROR && (number == 9 || number == 16)) {
 
 	    if (effect == EFFECT_PLAY) {
 
@@ -140,22 +182,22 @@ void A00170 (void)
 	switch (effect) {
 
 	case EFFECT_PREPARE:
-	    A00209 (number);
+	    A00223 (number);
 	    break;
 	case EFFECT_PLAY:
 	    start_sample (number, lo (volume), hi (volume), (zargc == 4) ? zargs[3] : 0);
 	    break;
 	case EFFECT_STOP:
-	    A00223 ();
+	    A00237 (number);
 	    break;
 	case EFFECT_FINISH_WITH:
-	    A00203 ();
+	    A00216 (number);
 	    break;
 
 	}
 
 	locked = FALSE;
 
-    } else A00196 (number);
+    } else A00209 (number);
 
-}/* A00170 */
+}/* A00175 */

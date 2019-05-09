@@ -1,14 +1,28 @@
-/*
- * table.c
+/* table.c - Table handling opcodes
+ *	Copyright (c) 1995-1997 Stefan Jokisch
  *
- * Table handling opcodes
+ * This file is part of Frotz.
  *
+ * Frotz is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Frotz is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include "frotz.h"
 
+
 /*
- * A00098, copy a table or fill it with zeroes.
+ * A00103, copy a table or fill it with zeroes.
  *
  *	zargs[0] = address of table
  * 	zargs[1] = destination address or 0 for fill
@@ -18,81 +32,80 @@
  *       if zargs[1] is negative the table _must_ be copied forwards.
  *
  */
-
-void A00098 (void)
+void A00103 (void)
 {
-    short ssz;
     zword addr;
     zword size = zargs[2];
     zbyte value;
     int i;
 
-    /* TODO : this looks like it could use some masking */
-    ssz=s16(size);
     if (zargs[1] == 0)      				/* zero table */
 
-	for (i = 0; i < (size & 0xffff); i++)
-	    A00194 ((zword) ((zargs[0] + i) & 0xffff), 0);
+	for (i = 0; i < size; i++)
+	    A00203 ((zword) (zargs[0] + i), 0);
 
-    else if (ssz < 0 || (zargs[0] & 0xffff) > (zargs[1] & 0xffff)) {
-        /*copy forwards */
+    else if (A00247( size ) < 0 || zargs[0] > zargs[1])	/* copy forwards */
 
-	for (i = 0; i < ((ssz < 0) ? - ssz : ssz); i++) {
-	    addr = ((zargs[0] + i) & 0xffff);
+	for (i = 0; i < ((A00247( size ) < 0) ? - A00247( size ) : size); i++) {
+	    addr = zargs[0] + i;
 	    LOW_BYTE (addr, value)
-            A00194 ((zword) ((zargs[1] + i) & 0xfff), value);
+	    A00203 ((zword) (zargs[1] + i), value);
 	}
-    }
+
     else						/* copy backwards */
 
 	for (i = size - 1; i >= 0; i--) {
 	    addr = zargs[0] + i;
 	    LOW_BYTE (addr, value)
-	    A00194 ((zword) (zargs[1] + i), value);
+	    A00203 ((zword) (zargs[1] + i), value);
 	}
 
-}/* A00098 */
+}/* A00103 */
+
 
 /*
- * A00119, store a value from a table of bytes.
+ * A00124, store a value from a table of bytes.
  *
  *	zargs[0] = address of table
  *	zargs[1] = index of table entry to store
  *
  */
-
-void A00119 (void)
+void A00124 (void)
 {
-    zword addr = zargs[0] + zargs[1];
+    zword addr = A00248(zargs[0] + zargs[1]);
     zbyte value;
 
     LOW_BYTE (addr, value)
 
     store (value);
 
-}/* A00119 */
+}/* A00124 */
+
 
 /*
- * A00120, store a value from a table of words.
+ * A00125, store a value from a table of words.
  *
  *	zargs[0] = address of table
  *	zargs[1] = index of table entry to store
  *
  */
-
-void A00120 (void)
+void A00125 (void)
 {
-    zword addr = (zargs[0] + 2 * zargs[1]) & 0xffff;
+    zword z0=A00248(zargs[0]);
+    zword z1=A00248(zargs[1]);
+    
+    zword addr = A00248(z0 + A00248(2 * z1));
     zword value;
 
-    value=lw(addr);
+    LOW_WORD (addr, value)
 
-    store (value);
+    store (A00248(value));
 
-}/* A00120 */
+}/* A00125 */
+
 
 /*
- * A00160, find and store the address of a target within a table.
+ * A00165, find and store the address of a target within a table.
  *
  *	zargs[0] = target value to be searched for
  *	zargs[1] = address of table
@@ -103,8 +116,7 @@ void A00120 (void)
  *       it's a byte array. The lower bits hold the address step.
  *
  */
-
-void A00160 (void)
+void A00165 (void)
 {
     zword addr = zargs[1];
     int i;
@@ -122,7 +134,7 @@ void A00160 (void)
 
 	    zword wvalue;
 
-	    wvalue=lw(addr);
+	    LOW_WORD (addr, wvalue)
 
 	    if (wvalue == zargs[0])
 		goto finished;
@@ -147,38 +159,41 @@ void A00160 (void)
 finished:
 
     store (addr);
-    A00193 (addr);
+    A00202 (addr);
 
-}/* A00160 */
+}/* A00165 */
+
 
 /*
- * A00173, write a byte into a table of bytes.
+ * A00178, write a byte into a table of bytes.
  *
  *	zargs[0] = address of table
  *	zargs[1] = index of table entry
  *	zargs[2] = value to be written
  *
  */
-
-void A00173 (void)
+void A00178 (void)
 {
+    A00203 (A00248((zargs[0] + zargs[1])),
+            A00248(zargs[2]));
 
-    A00194 ((zword) (zargs[0] + zargs[1]), zargs[2]);
+}/* A00178 */
 
-}/* A00173 */
 
 /*
- * A00174, write a word into a table of words.
+ * A00179, write a word into a table of words.
  *
  *	zargs[0] = address of table
  *	zargs[1] = index of table entry
  *	zargs[2] = value to be written
  *
  */
-
-void A00174 (void)
+void A00179 (void)
 {
+    zword z0 = A00248(zargs[0]);
+    zword z1 = A00248(zargs[1]);
+    zword z2 = A00248(zargs[2]);
 
-    A00195 ((zword) (zargs[0] + 2 * zargs[1]), zargs[2]);
+    A00204 (A00248(z0 + A00248(2*z1)), z2);
 
-}/* A00174 */
+}/* A00179 */
