@@ -29,7 +29,8 @@
  */
 void z_add (void)
 {
-    store ((zword) (sanitize_16( zargs[0] ) + sanitize_16( zargs[1])) );
+    store (truncate_zword((zword) (sanitize_16( zargs[0] ) +
+                                   sanitize_16( zargs[1])) ));
 
 }/* z_add */
 
@@ -43,7 +44,7 @@ void z_add (void)
  */
 void z_and (void)
 {
-    store ((zword) (zargs[0] & zargs[1]));
+    store (truncate_zword((zword) (zargs[0] & zargs[1])));
 
 }/* z_and */
 
@@ -58,9 +59,11 @@ void z_and (void)
 void z_art_shift (void)
 {
     if (sanitize_16( zargs[1] ) > 0)
-	store ((zword) (sanitize_16( zargs[0] ) << sanitize_16( zargs[1])) );
+	store (truncate_zword((zword) (sanitize_16( zargs[0] )
+                                       << sanitize_16( zargs[1])) ));
     else
-	store ((zword) (sanitize_16( zargs[0] ) >> - sanitize_16( zargs[1])) );
+	store (truncate_zword((zword) (sanitize_16( zargs[0] )
+                                       >> - sanitize_16( zargs[1])) ));
 
 }/* z_art_shift */
 
@@ -74,10 +77,11 @@ void z_art_shift (void)
  */
 void z_div (void)
 {
-    if (zargs[1] == 0)
+    if (truncate_zword(zargs[1] == 0))
 	runtime_error (ERR_DIV_ZERO);
 
-    store ((zword) (sanitize_16( zargs[0] ) / sanitize_16( zargs[1])) );
+    store (truncate_zword((zword) (sanitize_16( zargs[0] )
+                                   / sanitize_16( zargs[1])) ));
 
 }/* z_div */
 
@@ -93,10 +97,16 @@ void z_div (void)
  */
 void z_je (void)
 {
+
+    zword z0 = truncate_zword(zargs[0]);
+    zword z1 = truncate_zword(zargs[1]);
+    zword z2 = truncate_zword(zargs[2]);
+    zword z3 = truncate_zword(zargs[3]);
+    
     branch (
-	zargc > 1 && (zargs[0] == zargs[1] || (
-	zargc > 2 && (zargs[0] == zargs[2] || (
-	zargc > 3 && (zargs[0] == zargs[3]))))));
+	zargc > 1 && (z0 == z1 || (
+	zargc > 2 && (z0 == z2 || (
+        zargc > 3 && (z0 == z3))))));
 
 }/* z_je */
 
@@ -152,9 +162,11 @@ void z_jz (void)
 void z_log_shift (void)
 {
     if (sanitize_16( zargs[1] ) > 0)
-	store ((zword) (zargs[0] << sanitize_16( zargs[1])) );
+	store (truncate_zword((zword) (zargs[0]
+                                       << sanitize_16( zargs[1])) ));
     else
-	store ((zword) (zargs[0] >> - sanitize_16( zargs[1])) );
+	store (truncate_zword((zword) (zargs[0]
+                                       >> - sanitize_16( zargs[1])) ));
 
 }/* z_log_shift */
 
@@ -168,7 +180,7 @@ void z_log_shift (void)
  */
 void z_mod (void)
 {
-    if (zargs[1] == 0)
+    if (truncate_zword(zargs[1]) == 0)
 	runtime_error (ERR_DIV_ZERO);
 
     store ((zword) (sanitize_16( zargs[0] ) % sanitize_16( zargs[1])) );
@@ -185,7 +197,7 @@ void z_mod (void)
  */
 void z_mul (void)
 {
-    store ((zword) (sanitize_16( zargs[0] ) * sanitize_16( zargs[1])) );
+    store (truncate_zword((zword) (sanitize_16( zargs[0] ) * sanitize_16( zargs[1])) ));
 
 }/* z_mul */
 
@@ -198,7 +210,7 @@ void z_mul (void)
  */
 void z_not (void)
 {
-    store ((zword) ~zargs[0]);
+    store (truncate_zword((zword) ~zargs[0]));
 
 }/* z_not */
 
@@ -212,13 +224,13 @@ void z_not (void)
  */
 void z_or (void)
 {
-    store ((zword) (zargs[0] | zargs[1]));
+    store (truncate_zword((zword) (zargs[0] | zargs[1])));
 
 }/* z_or */
 
 
 /*
- * z_sub, 16bit substraction.
+ * z_sub, 16bit subtraction.
  *
  *	zargs[0] = first value
  *	zargs[1] = second value
@@ -226,7 +238,8 @@ void z_or (void)
  */
 void z_sub (void)
 {
-    store ((zword) (sanitize_16( zargs[0] ) - sanitize_16( zargs[1])) );
+    store (truncate_zword((zword) (sanitize_16( zargs[0] )
+                                   - sanitize_16( zargs[1])) ));
 
 }/* z_sub */
 
@@ -240,6 +253,8 @@ void z_sub (void)
  */
 void z_test (void)
 {
-    branch ((zargs[0] & zargs[1]) == zargs[1]);
+    zword z0 = truncate_zword(zargs[0]);
+    zword z1 = truncate_zword(zargs[1]);    
+    branch ((z0 & z1) == z1);
 
 }/* z_test */

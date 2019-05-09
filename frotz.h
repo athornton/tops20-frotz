@@ -853,5 +853,6 @@ bool    os_repaint_window (int win, int ypos_old, int ypos_new, int xpos,
 
 /* This is for systems whose word size is not a power of two. */
 short   sanitize_16(zword);
+zword   truncate_zword(zword);
 
 #endif /* FROTZ_H_ */

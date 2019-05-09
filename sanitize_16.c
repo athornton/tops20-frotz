@@ -1,6 +1,6 @@
 #include "frotz.h"
 
-short sanitize_16( zword z) {
+short sanitize_16 ( zword z ) {
     short s;
 
     s = (short) (z & 0xffff) ;
@@ -9,4 +9,8 @@ short sanitize_16( zword z) {
     }
 
     return s;
+}
+
+zword truncate_zword ( zword z ) {
+    return ( z & 0xffff);
 }
