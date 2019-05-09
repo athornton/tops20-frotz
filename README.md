@@ -10,5 +10,5 @@ The "current-unix" branch contains the modified source code; the
 happier, but it's much less readable.  There are also branches that
 represent v2.32r1.
 
-Process "unix" with https://github.com/athornton/gnusto-frotz-tops20 to
-get "master".
+Process "current-unix" with
+https://github.com/athornton/gnusto-frotz-tops20 to get "master".
