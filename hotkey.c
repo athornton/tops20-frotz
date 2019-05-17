@@ -20,18 +20,18 @@
 
 #include "frotz.h"
 
-extern int restore_undo (void);
+extern int restore_undo ();
 
-extern int read_number (void);
+extern int read_number ();
 
-extern bool read_yes_or_no (const char *);
+extern bool read_yes_or_no ();
 
-extern void replay_open (void);
-extern void replay_close (void);
-extern void record_open (void);
-extern void record_close (void);
+extern void replay_open ();
+extern void replay_close ();
+extern void record_open ();
+extern void record_close ();
 
-extern void seed_random (int);
+extern void seed_random ();
 
 /*
  * hot_key_debugging
@@ -39,7 +39,7 @@ extern void seed_random (int);
  * ...allows user to toggle cheating options on/off.
  *
  */
-static bool hot_key_debugging (void)
+static bool hot_key_debugging ()
 {
 
     print_string ("Debugging options\n");
@@ -61,7 +61,8 @@ static bool hot_key_debugging (void)
  * ...displays a list of all hot keys.
  *
  */
-static bool hot_key_help (void) {
+static bool hot_key_help ()
+ {
 
     print_string ("Help\n");
 
@@ -87,7 +88,7 @@ static bool hot_key_help (void) {
  * ...allows user to turn playback on.
  *
  */
-static bool hot_key_playback (void)
+static bool hot_key_playback ()
 {
     print_string ("Playback on\n");
 
@@ -105,7 +106,7 @@ static bool hot_key_playback (void)
  * ...allows user to turn recording on/off.
  *
  */
-static bool hot_key_recording (void)
+static bool hot_key_recording ()
 {
 
     if (istream_replay) {
@@ -130,7 +131,7 @@ static bool hot_key_recording (void)
  * ...allows user to seed the random number seed.
  *
  */
-static bool hot_key_seed (void)
+static bool hot_key_seed ()
 {
 
     print_string ("Seed random numbers\n");
@@ -149,7 +150,7 @@ static bool hot_key_seed (void)
  * ...allows user to undo the previous turn.
  *
  */
-static bool hot_key_undo (void)
+static bool hot_key_undo ()
 {
 
     print_string ("Undo one turn\n");
@@ -179,7 +180,7 @@ static bool hot_key_undo (void)
  * ...allows user to start a new game.
  *
  */
-static bool hot_key_restart (void)
+static bool hot_key_restart ()
 {
     print_string ("New game\n");
 
@@ -199,7 +200,7 @@ static bool hot_key_restart (void)
  * ...allows user to exit the game.
  *
  */
-static bool hot_key_quit (void)
+static bool hot_key_quit ()
 {
 
     print_string ("Exit game\n");
@@ -221,7 +222,8 @@ static bool hot_key_quit (void)
  * true to abort the current input action.
  *
  */
-bool handle_hot_key (zchar key)
+bool handle_hot_key (key)
+     zchar key;
 {
     if (cwin == 0) {
 

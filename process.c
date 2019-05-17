@@ -30,8 +30,8 @@ int zargc;
 
 static int finished = 0;
 
-static void __extended__ (void);
-static void __illegal__ (void);
+static void __extended__ ();
+static void __illegal__ ();
 
 void (*op0_opcodes[0x10]) (void) = {
     z_rtrue,
@@ -177,7 +177,7 @@ void (*ext_opcodes[0x1d]) (void) = {
  * Initialize process variables.
  *
  */
-void init_process (void)
+void init_process ()
 {
     finished = 0;
 } /* init_process */
@@ -189,7 +189,8 @@ void init_process (void)
  * Load an operand, either a variable or a constant.
  *
  */
-static void load_operand (zbyte type)
+static void load_operand (type)
+     zbyte type;
 {
     zword value;
 
@@ -229,7 +230,8 @@ static void load_operand (zbyte type)
  * for a VAR or EXT opcode.
  *
  */
-static void load_all_operands (zbyte specifier)
+static void load_all_operands (specifier)
+     zbyte specifier;
 {
     int i;
 
@@ -253,7 +255,7 @@ static void load_all_operands (zbyte specifier)
  * Z-code interpreter main loop
  *
  */
-void interpret (void)
+void interpret ()
 {
     /* If we got a save file on the command line, use it now. */
     if(f_setup.restore_mode==1) {
@@ -330,7 +332,11 @@ void interpret (void)
  * can be 0 (z_call_s), 1 (z_call_n) or 2 (direct call).
  *
  */
-void call (zword routine, int argc, zword *args, int ct)
+void call (routine, argc, args, ct)
+     zword routine;
+     int argc;
+     zword *args;
+     int ct;
 {
     long pc;
     zword value;
@@ -405,7 +411,8 @@ void call (zword routine, int argc, zword *args, int ct)
  * and we must exit the interpreter loop.
  *
  */
-void ret (zword value)
+void ret (value)
+     zword value;
 {
     long pc;
     int ct;
@@ -452,7 +459,8 @@ void ret (zword value)
  * return true.
  *
  */
-void branch (bool flag)
+void branch (flag)
+     bool flag;
 {
     long pc;
     zword offset;
@@ -498,7 +506,8 @@ void branch (bool flag)
  * Store an operand, either as a variable or pushed on the stack.
  *
  */
-void store (zword value)
+void store (value)
+     zword value;
 {
     zbyte variable;
 
@@ -528,7 +537,8 @@ void store (zword value)
  * The interpreter returns the result value on the stack.
  *
  */
-int direct_call (zword addr)
+int direct_call (addr)
+     zword addr;
 {
     zword saved_zargs[8];
     int saved_zargc;
@@ -570,7 +580,7 @@ int direct_call (zword addr)
  * Load and execute an extended opcode.
  *
  */
-static void __extended__ (void)
+static void __extended__ ()
 {
     zbyte opcode;
     zbyte specifier;
@@ -592,7 +602,7 @@ static void __extended__ (void)
  * Exit game because an unknown opcode has been hit.
  *
  */
-static void __illegal__ (void)
+static void __illegal__ ()
 {
     runtime_error (ERR_ILL_OPCODE);
 
@@ -605,7 +615,7 @@ static void __illegal__ (void)
  *	no zargs used
  *
  */
-void z_catch (void)
+void z_catch ()
 {
     store (frame_count);
 
@@ -619,7 +629,7 @@ void z_catch (void)
  *	zargs[1] = stack frame
  *
  */
-void z_throw (void)
+void z_throw ()
 {
     if (zargs[1] > frame_count)
 	runtime_error (ERR_BAD_FRAME);
@@ -642,7 +652,7 @@ void z_throw (void)
  *	zargs[7] = seventh argument (optional)
  *
  */
-void z_call_n (void)
+void z_call_n ()
 {
     if (zargs[0] != 0)
 	call (zargs[0], zargc - 1, zargs + 1, 1);
@@ -659,7 +669,7 @@ void z_call_n (void)
  *	zargs[7] = seventh argument (optional)
  *
  */
-void z_call_s (void)
+void z_call_s ()
 {
     if (zargs[0] != 0)
 	call (zargs[0], zargc - 1, zargs + 1, 0);
@@ -675,7 +685,7 @@ void z_call_s (void)
  * 	zargs[0] = number of arguments
  *
  */
-void z_check_arg_count (void)
+void z_check_arg_count ()
 {
     if (fp == stack + STACK_SIZE)
 	branch (zargs[0] == 0);
@@ -691,7 +701,7 @@ void z_check_arg_count (void)
  *	zargs[0] = PC relative address
  *
  */
-void z_jump (void)
+void z_jump ()
 {
     long pc;
 
@@ -713,7 +723,7 @@ void z_jump (void)
  *	no zargs used
  *
  */
-void z_nop (void)
+void z_nop ()
 {
     /* Do nothing */
 
@@ -726,7 +736,7 @@ void z_nop (void)
  *	no zargs used
  *
  */
-void z_quit (void)
+void z_quit ()
 {
     finished = 9999;
 
@@ -739,7 +749,7 @@ void z_quit (void)
  *	zargs[0] = value to return
  *
  */
-void z_ret (void)
+void z_ret ()
 {
     ret (zargs[0]);
 
@@ -752,7 +762,7 @@ void z_ret (void)
  *	no zargs used
  *
  */
-void z_ret_popped (void)
+void z_ret_popped ()
 {
     ret (*sp++);
 
@@ -765,7 +775,7 @@ void z_ret_popped (void)
  * 	no zargs used
  *
  */
-void z_rfalse (void)
+void z_rfalse ()
 {
     ret (0);
 
@@ -778,7 +788,7 @@ void z_rfalse (void)
  * 	no zargs used
  *
  */
-void z_rtrue (void)
+void z_rtrue ()
 {
     ret (1);
 

@@ -30,10 +30,10 @@
 #define cdecl
 #endif
 
-extern void interpret (void);
-extern void init_memory (void);
-extern void init_undo (void);
-extern void reset_memory (void);
+extern void interpret ();
+extern void init_memory ();
+extern void init_undo ();
+extern void reset_memory ();
 
 bool need_newline_at_exit = FALSE;
 
@@ -131,7 +131,7 @@ long reserve_mem = 0;
  *	no zargs used
  *
  */
-void z_piracy (void)
+void z_piracy ()
 {
     branch (!f_setup.piracy);
 
@@ -144,7 +144,9 @@ void z_piracy (void)
  * Prepare and run the game.
  *
  */
-int cdecl main (int argc, char *argv[])
+int cdecl main (argc, argv)
+     int argc;
+     char **argv;
 {
     os_init_setup ();
 

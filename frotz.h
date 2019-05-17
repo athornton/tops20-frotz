@@ -589,123 +589,123 @@ extern long reserve_mem;
 
 /*** Z-machine opcodes ***/
 
-void 	z_add (void);
-void 	z_and (void);
-void 	z_art_shift (void);
-void 	z_buffer_mode (void);
-void 	z_call_n (void);
-void 	z_call_s (void);
-void 	z_catch (void);
-void 	z_check_arg_count (void);
-void	z_check_unicode (void);
-void 	z_clear_attr (void);
-void 	z_copy_table (void);
-void 	z_dec (void);
-void 	z_dec_chk (void);
-void 	z_div (void);
-void 	z_draw_picture (void);
-void 	z_encode_text (void);
-void 	z_erase_line (void);
-void 	z_erase_picture (void);
-void 	z_erase_window (void);
-void 	z_get_child (void);
-void 	z_get_cursor (void);
-void 	z_get_next_prop (void);
-void 	z_get_parent (void);
-void 	z_get_prop (void);
-void 	z_get_prop_addr (void);
-void 	z_get_prop_len (void);
-void 	z_get_sibling (void);
-void 	z_get_wind_prop (void);
-void 	z_inc (void);
-void 	z_inc_chk (void);
-void 	z_input_stream (void);
-void 	z_insert_obj (void);
-void 	z_je (void);
-void 	z_jg (void);
-void 	z_jin (void);
-void 	z_jl (void);
-void 	z_jump (void);
-void 	z_jz (void);
-void 	z_load (void);
-void 	z_loadb (void);
-void 	z_loadw (void);
-void 	z_log_shift (void);
-void 	z_make_menu (void);
-void 	z_mod (void);
-void 	z_mouse_window (void);
-void 	z_move_window (void);
-void 	z_mul (void);
-void 	z_new_line (void);
-void 	z_nop (void);
-void 	z_not (void);
-void 	z_or (void);
-void 	z_output_stream (void);
-void 	z_picture_data (void);
-void 	z_picture_table (void);
-void 	z_piracy (void);
-void 	z_pop (void);
-void 	z_pop_stack (void);
-void 	z_print (void);
-void 	z_print_addr (void);
-void 	z_print_char (void);
-void 	z_print_form (void);
-void 	z_print_num (void);
-void 	z_print_obj (void);
-void 	z_print_paddr (void);
-void 	z_print_ret (void);
-void 	z_print_table (void);
-void	z_print_unicode (void);
-void 	z_pull (void);
-void 	z_push (void);
-void 	z_push_stack (void);
-void 	z_put_prop (void);
-void 	z_put_wind_prop (void);
-void 	z_quit (void);
-void 	z_random (void);
-void 	z_read (void);
-void 	z_read_char (void);
-void 	z_read_mouse (void);
-void 	z_remove_obj (void);
-void 	z_restart (void);
-void 	z_restore (void);
-void 	z_restore_undo (void);
-void 	z_ret (void);
-void 	z_ret_popped (void);
-void 	z_rfalse (void);
-void 	z_rtrue (void);
-void 	z_save (void);
-void 	z_save_undo (void);
-void 	z_scan_table (void);
-void 	z_scroll_window (void);
-void 	z_set_attr (void);
-void 	z_set_font (void);
-void 	z_set_colour (void);
-void 	z_set_cursor (void);
-void 	z_set_margins (void);
-void 	z_set_window (void);
-void 	z_set_text_style (void);
-void 	z_show_status (void);
-void 	z_sound_effect (void);
-void 	z_split_window (void);
-void 	z_store (void);
-void 	z_storeb (void);
-void 	z_storew (void);
-void 	z_sub (void);
-void 	z_test (void);
-void 	z_test_attr (void);
-void 	z_throw (void);
-void 	z_tokenise (void);
-void 	z_verify (void);
-void 	z_window_size (void);
-void 	z_window_style (void);
+void 	z_add ();
+void 	z_and ();
+void 	z_art_shift ();
+void 	z_buffer_mode ();
+void 	z_call_n ();
+void 	z_call_s ();
+void 	z_catch ();
+void 	z_check_arg_count ();
+void	z_check_unicode ();
+void 	z_clear_attr ();
+void 	z_copy_table ();
+void 	z_dec ();
+void 	z_dec_chk ();
+void 	z_div ();
+void 	z_draw_picture ();
+void 	z_encode_text ();
+void 	z_erase_line ();
+void 	z_erase_picture ();
+void 	z_erase_window ();
+void 	z_get_child ();
+void 	z_get_cursor ();
+void 	z_get_next_prop ();
+void 	z_get_parent ();
+void 	z_get_prop ();
+void 	z_get_prop_addr ();
+void 	z_get_prop_len ();
+void 	z_get_sibling ();
+void 	z_get_wind_prop ();
+void 	z_inc ();
+void 	z_inc_chk ();
+void 	z_input_stream ();
+void 	z_insert_obj ();
+void 	z_je ();
+void 	z_jg ();
+void 	z_jin ();
+void 	z_jl ();
+void 	z_jump ();
+void 	z_jz ();
+void 	z_load ();
+void 	z_loadb ();
+void 	z_loadw ();
+void 	z_log_shift ();
+void 	z_make_menu ();
+void 	z_mod ();
+void 	z_mouse_window ();
+void 	z_move_window ();
+void 	z_mul ();
+void 	z_new_line ();
+void 	z_nop ();
+void 	z_not ();
+void 	z_or ();
+void 	z_output_stream ();
+void 	z_picture_data ();
+void 	z_picture_table ();
+void 	z_piracy ();
+void 	z_pop ();
+void 	z_pop_stack ();
+void 	z_print ();
+void 	z_print_addr ();
+void 	z_print_char ();
+void 	z_print_form ();
+void 	z_print_num ();
+void 	z_print_obj ();
+void 	z_print_paddr ();
+void 	z_print_ret ();
+void 	z_print_table ();
+void	z_print_unicode ();
+void 	z_pull ();
+void 	z_push ();
+void 	z_push_stack ();
+void 	z_put_prop ();
+void 	z_put_wind_prop ();
+void 	z_quit ();
+void 	z_random ();
+void 	z_read ();
+void 	z_read_char ();
+void 	z_read_mouse ();
+void 	z_remove_obj ();
+void 	z_restart ();
+void 	z_restore ();
+void 	z_restore_undo ();
+void 	z_ret ();
+void 	z_ret_popped ();
+void 	z_rfalse ();
+void 	z_rtrue ();
+void 	z_save ();
+void 	z_save_undo ();
+void 	z_scan_table ();
+void 	z_scroll_window ();
+void 	z_set_attr ();
+void 	z_set_font ();
+void 	z_set_colour ();
+void 	z_set_cursor ();
+void 	z_set_margins ();
+void 	z_set_window ();
+void 	z_set_text_style ();
+void 	z_show_status ();
+void 	z_sound_effect ();
+void 	z_split_window ();
+void 	z_store ();
+void 	z_storeb ();
+void 	z_storew ();
+void 	z_sub ();
+void 	z_test ();
+void 	z_test_attr ();
+void 	z_throw ();
+void 	z_tokenise ();
+void 	z_verify ();
+void 	z_window_size ();
+void 	z_window_style ();
 
 /* Definitions for error handling functions and error codes. */
 
 /* extern int err_report_mode; */
 
-void	init_err (void);
-void	runtime_error (int);
+void	init_err ();
+void	runtime_error ();
  
 /* Error codes */
 #define ERR_TEXT_BUF_OVF 1	/* Text buffer overflow */
@@ -763,100 +763,99 @@ void	runtime_error (int);
 #define ERR_DEFAULT_REPORT_MODE ERR_REPORT_ONCE
 
 /*** Assorted initialization functions ***/
-void   init_buffer (void);
-void   init_process (void);
-void   init_sound (void);
+void   init_buffer ();
+void   init_process ();
+void   init_sound ();
 
 /*** Various global functions ***/
 
-zchar	translate_from_zscii (zbyte);
-zbyte	translate_to_zscii (zchar);
+zchar	translate_from_zscii ();
+zbyte	translate_to_zscii ();
 
-void 	flush_buffer (void);
-void	new_line (void);
-void	print_char (zchar);
-void	print_num (zword);
-void	print_object (zword);
-void 	print_string (const char *);
+void 	flush_buffer ();
+void	new_line ();
+void	print_char ();
+void	print_num ();
+void	print_object ();
+void 	print_string ();
 
-void 	stream_mssg_on (void);
-void 	stream_mssg_off (void);
+void 	stream_mssg_on ();
+void 	stream_mssg_off ();
 
-void	ret (zword);
-void 	store (zword);
-void 	branch (bool);
+void	ret ();
+void 	store ();
+void 	branch ();
 
-void	storeb (zword, zbyte);
-void	storew (zword, zword);
+void	storeb ();
+void	storew ();
 
-void end_of_sound (void);
+void end_of_sound ();
 
-int completion (const zchar *buffer, zchar *result);
+int completion ();
 
-bool is_terminator (zchar);
-void read_string (int max, zchar *buffer);
-bool read_yes_or_no (const char *);
+bool is_terminator ();
+void read_string ();
+bool read_yes_or_no ();
 
-void screen_new_line (void);
+void screen_new_line ();
 
 	/*** returns the current window ***/
-Zwindow * curwinrec( void);
+Zwindow * curwinrec();
 
 
 /*** Interface functions ***/
 
-void 	os_beep (int);
-int  	os_char_width (zchar);
-void 	os_display_char (zchar);
-void 	os_display_string (const zchar *);
-void 	os_draw_picture (int, int, int);
-void 	os_erase_area (int, int, int, int, int);
-void 	os_fatal (const char *, ...);
-void 	os_finish_with_sample (int);
-int  	os_font_data (int, int *, int *);
-void 	os_init_screen (void);
-void	os_init_sound (void);
-FILE	*os_load_story (void);
-void 	os_more_prompt (void);
-int  	os_peek_colour (void);
-int  	os_picture_data (int, int *, int *);
-void 	os_prepare_sample (int);
-void 	os_process_arguments (int, char *[]);
-int	os_random_seed (void);
-char  	*os_read_file_name (const char *, int);
-zchar	os_read_key (int, int);
-zchar	os_read_line (int, zchar *, int, int, int);
-void 	os_reset_screen (void);
-void 	os_restart_game (int);
-void 	os_scroll_area (int, int, int, int, int);
-void 	os_set_colour (int, int);
-void 	os_set_cursor (int, int);
-void 	os_set_font (int);
-void 	os_set_text_style (int);
-void 	os_start_sample (int, int, int, zword);
-void 	os_stop_sample (int);
-int	os_storyfile_seek (FILE *, long, int);
-int	os_storyfile_tell (FILE *);
-int  	os_string_width (const zchar *);
-void	os_init_setup (void);
-void 	os_warn (const char *, ...);
-void	os_quit (void);
+void 	os_beep ();
+int  	os_char_width ();
+void 	os_display_char ();
+void 	os_display_string ();
+void 	os_draw_picture ();
+void 	os_erase_area ();
+void 	os_fatal ();
+void 	os_finish_with_sample ();
+int  	os_font_data ();
+void 	os_init_screen ();
+void	os_init_sound ();
+FILE	*os_load_story ();
+void 	os_more_prompt ();
+int  	os_peek_colour ();
+int  	os_picture_data ();
+void 	os_prepare_sample ();
+void 	os_process_arguments ();
+int	os_random_seed ();
+char  	*os_read_file_name ();
+zchar	os_read_key ();
+zchar	os_read_line ();
+void 	os_reset_screen ();
+void 	os_restart_game ();
+void 	os_scroll_area ();
+void 	os_set_colour ();
+void 	os_set_cursor ();
+void 	os_set_font ();
+void 	os_set_text_style ();
+void 	os_start_sample ();
+void 	os_stop_sample ();
+int	os_storyfile_seek ();
+int	os_storyfile_tell ();
+int  	os_string_width ();
+void	os_init_setup ();
+void 	os_warn ();
+void	os_quit ();
 
 /**
  * Called regularly by the interpreter, at least every few instructions
  * (only when interpreting: e.g., not when waiting for input).
  */
-void    os_tick (void);
+void    os_tick ();
 
 /* Front ends call this if the terminal size changes. */
-void    resize_screen(void);
+void    resize_screen();
 
 /* This is callable only from resize_screen. */
-bool    os_repaint_window (int win, int ypos_old, int ypos_new, int xpos,
-                           int ysize, int xsize);
+bool    os_repaint_window ();
 
 /* This is for systems whose word size is not a power of two. */
-short   sanitize_16(zword);
+short   sanitize_16();
 
 #ifdef WEIRD_WORDSIZE
 #define TRUNCATE_ZWORD(v) ((zword) ((v) & 0xffff))

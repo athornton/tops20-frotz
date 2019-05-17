@@ -1,6 +1,8 @@
 #include "frotz.h"
 
-short sanitize_16 ( zword z ) {
+short sanitize_16 (z)
+     zword z;
+ {
     short s;
 
     s = (short) (z & 0xffff) ;

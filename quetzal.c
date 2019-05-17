@@ -102,7 +102,9 @@ static zword frames[STACK_SIZE/4+1];
     (write_byte (fp, 0)         && write_byte (fp, (run)))
 
 /* Read one word from file; return TRUE if OK. */
-static bool read_word (FILE *f, zword *result)
+static bool read_word (f, result)
+     FILE *f;
+     zword *result;
 {
     int a, b;
 
@@ -114,7 +116,9 @@ static bool read_word (FILE *f, zword *result)
 }
 
 /* Read one long from file; return TRUE if OK. */
-static bool read_long (FILE *f, zlong *result)
+static bool read_long (f, result)
+     FILE *f;
+     zlong *result;
 {
     int a, b, c, d;
 
@@ -133,7 +137,9 @@ static bool read_long (FILE *f, zlong *result)
  * Restore a saved game using Quetzal format. Return 2 if OK, 0 if an error
  * occurred before any damage was done, -1 on a fatal error.
  */
-zword restore_quetzal (FILE *svf, FILE *stf)
+zword restore_quetzal (svf, stf)
+     FILE *svf;
+     FILE *stf;
 {
     zlong ifzslen, currlen, tmpl;
     zlong pc;
@@ -423,7 +429,9 @@ zword restore_quetzal (FILE *svf, FILE *stf)
 /*
  * Save a game using Quetzal format. Return 1 if OK, 0 if failed.
  */
-zword save_quetzal (FILE *svf, FILE *stf)
+zword save_quetzal (svf, stf)
+     FILE *svf;
+     FILE *stf;
 {
     zlong ifzslen = 0, cmemlen = 0, stkslen = 0;
     zlong pc;

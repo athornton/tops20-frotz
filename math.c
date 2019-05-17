@@ -27,7 +27,7 @@
  *	zargs[1] = second value
  *
  */
-void z_add (void)
+void z_add ()
 {
     store (TRUNCATE_ZWORD((zword) (sanitize_16( zargs[0] ) +
                                    sanitize_16( zargs[1])) ));
@@ -42,7 +42,7 @@ void z_add (void)
  *	zargs[1] = second value
  *
  */
-void z_and (void)
+void z_and ()
 {
     store (TRUNCATE_ZWORD((zword) (zargs[0] & zargs[1])));
 
@@ -56,7 +56,7 @@ void z_and (void)
  *	zargs[1] = #positions to shift left (positive) or right
  *
  */
-void z_art_shift (void)
+void z_art_shift ()
 {
     if (sanitize_16( zargs[1] ) > 0)
 	store (TRUNCATE_ZWORD((zword) (sanitize_16( zargs[0] )
@@ -75,7 +75,7 @@ void z_art_shift (void)
  *	zargs[1] = second value
  *
  */
-void z_div (void)
+void z_div ()
 {
     if (TRUNCATE_ZWORD(zargs[1] == 0))
 	runtime_error (ERR_DIV_ZERO);
@@ -95,7 +95,7 @@ void z_div (void)
  *	zargs[3] = fourth value (optional)
  *
  */
-void z_je (void)
+void z_je ()
 {
 
     zword z0 = TRUNCATE_ZWORD(zargs[0]);
@@ -118,7 +118,7 @@ void z_je (void)
  *	zargs[1] = second value
  *
  */
-void z_jg (void)
+void z_jg ()
 {
     branch (sanitize_16( zargs[0] ) > sanitize_16( zargs[1]) );
 
@@ -132,7 +132,7 @@ void z_jg (void)
  *	zargs[1] = second value
  *
  */
-void z_jl (void)
+void z_jl ()
 {
     branch (sanitize_16( zargs[0] ) < sanitize_16( zargs[1]) );
 
@@ -145,7 +145,7 @@ void z_jl (void)
  * 	zargs[0] = value
  *
  */
-void z_jz (void)
+void z_jz ()
 {
     branch (sanitize_16( zargs[0] ) == 0);
 
@@ -159,7 +159,7 @@ void z_jz (void)
  *	zargs[1] = #positions to shift left (positive) or right (negative)
  *
  */
-void z_log_shift (void)
+void z_log_shift ()
 {
     if (sanitize_16( zargs[1] ) > 0)
 	store (TRUNCATE_ZWORD((zword) (zargs[0]
@@ -178,7 +178,7 @@ void z_log_shift (void)
  *	zargs[1] = second value
  *
  */
-void z_mod (void)
+void z_mod ()
 {
     if (TRUNCATE_ZWORD(zargs[1]) == 0)
 	runtime_error (ERR_DIV_ZERO);
@@ -195,7 +195,7 @@ void z_mod (void)
  *	zargs[1] = second value
  *
  */
-void z_mul (void)
+void z_mul ()
 {
     store (TRUNCATE_ZWORD((zword) (sanitize_16( zargs[0] ) * sanitize_16( zargs[1])) ));
 
@@ -208,7 +208,7 @@ void z_mul (void)
  * 	zargs[0] = value
  *
  */
-void z_not (void)
+void z_not ()
 {
     store (TRUNCATE_ZWORD((zword) ~zargs[0]));
 
@@ -222,7 +222,7 @@ void z_not (void)
  *	zargs[1] = second value
  *
  */
-void z_or (void)
+void z_or ()
 {
     store (TRUNCATE_ZWORD((zword) (zargs[0] | zargs[1])));
 
@@ -236,7 +236,7 @@ void z_or (void)
  *	zargs[1] = second value
  *
  */
-void z_sub (void)
+void z_sub ()
 {
     store (TRUNCATE_ZWORD((zword) (sanitize_16( zargs[0] )
                                    - sanitize_16( zargs[1])) ));
@@ -251,7 +251,7 @@ void z_sub (void)
  *	zargs[1] = bit mask
  *
  */
-void z_test (void)
+void z_test ()
 {
     zword z0 = TRUNCATE_ZWORD(zargs[0]);
     zword z1 = TRUNCATE_ZWORD(zargs[1]);    

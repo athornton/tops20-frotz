@@ -32,7 +32,7 @@
  *       if zargs[1] is negative the table _must_ be copied forwards.
  *
  */
-void z_copy_table (void)
+void z_copy_table ()
 {
     zword addr;
     zword size = zargs[2];
@@ -70,7 +70,7 @@ void z_copy_table (void)
  *	zargs[1] = index of table entry to store
  *
  */
-void z_loadb (void)
+void z_loadb ()
 {
     zword addr = TRUNCATE_ZWORD(zargs[0] + zargs[1]);
     zbyte value;
@@ -89,7 +89,7 @@ void z_loadb (void)
  *	zargs[1] = index of table entry to store
  *
  */
-void z_loadw (void)
+void z_loadw ()
 {
     zword z0=TRUNCATE_ZWORD(zargs[0]);
     zword z1=TRUNCATE_ZWORD(zargs[1]);
@@ -116,7 +116,7 @@ void z_loadw (void)
  *       it's a byte array. The lower bits hold the address step.
  *
  */
-void z_scan_table (void)
+void z_scan_table ()
 {
     zword addr = zargs[1];
     int i;
@@ -172,7 +172,7 @@ finished:
  *	zargs[2] = value to be written
  *
  */
-void z_storeb (void)
+void z_storeb ()
 {
     storeb (TRUNCATE_ZWORD((zargs[0] + zargs[1])),
             TRUNCATE_ZWORD(zargs[2]));
@@ -188,7 +188,7 @@ void z_storeb (void)
  *	zargs[2] = value to be written
  *
  */
-void z_storew (void)
+void z_storew ()
 {
     zword z0 = TRUNCATE_ZWORD(zargs[0]);
     zword z1 = TRUNCATE_ZWORD(zargs[1]);

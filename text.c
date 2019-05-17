@@ -24,7 +24,7 @@ enum string_type {
     LOW_STRING, ABBREVIATION, HIGH_STRING, EMBEDDED_STRING, VOCABULARY
 };
 
-extern zword object_name (zword);
+extern zword object_name ();
 
 static zchar decoded[10];
 static zword encoded[3];
@@ -53,7 +53,8 @@ static zchar zscii_to_latin1[] = {
  * Map a ZSCII character onto the ISO Latin-1 alphabet.
  *
  */
-zchar translate_from_zscii (zbyte c)
+zchar translate_from_zscii (c)
+     zbyte c;
 {
     if (c == 0xfc)
 	return ZC_MENU_CLICK;
@@ -106,7 +107,8 @@ zchar translate_from_zscii (zbyte c)
  * Map an ISO Latin-1 character onto the ZSCII alphabet.
  *
  */
-zbyte translate_to_zscii (zchar c)
+zbyte translate_to_zscii (c)
+     zchar c;
 {
     int i;
 
@@ -166,7 +168,9 @@ zbyte translate_to_zscii (zchar c)
  * Return a character from one of the three character sets.
  *
  */
-static zchar alphabet (int set, int index)
+static zchar alphabet (set, index)
+     int set;
+     int index;
 {
     if (h_alphabet != 0) {	/* game uses its own alphabet */
 
@@ -197,7 +201,9 @@ static zchar alphabet (int set, int index)
  * Copy a ZSCII string from the memory to the global "decoded" string.
  *
  */
-static void load_string (zword addr, zword length)
+static void load_string (addr, length)
+     zword addr;
+     zword length;
 {
     int resolution = (h_version <= V3) ? 2 : 3;
     int i = 0;
@@ -231,7 +237,8 @@ static void load_string (zword addr, zword length)
  * the minimum and maximum Z-characters.
  *
  */
-static void encode_text (int padding)
+static void encode_text (padding)
+     int padding;
 {
     static zchar again[] = { 'a', 'g', 'a', 'i', 'n', 0 };
     static zchar examine[] = { 'e', 'x', 'a', 'm', 'i', 'n', 'e', 0 };
@@ -313,7 +320,7 @@ static void encode_text (int padding)
  * 	zargs[0] = Unicode
  *
  */
-void z_check_unicode (void)
+void z_check_unicode ()
 {
     zword c = zargs[0];
 
@@ -341,7 +348,7 @@ void z_check_unicode (void)
  * three 16bit words.
  *
  */
-void z_encode_text (void)
+void z_encode_text ()
 {
     int i;
 
@@ -376,7 +383,9 @@ void z_encode_text (void)
  *
  */
 #define outchar(c)	if (st==VOCABULARY) *ptr++=c; else print_char(c)
-static void decode_text (enum string_type st, zword addr)
+static void decode_text (st, addr)
+     enum string_type st;
+     zword addr;
 {
     zchar *ptr;
     long byte_addr;
@@ -525,7 +534,7 @@ static void decode_text (enum string_type st, zword addr)
  * 	no zargs used
  *
  */
-void z_new_line (void)
+void z_new_line ()
 {
     new_line ();
 
@@ -538,7 +547,7 @@ void z_new_line (void)
  *	no zargs used
  *
  */
-void z_print (void)
+void z_print ()
 {
     decode_text (EMBEDDED_STRING, 0);
 
@@ -551,7 +560,7 @@ void z_print (void)
  *	zargs[0] = address of string to print
  *
  */
-void z_print_addr (void)
+void z_print_addr ()
 {
     decode_text (LOW_STRING, zargs[0]);
 
@@ -564,7 +573,7 @@ void z_print_addr (void)
  *	zargs[0] = ZSCII character to be printed
  *
  */
-void z_print_char (void)
+void z_print_char ()
 {
     print_char (translate_from_zscii (zargs[0]));
 
@@ -577,7 +586,7 @@ void z_print_char (void)
  *	zargs[0] = address of formatted table to be printed
  *
  */
-void z_print_form (void)
+void z_print_form ()
 {
     zword count;
     zword addr = zargs[0];
@@ -619,7 +628,8 @@ void z_print_form (void)
  * Print a signed 16bit number.
  *
  */
-void print_num (zword value)
+void print_num (value)
+     zword value;
 {
     int i;
 
@@ -645,7 +655,7 @@ void print_num (zword value)
  * 	zargs[0] = number to print
  *
  */
-void z_print_num (void)
+void z_print_num ()
 {
     print_num (zargs[0]);
 
@@ -658,7 +668,8 @@ void z_print_num (void)
  * Print an object description.
  *
  */
-void print_object (zword object)
+void print_object (object)
+     zword object;
 {
     zword addr = object_name (object);
     zword code = 0x94a5;
@@ -686,7 +697,7 @@ void print_object (zword object)
  * 	zargs[0] = number of object to be printed
  *
  */
-void z_print_obj (void)
+void z_print_obj ()
 {
     print_object (zargs[0]);
 
@@ -699,7 +710,7 @@ void z_print_obj (void)
  * 	zargs[0] = packed address of string to be printed
  *
  */
-void z_print_paddr (void)
+void z_print_paddr ()
 {
     decode_text (HIGH_STRING, zargs[0]);
 
@@ -712,7 +723,7 @@ void z_print_paddr (void)
  * 	no zargs used
  *
  */
-void z_print_ret (void)
+void z_print_ret ()
 {
     decode_text (EMBEDDED_STRING, 0);
     new_line ();
@@ -727,7 +738,8 @@ void z_print_ret (void)
  * Print a string of ASCII characters.
  *
  */
-void print_string (const char *s)
+void print_string (s)
+     const char *s;
 {
     char c;
 
@@ -747,7 +759,7 @@ void print_string (const char *s)
  * 	zargs[0] = Unicode
  *
  */
-void z_print_unicode (void)
+void z_print_unicode ()
 {
     print_char ((zargs[0] <= 0xff) ? zargs[0] : '?');
 
@@ -767,7 +779,9 @@ void z_print_unicode (void)
  * The return value is 0 if the search fails.
  *
  */
-static zword lookup_text (int padding, zword dct)
+static zword lookup_text (padding, dct)
+     int padding;
+     zword dct;
 {
     zword entry_addr;
     zword entry_count;
@@ -861,7 +875,13 @@ static zword lookup_text (int padding, zword dct)
  * times with different dictionaries); otherwise they are zero.
  *
  */
-static void tokenise_text (zword text, zword length, zword from, zword parse, zword dct, bool flag)
+static void tokenise_text (text, length, from, parse, dct, flag)
+     zword text;
+     zword length;
+     zword from;
+     zword parse;
+     zword dct;
+     bool flag;
 {
     zword addr;
     zbyte token_max, token_count;
@@ -899,7 +919,11 @@ static void tokenise_text (zword text, zword length, zword from, zword parse, zw
  * Split an input line into words and translate the words to tokens.
  *
  */
-void tokenise_line (zword text, zword token, zword dct, bool flag)
+void tokenise_line (text, token, dct, flag)
+     zword text;
+     zword token;
+     zword dct;
+     bool flag;
 {
     zword addr1;
     zword addr2;
@@ -1003,7 +1027,7 @@ void tokenise_line (zword text, zword token, zword dct, bool flag)
  *	zargs[3] = set when unknown words cause empty slots (optional)
  *
  */
-void z_tokenise (void)
+void z_tokenise ()
 {
     /* Supply default arguments */
 
@@ -1038,7 +1062,9 @@ void z_tokenise (void)
  * to the last word that results in the only possible completion.
  *
  */
-int completion (const zchar *buffer, zchar *result)
+int completion (buffer, result)
+     const zchar *buffer;
+     zchar *result;
 {
     zword minaddr;
     zword maxaddr;

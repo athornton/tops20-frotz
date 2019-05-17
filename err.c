@@ -65,7 +65,7 @@ static char *err_messages[] = {
     "@get_next_prop called with object 0"
 };
 
-static void print_long (unsigned long value, int base);
+static void print_long ();
 
 /*
  * init_err
@@ -73,7 +73,7 @@ static void print_long (unsigned long value, int base);
  * Initialise error reporting.
  *
  */
-void init_err (void)
+void init_err ()
 {
     int i;
 
@@ -93,7 +93,8 @@ void init_err (void)
  * errnum : Numeric code for error (1 to ERR_NUM_ERRORS)
  *
  */
-void runtime_error (int errnum)
+void runtime_error (errnum)
+     int errnum;
 {
     int wasfirst;
 
@@ -139,7 +140,9 @@ void runtime_error (int errnum)
  * Print an unsigned 32bit number in decimal or hex.
  *
  */
-static void print_long (unsigned long value, int base)
+static void print_long (value, base)
+     long unsigned int value;
+     int base;
 {
     unsigned long i;
     char c;

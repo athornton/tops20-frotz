@@ -22,7 +22,7 @@
 
 #define MAX_NESTING 16
 
-extern zword get_max_width (zword);
+extern zword get_max_width ();
 
 static int depth = -1;
 
@@ -40,7 +40,10 @@ static struct {
  * Begin output redirection to the memory of the Z-machine.
  *
  */
-void memory_open (zword table, zword xsize, bool buffering)
+void memory_open (table, xsize, buffering)
+     zword table;
+     zword xsize;
+     bool buffering;
 {
     if (++depth < MAX_NESTING) {
 
@@ -73,7 +76,7 @@ void memory_open (zword table, zword xsize, bool buffering)
  * Redirect a newline to the memory of the Z-machine.
  *
  */
-void memory_new_line (void)
+void memory_new_line ()
 {
     zword size;
     zword addr;
@@ -104,7 +107,8 @@ void memory_new_line (void)
  * Redirect a string of characters to the memory of the Z-machine.
  *
  */
-void memory_word (const zchar *s)
+void memory_word (s)
+     const zchar *s;
 {
     zword size;
     zword addr;
@@ -148,7 +152,7 @@ void memory_word (const zchar *s)
  * End of output redirection.
  *
  */
-void memory_close (void)
+void memory_close ()
 {
     if (depth >= 0) {
 

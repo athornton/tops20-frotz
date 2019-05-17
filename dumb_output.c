@@ -47,8 +47,12 @@ typedef unsigned short cell;
 static cell *screen_data;
 
 static cell make_cell(int style, char c) {return (style << 8) | (0xff & c);}
-static char cell_char(cell c) {return c & 0xff;}
-static int cell_style(cell c) {return c >> 8;}
+static char cell_char(c)
+     cell c;
+ {return c & 0xff;}
+static int cell_style(c)
+     cell c;
+ {return c >> 8;}
 
 
 /* A cell's style is REVERSE_STYLE, normal (0), or PICTURE_STYLE.
@@ -79,14 +83,18 @@ static enum {
 static char *rv_names[] = {"NONE", "DOUBLESTRIKE", "UNDERLINE", "CAPS"};
 static char rv_blank_char = ' ';
 
-static cell *dumb_row(int r) {return screen_data + r * h_screen_cols;}
+static cell *dumb_row(r)
+     int r;
+ {return screen_data + r * h_screen_cols;}
 
-static char *dumb_changes_row(int r)
+static char *dumb_changes_row(r)
+     int r;
 {
     return screen_changes + r * h_screen_cols;
 }
 
-int os_char_width (zchar z)
+int os_char_width (z)
+     zchar z;
 {
     if (plain_ascii && z >= ZC_LATIN1_MIN) {
 	char *p = latin1_to_ascii + 4 * (z - ZC_LATIN1_MIN);
@@ -95,7 +103,8 @@ int os_char_width (zchar z)
     return 1;
 }
 
-int os_string_width (const zchar *s)
+int os_string_width (s)
+     const zchar *s;
 {
     int width = 0;
     zchar c;
@@ -109,7 +118,9 @@ int os_string_width (const zchar *s)
     return width;
 }
 
-void os_set_cursor(int row, int col)
+void os_set_cursor(row, col)
+     int row;
+     int col;
 {
     cursor_row = row - 1; cursor_col = col - 1;
     if (cursor_row >= h_screen_rows)
@@ -124,13 +135,19 @@ bool os_repaint_window(int UNUSED(win), int UNUSED(ypos_old),
 }
 
 /* Set a cell and update screen_changes.  */
-static void dumb_set_cell(int row, int col, cell c)
+static void dumb_set_cell(row, col, c)
+     int row;
+     int col;
+     cell c;
 {
     dumb_changes_row(row)[col] = (c != dumb_row(row)[col]);
     dumb_row(row)[col] = c;
 }
 
-void dumb_set_picture_cell(int row, int col, char c)
+void dumb_set_picture_cell(row, col, c)
+     int row;
+     int col;
+     char c;
 {
     dumb_set_cell(row, col, make_cell(PICTURE_STYLE, c));
 }
@@ -144,13 +161,15 @@ static void dumb_copy_cell(int dest_row, int dest_col,
     dumb_changes_row(dest_row)[dest_col] = dumb_changes_row(src_row)[src_col];
 }
 
-void os_set_text_style(int x)
+void os_set_text_style(x)
+     int x;
 {
     current_style = x & REVERSE_STYLE;
 }
 
 /* put a character in the cell at the cursor and advance the cursor.  */
-static void dumb_display_char(char c)
+static void dumb_display_char(c)
+     char c;
 {
     dumb_set_cell(cursor_row, cursor_col, make_cell(current_style, c));
     if (++cursor_col == h_screen_cols) {
@@ -163,14 +182,16 @@ static void dumb_display_char(char c)
     }
 }
 
-void dumb_display_user_input(char *s)
+void dumb_display_user_input(s)
+     char *s;
 {
     /* copy to screen without marking it as a change.  */
     while (*s)
 	dumb_row(cursor_row)[cursor_col++] = make_cell(0, *s++);
 }
 
-void dumb_discard_old_input(int num_chars)
+void dumb_discard_old_input(num_chars)
+     int num_chars;
 {
   /* Weird discard stuff.  Grep spec for 'pain in my butt'.  */
   /* The old characters should be on the screen just before the cursor.
@@ -183,7 +204,8 @@ void dumb_discard_old_input(int num_chars)
 	cursor_row + 1, cursor_col + num_chars, -1);
 }
 
-void os_display_char (zchar c)
+void os_display_char (c)
+     zchar c;
 {
     if (c >= ZC_LATIN1_MIN) {
 	if (plain_ascii) {
@@ -205,7 +227,8 @@ void os_display_char (zchar c)
 
 
 /* Haxor your boxor? */
-void os_display_string (const zchar *s)
+void os_display_string (s)
+     const zchar *s;
 {
     zchar c;
 
@@ -220,7 +243,12 @@ void os_display_string (const zchar *s)
     }
 }
 
-void os_erase_area (int top, int left, int bottom, int right, int UNUSED (win))
+void os_erase_area (top, left, bottom, right, UNUSED_win)
+     int top;
+     int left;
+     int bottom;
+     int right;
+     int UNUSED_win;
 {
     int row, col;
     top--; left--; bottom--; right--;
@@ -230,7 +258,12 @@ void os_erase_area (int top, int left, int bottom, int right, int UNUSED (win))
     }
 }
 
-void os_scroll_area (int top, int left, int bottom, int right, int units)
+void os_scroll_area (top, left, bottom, right, units)
+     int top;
+     int left;
+     int bottom;
+     int right;
+     int units;
 {
     int row, col;
 
@@ -251,7 +284,10 @@ void os_scroll_area (int top, int left, int bottom, int right, int units)
     }
 }
 
-int os_font_data(int font, int *height, int *width)
+int os_font_data(font, height, width)
+     int font;
+     int *height;
+     int *width;
 {
     if (font == TEXT_FONT) {
 	*height = 1; *width = 1; return 1;
@@ -259,11 +295,17 @@ int os_font_data(int font, int *height, int *width)
     return 0;
 }
 
-void os_set_colour (int UNUSED (x), int UNUSED (y)) {}
-void os_set_font (int UNUSED (x)) {}
+void os_set_colour (UNUSED_x, UNUSED_y)
+     int UNUSED_x;
+     int UNUSED_y;
+ {}
+void os_set_font (UNUSED_x)
+     int UNUSED_x;
+ {}
 
 /* Print a cell to stdout.  */
-static void show_cell(cell cel)
+static void show_cell(cel)
+     cell cel;
 {
     char c = cell_char(cel);
     switch (cell_style(cel)) {
@@ -287,7 +329,8 @@ static void show_cell(cell cel)
     }
 }
 
-static bool will_print_blank(cell c)
+static bool will_print_blank(c)
+     cell c;
 {
     return (((cell_style(c) == PICTURE_STYLE) && !show_pictures)
 	|| ((cell_char(c) == ' ')
@@ -295,7 +338,9 @@ static bool will_print_blank(cell c)
 	|| (rv_blank_char == ' '))));
 }
 
-static void show_line_prefix(int row, char c)
+static void show_line_prefix(row, c)
+     int row;
+     char c;
 {
     if (show_line_numbers) {
 	if (row == -1)
@@ -311,7 +356,8 @@ static void show_line_prefix(int row, char c)
 }
 
 /* Print a row to stdout.  */
-static void show_row(int r)
+static void show_row(r)
+     int r;
 {
     if (r == -1) {
 	show_line_prefix(-1, '.');
@@ -331,7 +377,9 @@ static void show_row(int r)
 }
 
 /* Print the part of the cursor row before the cursor.  */
-void dumb_show_prompt(bool show_cursor, char line_type)
+void dumb_show_prompt(show_cursor, line_type)
+     bool show_cursor;
+     char line_type;
 {
     int i;
     show_line_prefix(show_cursor ? cursor_row : -1, line_type);
@@ -341,14 +389,15 @@ void dumb_show_prompt(bool show_cursor, char line_type)
     }
 }
 
-static void mark_all_unchanged(void)
+static void mark_all_unchanged()
 {
     memset(screen_changes, 0, screen_cells);
 }
 
 /* Check if a cell is a blank or will display as one.
  * (Used to help decide if contents are worth printing.)  */
-static bool is_blank(cell c)
+static bool is_blank(c)
+     cell c;
 {
     return ((cell_char(c) == ' ')
 	|| ((cell_style(c) == PICTURE_STYLE) && !show_pictures));
@@ -361,7 +410,8 @@ static bool is_blank(cell c)
  * last nonblank character on the last line that would be shown, then
  * don't show that line (because it will be redundant with the prompt
  * line just below it).  */
-void dumb_show_screen(bool show_cursor)
+void dumb_show_screen(show_cursor)
+     bool show_cursor;
 {
     int r, c, first, last;
     char changed_rows[0x100];
@@ -424,7 +474,7 @@ void dumb_show_screen(bool show_cursor)
 }
 
 /* Unconditionally show whole screen.  For \s user command.  */
-void dumb_dump_screen(void)
+void dumb_dump_screen()
 {
     int r;
     for (r = 0; r < h_screen_height; r++)
@@ -432,7 +482,7 @@ void dumb_dump_screen(void)
 }
 
 /* Called when it's time for a more prompt but user has them turned off.  */
-void dumb_elide_more_prompt(void)
+void dumb_elide_more_prompt()
 {
     dumb_show_screen(FALSE);
     if (compression_mode == COMPRESSION_SPANS && hide_lines == 0) {
@@ -440,12 +490,13 @@ void dumb_elide_more_prompt(void)
     }
 }
 
-void os_reset_screen(void)
+void os_reset_screen()
 {
     dumb_show_screen(FALSE);
 }
 
-void os_beep (int volume)
+void os_beep (volume)
+     int volume;
 {
     if (visual_bell)
 	printf("[%s-PITCHED BEEP]\n", (volume == 1) ? "HIGH" : "LOW");
@@ -456,15 +507,29 @@ void os_beep (int volume)
 
 /* To make the common code happy */
 
-void os_init_sound(void) {}
-void os_prepare_sample (int UNUSED (a)) {}
-void os_finish_with_sample (int UNUSED (a)) {}
-void os_start_sample (int UNUSED (a), int UNUSED (b), int UNUSED (c), zword UNUSED (d)) {}
-void os_stop_sample (int UNUSED (a)) {}
+void os_init_sound()
+ {}
+void os_prepare_sample (UNUSED_a)
+     int UNUSED_a;
+ {}
+void os_finish_with_sample (UNUSED_a)
+     int UNUSED_a;
+ {}
+void os_start_sample (UNUSED_a, UNUSED_b, UNUSED_c, UNUSED_d)
+     int UNUSED_a;
+     int UNUSED_b;
+     int UNUSED_c;
+     zword UNUSED_d;
+ {}
+void os_stop_sample (UNUSED_a)
+     int UNUSED_a;
+ {}
 
 
 /* if val is '0' or '1', set *var accordingly, else toggle it.  */
-static void toggle(bool *var, char val)
+static void toggle(var, val)
+     bool *var;
+     char val;
 {
     *var = val == '1' || (val != '0' && !*var);
 }
@@ -541,7 +606,7 @@ bool dumb_output_handle_setting(const char *setting, bool show_cursor,
     return TRUE;
 }
 
-void dumb_init_output(void)
+void dumb_init_output()
 {
     if (h_version == V3) {
 	h_config |= CONFIG_SPLITSCREEN;

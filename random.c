@@ -32,7 +32,8 @@ static int counter = 0;
  * Set the seed value for the random number generator.
  *
  */
-void seed_random (int value)
+void seed_random (value)
+     int value;
 {
 
     if (value == 0) {		/* ask interface for seed value */

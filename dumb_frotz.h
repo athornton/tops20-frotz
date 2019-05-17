@@ -17,23 +17,22 @@
 #include <time.h>
 
 /* From input.c.  */
-bool is_terminator (zchar);
+bool is_terminator ();
 
 /* dumb-input.c */
-bool dumb_handle_setting(const char *setting, bool show_cursor, bool startup);
-void dumb_init_input(void);
+bool dumb_handle_setting();
+void dumb_init_input();
 
 /* dumb-output.c */
-void dumb_init_output(void);
-bool dumb_output_handle_setting(const char *setting, bool show_cursor,
-				bool startup);
-void dumb_show_screen(bool show_cursor);
-void dumb_show_prompt(bool show_cursor, char line_type);
-void dumb_dump_screen(void);
-void dumb_display_user_input(char *);
-void dumb_discard_old_input(int num_chars);
-void dumb_elide_more_prompt(void);
-void dumb_set_picture_cell(int row, int col, char c);
+void dumb_init_output();
+bool dumb_output_handle_setting();
+void dumb_show_screen();
+void dumb_show_prompt();
+void dumb_dump_screen();
+void dumb_display_user_input();
+void dumb_discard_old_input();
+void dumb_elide_more_prompt();
+void dumb_set_picture_cell();
 
 /* dumb-pic.c */
-void dumb_init_pictures(char *graphics_filename);
+void dumb_init_pictures();

@@ -41,13 +41,19 @@ static struct {
 } *pict_info;
 static int num_pictures = 0;
 
-static unsigned char lookupb(unsigned char *p, int n) {return p[n];}
-static unsigned short lookupw(unsigned char *p, int n)
+static unsigned char lookupb(p, n)
+     unsigned char *p;
+     int n;
+ {return p[n];}
+static unsigned short lookupw(p, n)
+     unsigned char *p;
+     int n;
 {
     return (p[n + 1] << 8) | p[n];
 }
 
-void dumb_init_pictures (char *filename)
+void dumb_init_pictures (filename)
+     char *filename;
 {
     FILE *file = NULL;
     int success = FALSE;
@@ -106,7 +112,8 @@ void dumb_init_pictures (char *filename)
 }
 
 /* Convert a Z picture number to an index into pict_info.  */
-static int z_num_to_index(int n)
+static int z_num_to_index(n)
+     int n;
 {
     int i;
     for (i = 0; i <= num_pictures; i++)
@@ -115,7 +122,10 @@ static int z_num_to_index(int n)
     return -1;
 }
 
-bool os_picture_data(int num, int *height, int *width)
+bool os_picture_data(num, height, width)
+     int num;
+     int *height;
+     int *width;
 {
     int index;
 
@@ -134,7 +144,10 @@ bool os_picture_data(int num, int *height, int *width)
     return TRUE;
 }
 
-void os_draw_picture (int num, int row, int col)
+void os_draw_picture (num, row, col)
+     int num;
+     int row;
+     int col;
 {
     int width, height, r, c;
     if (!os_picture_data(num, &height, &width) || !width || !height)
@@ -164,4 +177,5 @@ void os_draw_picture (int num, int row, int col)
 	    dumb_set_picture_cell(row + height - 2, c, num ? (num % 10 + '0') : ':');
 }
 
-int os_peek_colour (void) {return BLACK_COLOUR; }
+int os_peek_colour ()
+ {return BLACK_COLOUR; }

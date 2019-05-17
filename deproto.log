@@ -1,0 +1,884 @@
+ubuntu@ip-172-31-28-166:~/git/tops20-frotz$ unprotoize *.c
+unprotoize: compiling 'buffer.c'
+unprotoize: compiling 'dumb_blorb.c'
+unprotoize: compiling 'dumb_init.c'
+unprotoize: compiling 'dumb_input.c'
+unprotoize: compiling 'dumb_output.c'
+unprotoize: compiling 'dumb_pic.c'
+unprotoize: compiling 'err.c'
+unprotoize: compiling 'fastmem.c'
+unprotoize: compiling 'files.c'
+unprotoize: compiling 'getopt.c'
+unprotoize: compiling 'hotkey.c'
+unprotoize: compiling 'input.c'
+unprotoize: compiling 'main.c'
+unprotoize: compiling 'math.c'
+unprotoize: compiling 'missing.c'
+unprotoize: compiling 'object.c'
+unprotoize: compiling 'process.c'
+unprotoize: compiling 'quetzal.c'
+unprotoize: compiling 'random.c'
+unprotoize: compiling 'redirect.c'
+unprotoize: compiling 'sanitize_16.c'
+unprotoize: compiling 'screen.c'
+unprotoize: compiling 'sound.c'
+unprotoize: compiling 'stream.c'
+unprotoize: compiling 'table.c'
+unprotoize: compiling 'text.c'
+unprotoize: compiling 'variable.c'
+unprotoize: compiling 'version.c'
+unprotoize: converting file 'object.c'
+object.c: 44: warning: 'object_address' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 74: warning: 'object_name' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 88: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 102: warning: 'first_property' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 113: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 128: warning: 'next_property' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 134: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 145: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 165: warning: 'unlink_object' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 188: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 195: warning: 'SET_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 197: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 198: warning: 'SET_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 203: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 208: warning: 'SET_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 227: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 234: warning: 'SET_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 236: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 237: warning: 'SET_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 242: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 247: warning: 'SET_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 268: warning: 'z_clear_attr' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 302: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 316: warning: 'z_jin' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 346: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 359: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 376: warning: 'z_get_child' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 405: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 419: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 438: warning: 'z_get_next_prop' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 463: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 476: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 488: warning: 'z_get_parent' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 516: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 529: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 547: warning: 'z_get_prop' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 572: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 586: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 614: warning: 'z_get_prop_addr' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 641: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 666: warning: 'z_get_prop_len' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 674: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 703: warning: 'z_get_sibling' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 723: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 737: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 756: warning: 'z_insert_obj' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 800: warning: 'SET_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 802: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 803: warning: 'SET_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 812: warning: 'SET_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 814: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 815: warning: 'SET_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 832: warning: 'z_put_prop' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 854: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 886: warning: 'z_remove_obj' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 911: warning: 'z_set_attr' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 945: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 965: warning: 'z_test_attr' excluded by preprocessing
+unprotoize: function definition not converted
+object.c: 996: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'buffer.c'
+buffer.c: 39: warning: 'flush_buffer' excluded by preprocessing
+unprotoize: function definition not converted
+buffer.c: 75: warning: 'print_char' excluded by preprocessing
+unprotoize: function definition not converted
+buffer.c: 125: warning: 'new_line' excluded by preprocessing
+unprotoize: function definition not converted
+buffer.c: 138: warning: 'init_buffer' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'screen.c'
+screen.c: 65: warning: 'winarg0' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 86: warning: 'winarg2' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 105: warning: 'update_cursor' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 120: warning: 'reset_cursor' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 142: warning: 'set_more_prompts' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 158: warning: 'units_left' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 172: warning: 'get_max_width' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 193: warning: 'countdown' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 209: warning: 'screen_new_line' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 285: warning: 'screen_char' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 316: warning: 'screen_word' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 370: warning: 'screen_write_input' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 393: warning: 'screen_erase_input' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 422: warning: 'console_read_input' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 466: warning: 'console_read_key' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 489: warning: 'update_attributes' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 518: warning: 'refresh_text_style' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 548: warning: 'set_window' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 583: warning: 'erase_window' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 614: warning: 'split_window' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 662: warning: 'erase_screen' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 686: warning: 'resize_screen' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 732: warning: 'restart_screen' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 797: warning: 'validate_click' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 843: warning: 'screen_mssg_on' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 865: warning: 'screen_mssg_off' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 884: warning: 'z_buffer_mode' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 917: warning: 'z_draw_picture' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 984: warning: 'z_erase_line' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1015: warning: 'z_erase_picture' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1045: warning: 'z_erase_window' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1063: warning: 'z_get_cursor' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1090: warning: 'z_get_wind_prop' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1108: warning: 'z_mouse_window' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1123: warning: 'z_move_window' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1145: warning: 'z_picture_data' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1187: warning: 'z_picture_table' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1206: warning: 'z_print_table' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1242: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1264: warning: 'z_put_wind_prop' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1283: warning: 'z_scroll_window' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1318: warning: 'z_set_colour' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1380: warning: 'z_set_font' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1416: warning: 'z_set_cursor' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1483: warning: 'z_set_margins' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1512: warning: 'z_set_text_style' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1533: warning: 'z_set_window' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1546: warning: 'pad_status_line' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1568: warning: 'z_show_status' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1587: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1589: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1591: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1669: warning: 'z_split_window' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1684: warning: 'z_window_size' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1709: warning: 'z_window_style' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1742: warning: 'get_window_colours' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1756: warning: 'get_window_font' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1787: warning: 'colour_in_use' excluded by preprocessing
+unprotoize: function definition not converted
+screen.c: 1811: warning: 'get_current_window' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'random.c'
+random.c: 35: warning: 'seed_random' excluded by preprocessing
+unprotoize: function definition not converted
+random.c: 58: warning: 'z_random' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'stream.c'
+stream.c: 69: warning: 'stream_mssg_on' excluded by preprocessing
+unprotoize: function definition not converted
+stream.c: 89: warning: 'stream_mssg_off' excluded by preprocessing
+unprotoize: function definition not converted
+stream.c: 111: warning: 'z_output_stream' excluded by preprocessing
+unprotoize: function definition not converted
+stream.c: 145: warning: 'stream_char' excluded by preprocessing
+unprotoize: function definition not converted
+stream.c: 161: warning: 'stream_word' excluded by preprocessing
+unprotoize: function definition not converted
+stream.c: 185: warning: 'stream_new_line' excluded by preprocessing
+unprotoize: function definition not converted
+stream.c: 208: warning: 'z_input_stream' excluded by preprocessing
+unprotoize: function definition not converted
+stream.c: 226: warning: 'stream_read_key' excluded by preprocessing
+unprotoize: function definition not converted
+stream.c: 288: warning: 'stream_read_input' excluded by preprocessing
+unprotoize: function definition not converted
+stream.c: 269: warning: source too confusing
+unprotoize: definition of function 'stream_read_input' not converted
+unprotoize: converting file 'getopt.c'
+getopt.c: 23: warning: 'getopt' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'hotkey.c'
+hotkey.c: 42: warning: 'hot_key_debugging' excluded by preprocessing
+unprotoize: function definition not converted
+hotkey.c: 90: warning: 'hot_key_playback' excluded by preprocessing
+unprotoize: function definition not converted
+hotkey.c: 108: warning: 'hot_key_recording' excluded by preprocessing
+unprotoize: function definition not converted
+hotkey.c: 133: warning: 'hot_key_seed' excluded by preprocessing
+unprotoize: function definition not converted
+hotkey.c: 152: warning: 'hot_key_undo' excluded by preprocessing
+unprotoize: function definition not converted
+hotkey.c: 182: warning: 'hot_key_restart' excluded by preprocessing
+unprotoize: function definition not converted
+hotkey.c: 202: warning: 'hot_key_quit' excluded by preprocessing
+unprotoize: function definition not converted
+hotkey.c: 224: warning: 'handle_hot_key' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'dumb_output.c'
+dumb_output.c: 84: warning: 'dumb_changes_row' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 89: warning: 'os_char_width' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 98: warning: 'os_string_width' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 112: warning: 'os_set_cursor' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 119: warning: 'os_repaint_window' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 127: warning: 'dumb_set_cell' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 133: warning: 'dumb_set_picture_cell' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 140: warning: 'dumb_copy_cell' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 147: warning: 'os_set_text_style' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 153: warning: 'dumb_display_char' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 166: warning: 'dumb_display_user_input' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 173: warning: 'dumb_discard_old_input' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 186: warning: 'os_display_char' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 208: warning: 'os_display_string' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 223: warning: 'os_erase_area' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 233: warning: 'os_scroll_area' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 254: warning: 'os_font_data' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 266: warning: 'show_cell' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 290: warning: 'will_print_blank' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 298: warning: 'show_line_prefix' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 314: warning: 'show_row' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 334: warning: 'dumb_show_prompt' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 344: warning: 'mark_all_unchanged' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 351: warning: 'is_blank' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 364: warning: 'dumb_show_screen' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 427: warning: 'dumb_dump_screen' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 435: warning: 'dumb_elide_more_prompt' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 443: warning: 'os_reset_screen' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 448: warning: 'os_beep' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 467: warning: 'toggle' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 472: warning: 'dumb_output_handle_setting' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 544: warning: 'dumb_init_output' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_output.c: 49: warning: source too confusing
+unprotoize: definition of function 'make_cell' not converted
+dumb_output.c: 119: warning: source too confusing
+unprotoize: definition of function 'os_repaint_window' not converted
+dumb_output.c: 135: warning: source too confusing
+unprotoize: definition of function 'dumb_copy_cell' not converted
+dumb_output.c: 469: warning: source too confusing
+unprotoize: definition of function 'dumb_output_handle_setting' not converted
+unprotoize: converting file 'fastmem.c'
+fastmem.c: 109: warning: 'get_header_extension' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 131: warning: 'set_header_extension' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 150: warning: 'restart_header' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 211: warning: 'init_memory' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 458: warning: 'init_undo' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 491: warning: 'free_undo' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 518: warning: 'reset_memory' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 544: warning: 'storeb' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 578: warning: 'storew' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 592: warning: 'z_restart' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 636: warning: 'get_default_name' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 680: warning: 'z_restore' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 796: warning: 'mem_diff' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 837: warning: 'mem_undiff' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 873: warning: 'restore_undo' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 909: warning: 'z_restore_undo' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 924: warning: 'z_save' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 1012: warning: 'save_undo' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 1078: warning: 'z_save_undo' excluded by preprocessing
+unprotoize: function definition not converted
+fastmem.c: 1091: warning: 'z_verify' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'process.c'
+process.c: 180: warning: 'init_process' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 192: warning: 'load_operand' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 200: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 215: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 218: warning: 'CODE_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 232: warning: 'load_all_operands' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 256: warning: 'interpret' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 268: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 295: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 296: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 300: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 333: warning: 'call' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 367: warning: 'SET_PC' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 371: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 408: warning: 'ret' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 424: warning: 'SET_PC' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 455: warning: 'branch' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 463: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 475: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 485: warning: 'GET_PC' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 501: warning: 'store' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 505: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 531: warning: 'direct_call' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 573: warning: '__extended__' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 578: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 579: warning: 'CODE_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 595: warning: '__illegal__' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 608: warning: 'z_catch' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 622: warning: 'z_throw' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 645: warning: 'z_call_n' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 662: warning: 'z_call_s' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 678: warning: 'z_check_arg_count' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 694: warning: 'z_jump' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 698: warning: 'GET_PC' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 716: warning: 'z_nop' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 729: warning: 'z_quit' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 742: warning: 'z_ret' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 755: warning: 'z_ret_popped' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 768: warning: 'z_rfalse' excluded by preprocessing
+unprotoize: function definition not converted
+process.c: 781: warning: 'z_rtrue' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'quetzal.c'
+quetzal.c: 105: warning: 'read_word' excluded by preprocessing
+unprotoize: function definition not converted
+quetzal.c: 117: warning: 'read_long' excluded by preprocessing
+unprotoize: function definition not converted
+quetzal.c: 136: warning: 'restore_quetzal' excluded by preprocessing
+unprotoize: function definition not converted
+quetzal.c: 426: warning: 'save_quetzal' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'dumb_pic.c'
+dumb_pic.c: 45: warning: 'lookupw' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_pic.c: 50: warning: 'dumb_init_pictures' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_pic.c: 109: warning: 'z_num_to_index' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_pic.c: 118: warning: 'os_picture_data' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_pic.c: 137: warning: 'os_draw_picture' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'variable.c'
+variable.c: 30: warning: 'z_dec' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 40: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 55: warning: 'z_dec_chk' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 65: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 81: warning: 'z_inc' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 91: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 106: warning: 'z_inc_chk' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 116: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 132: warning: 'z_load' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 156: warning: 'z_pop' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 170: warning: 'z_pop_stack' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 177: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 199: warning: 'z_pull' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 223: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 246: warning: 'z_push' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 260: warning: 'z_push_stack' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 265: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+variable.c: 288: warning: 'z_store' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'err.c'
+err.c: 76: warning: 'init_err' excluded by preprocessing
+unprotoize: function definition not converted
+err.c: 96: warning: 'runtime_error' excluded by preprocessing
+unprotoize: function definition not converted
+err.c: 142: warning: 'print_long' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'redirect.c'
+redirect.c: 43: warning: 'memory_open' excluded by preprocessing
+unprotoize: function definition not converted
+redirect.c: 76: warning: 'memory_new_line' excluded by preprocessing
+unprotoize: function definition not converted
+redirect.c: 86: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+redirect.c: 107: warning: 'memory_word' excluded by preprocessing
+unprotoize: function definition not converted
+redirect.c: 134: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+redirect.c: 151: warning: 'memory_close' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'main.c'
+main.c: 134: warning: 'z_piracy' excluded by preprocessing
+unprotoize: function definition not converted
+main.c: 147: warning: 'main' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'math.c'
+math.c: 30: warning: 'z_add' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 45: warning: 'z_and' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 59: warning: 'z_art_shift' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 78: warning: 'z_div' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 98: warning: 'z_je' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 121: warning: 'z_jg' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 135: warning: 'z_jl' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 148: warning: 'z_jz' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 162: warning: 'z_log_shift' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 181: warning: 'z_mod' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 198: warning: 'z_mul' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 211: warning: 'z_not' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 225: warning: 'z_or' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 239: warning: 'z_sub' excluded by preprocessing
+unprotoize: function definition not converted
+math.c: 254: warning: 'z_test' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'dumb_init.c'
+dumb_init.c: 55: warning: 'zgetopt' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_init.c: 103: warning: 'os_process_arguments' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_init.c: 188: warning: 'os_init_screen' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_init.c: 213: warning: 'os_random_seed' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_init.c: 223: warning: 'os_fatal' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_init.c: 233: warning: 'os_load_story' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_init.c: 268: warning: 'os_storyfile_seek' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_init.c: 278: warning: 'os_storyfile_tell' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_init.c: 283: warning: 'os_init_setup' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_init.c: 302: warning: 'print_version' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_init.c: 223: warning: definition of stdarg not converted
+unprotoize: converting file 'text.c'
+text.c: 56: warning: 'translate_from_zscii' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 71: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 78: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 109: warning: 'translate_to_zscii' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 127: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 134: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 169: warning: 'alphabet' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 176: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 200: warning: 'load_string' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 211: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 234: warning: 'encode_text' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 316: warning: 'z_check_unicode' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 344: warning: 'z_encode_text' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 379: warning: 'decode_text' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 427: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 430: warning: 'HIGH_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 433: warning: 'CODE_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 488: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 528: warning: 'z_new_line' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 541: warning: 'z_print' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 554: warning: 'z_print_addr' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 567: warning: 'z_print_char' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 580: warning: 'z_print_form' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 589: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 602: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 622: warning: 'print_num' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 648: warning: 'z_print_num' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 661: warning: 'print_object' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 667: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 671: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 689: warning: 'z_print_obj' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 702: warning: 'z_print_paddr' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 715: warning: 'z_print_ret' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 730: warning: 'print_string' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 750: warning: 'z_print_unicode' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 770: warning: 'lookup_text' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 786: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 788: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 790: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 817: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 864: warning: 'tokenise_text' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 869: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 871: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 902: warning: 'tokenise_line' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 947: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 953: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 958: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 1006: warning: 'z_tokenise' excluded by preprocessing
+unprotoize: function definition not converted
+text.c: 1041: warning: 'completion' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'table.c'
+table.c: 35: warning: 'z_copy_table' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 51: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 59: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 73: warning: 'z_loadb' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 78: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 92: warning: 'z_loadw' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 100: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 119: warning: 'z_scan_table' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 137: warning: 'LOW_WORD' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 146: warning: 'LOW_BYTE' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 175: warning: 'z_storeb' excluded by preprocessing
+unprotoize: function definition not converted
+table.c: 191: warning: 'z_storew' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'files.c'
+files.c: 65: warning: 'script_open' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 112: warning: 'script_close' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 129: warning: 'script_new_line' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 146: warning: 'script_char' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 199: warning: 'script_word' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 243: warning: 'script_write_input' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 269: warning: 'script_erase_input' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 288: warning: 'script_mssg_on' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 305: warning: 'script_mssg_off' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 319: warning: 'record_open' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 345: warning: 'record_close' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 359: warning: 'record_code' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 385: warning: 'record_char' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 407: warning: 'record_write_key' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 424: warning: 'record_write_input' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 445: warning: 'replay_open' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 474: warning: 'replay_close' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 490: warning: 'replay_code' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 516: warning: 'replay_char' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 553: warning: 'replay_read_key' excluded by preprocessing
+unprotoize: function definition not converted
+files.c: 575: warning: 'replay_read_input' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'sound.c'
+sound.c: 49: warning: 'init_sound' excluded by preprocessing
+unprotoize: function definition not converted
+sound.c: 65: warning: 'start_sample' excluded by preprocessing
+unprotoize: function definition not converted
+sound.c: 93: warning: 'start_next_sample' excluded by preprocessing
+unprotoize: function definition not converted
+sound.c: 112: warning: 'end_of_sound' excluded by preprocessing
+unprotoize: function definition not converted
+sound.c: 144: warning: 'z_sound_effect' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'sanitize_16.c'
+unprotoize: converting file 'input.c'
+input.c: 39: warning: 'is_terminator' excluded by preprocessing
+unprotoize: function definition not converted
+input.c: 77: warning: 'z_make_menu' excluded by preprocessing
+unprotoize: function definition not converted
+input.c: 95: warning: 'read_yes_or_no' excluded by preprocessing
+unprotoize: function definition not converted
+input.c: 121: warning: 'read_string' excluded by preprocessing
+unprotoize: function definition not converted
+input.c: 142: warning: 'read_number' excluded by preprocessing
+unprotoize: function definition not converted
+input.c: 168: warning: 'z_read' excluded by preprocessing
+unprotoize: function definition not converted
+input.c: 279: warning: 'z_read_char' excluded by preprocessing
+unprotoize: function definition not converted
+input.c: 317: warning: 'z_read_mouse' excluded by preprocessing
+unprotoize: function definition not converted
+input.c: 354: warning: 'truncate_question_mark' excluded by preprocessing
+unprotoize: function definition not converted
+unprotoize: converting file 'dumb_input.c'
+dumb_input.c: 80: warning: 'xgetchar' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 96: warning: 'dumb_getline' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 115: warning: 'translate_special_chars' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 167: warning: 'check_timeout' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 177: warning: 'toggle' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 183: warning: 'dumb_handle_setting' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 205: warning: 'dumb_read_line' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 310: warning: 'dumb_read_misc_line' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 325: warning: 'os_read_key' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 355: warning: 'os_read_line' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 409: warning: 'os_read_file_name' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 479: warning: 'os_more_prompt' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 488: warning: 'dumb_init_input' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 497: warning: 'os_read_mouse' excluded by preprocessing
+unprotoize: function definition not converted
+dumb_input.c: 504: warning: source too confusing
+dumb_input.c: 196: warning: source too confusing
+unprotoize: definition of function 'dumb_read_line' not converted
+unprotoize: converting file 'frotz.h'
+unprotoize: converting file 'dumb_frotz.h'

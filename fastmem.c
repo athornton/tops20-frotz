@@ -48,19 +48,19 @@
 
 #endif
 
-extern void seed_random (int);
-extern void restart_screen (void);
-extern void refresh_text_style (void);
-extern void call (zword, int, zword *, int);
-extern void split_window (zword);
-extern void script_open (void);
-extern void script_close (void);
+extern void seed_random ();
+extern void restart_screen ();
+extern void refresh_text_style ();
+extern void call ();
+extern void split_window ();
+extern void script_open ();
+extern void script_close ();
 
 
-extern zword save_quetzal (FILE *, FILE *);
-extern zword restore_quetzal (FILE *, FILE *);
+extern zword save_quetzal ();
+extern zword restore_quetzal ();
 
-extern void erase_window (zword);
+extern void erase_window ();
 
 extern void (*op0_opcodes[]) (void);
 extern void (*op1_opcodes[]) (void);
@@ -106,7 +106,8 @@ static int undo_count = 0;
  * Read a value from the header extension (former mouse table).
  *
  */
-zword get_header_extension (int entry)
+zword get_header_extension (entry)
+     int entry;
 {
     zword addr;
     zword val;
@@ -128,7 +129,9 @@ zword get_header_extension (int entry)
  * Set an entry in the header extension (former mouse table).
  *
  */
-void set_header_extension (int entry, zword val)
+void set_header_extension (entry, val)
+     int entry;
+     zword val;
 {
     zword addr;
 
@@ -147,7 +150,7 @@ void set_header_extension (int entry, zword val)
  * Set all header fields which hold information about the interpreter.
  *
  */
-void restart_header (void)
+void restart_header ()
 {
     zword screen_x_size;
     zword screen_y_size;
@@ -208,7 +211,7 @@ void restart_header (void)
  * Data collected from http://www.russotto.net/zplet/ivl.html
  *
  */
-void init_memory (void)
+void init_memory ()
 {
     long size;
     zword addr;
@@ -455,7 +458,7 @@ void init_memory (void)
  * during the game, e.g. for loading sounds or pictures.
  *
  */
-void init_undo (void)
+void init_undo ()
 {
     void far *reserved;
 
@@ -488,7 +491,8 @@ void init_undo (void)
  * Free count undo blocks from the beginning of the undo list.
  *
  */
-static void free_undo (int count)
+static void free_undo (count)
+     int count;
 {
     undo_t *p;
 
@@ -515,7 +519,7 @@ static void free_undo (int count)
  * Close the story file and deallocate memory.
  *
  */
-void reset_memory (void)
+void reset_memory ()
 {
     if (story_fp != NULL)
 	fclose (story_fp);
@@ -541,7 +545,9 @@ void reset_memory (void)
  * Write a byte value to the dynamic Z-machine memory.
  *
  */
-void storeb (zword addr, zbyte value)
+void storeb (addr, value)
+     zword addr;
+     zbyte value;
 {
     addr = TRUNCATE_ZWORD(addr);
     if (addr >= h_dynamic_size)
@@ -575,7 +581,9 @@ void storeb (zword addr, zbyte value)
  * Write a word value to the dynamic Z-machine memory.
  *
  */
-void storew (zword addr, zword value)
+void storew (addr, value)
+     zword addr;
+     zword value;
 {
     storeb (TRUNCATE_ZWORD(addr + 0), hi (value));
     storeb (TRUNCATE_ZWORD(addr + 1), lo (value));
@@ -589,7 +597,7 @@ void storew (zword addr, zword value)
  * 	no zargs used
  *
  */
-void z_restart (void)
+void z_restart ()
 {
     static bool first_restart = TRUE;
 
@@ -633,7 +641,9 @@ void z_restart (void)
  * copy it to a string.
  *
  */
-static void get_default_name (char *default_name, zword addr)
+static void get_default_name (default_name, addr)
+     char *default_name;
+     zword addr;
 {
     if (addr != 0) {
 
@@ -677,7 +687,7 @@ static void get_default_name (char *default_name, zword addr)
  *	zargs[2] = address of suggested file name
  *
  */
-void z_restore (void)
+void z_restore ()
 {
     char *new_name;
     char default_name[MAX_FILE_NAME + 1];
@@ -793,7 +803,11 @@ finished:
  * Returns the number of bytes copied to diff.
  *
  */
-static long mem_diff (zbyte *a, zbyte *b, zword mem_size, zbyte *diff)
+static long mem_diff (a, b, mem_size, diff)
+     zbyte *a;
+     zbyte *b;
+     zword mem_size;
+     zbyte *diff;
 {
     unsigned size = mem_size;
     zbyte *p = diff;
@@ -834,7 +848,10 @@ static long mem_diff (zbyte *a, zbyte *b, zword mem_size, zbyte *diff)
  * Applies a quetzal-like diff to dest
  *
  */
-static void mem_undiff (zbyte *diff, long diff_length, zbyte *dest)
+static void mem_undiff (diff, diff_length, dest)
+     zbyte *diff;
+     long int diff_length;
+     zbyte *dest;
 {
     zbyte c;
 
@@ -870,7 +887,7 @@ static void mem_undiff (zbyte *diff, long diff_length, zbyte *dest)
  * This function does the dirty work for z_restore_undo.
  *
  */
-int restore_undo (void)
+int restore_undo ()
 {
     if (f_setup.undo_slots == 0)	/* undo feature unavailable */
 
@@ -906,7 +923,7 @@ int restore_undo (void)
  *	no zargs used
  *
  */
-void z_restore_undo (void)
+void z_restore_undo ()
 {
     store ((zword) restore_undo ());
 
@@ -921,7 +938,7 @@ void z_restore_undo (void)
  *	zargs[2] = address of suggested file name
  *
  */
-void z_save (void)
+void z_save ()
 {
     char *new_name;
     char default_name[MAX_FILE_NAME + 1];
@@ -1009,7 +1026,7 @@ finished:
  * This function does the dirty work for z_save_undo.
  *
  */
-int save_undo (void)
+int save_undo ()
 {
     long diff_size;
     zword stack_size;
@@ -1075,7 +1092,7 @@ int save_undo (void)
  *	no zargs used
  *
  */
-void z_save_undo (void)
+void z_save_undo ()
 {
     store ((zword) save_undo ());
 
@@ -1088,7 +1105,7 @@ void z_save_undo (void)
  *	no zargs used
  *
  */
-void z_verify (void)
+void z_verify ()
 {
     zword checksum = 0;
     long i;

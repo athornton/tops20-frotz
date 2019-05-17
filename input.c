@@ -20,14 +20,14 @@
 
 #include "frotz.h"
 
-extern int save_undo (void);
+extern int save_undo ();
 
-extern zchar stream_read_key (zword, zword, bool);
-extern zchar stream_read_input (int, zchar *, zword, zword, bool, bool);
+extern zchar stream_read_key ();
+extern zchar stream_read_input ();
 
-extern void tokenise_line (zword, zword, zword, bool);
+extern void tokenise_line ();
 
-static bool truncate_question_mark(void);
+static bool truncate_question_mark();
 
 /*
  * is_terminator
@@ -36,7 +36,8 @@ static bool truncate_question_mark(void);
  *
  */
 
-bool is_terminator (zchar key)
+bool is_terminator (key)
+     zchar key;
 {
 
     if (key == ZC_TIME_OUT)
@@ -74,7 +75,7 @@ bool is_terminator (zchar key)
  *
  */
 
-void z_make_menu (void)
+void z_make_menu ()
 {
 
     /* This opcode was only used for the Macintosh version of Journey.
@@ -92,7 +93,8 @@ void z_make_menu (void)
  *
  */
 
-bool read_yes_or_no (const char *s)
+bool read_yes_or_no (s)
+     const char *s;
 {
     zchar key;
 
@@ -118,7 +120,9 @@ bool read_yes_or_no (const char *s)
  *
  */
 
-void read_string (int max, zchar *buffer)
+void read_string (max, buffer)
+     int max;
+     zchar *buffer;
 {
     zchar key;
 
@@ -139,7 +143,7 @@ void read_string (int max, zchar *buffer)
  *
  */
 
-int read_number (void)
+int read_number ()
 {
     zchar buffer[6];
     int value = 0;
@@ -165,7 +169,7 @@ int read_number (void)
  *
  */
 
-void z_read (void)
+void z_read ()
 {
     zchar buffer[INPUT_BUFFER_SIZE];
     zword addr;
@@ -276,7 +280,7 @@ void z_read (void)
  *
  */
 
-void z_read_char (void)
+void z_read_char ()
 {
     zchar key;
 
@@ -314,7 +318,7 @@ void z_read_char (void)
  *
  */
 
-void z_read_mouse (void)
+void z_read_mouse ()
 {
     zword btn;
 
@@ -351,7 +355,7 @@ void z_read_mouse (void)
  * the trailing question mark to be truncated.
  *
  */
-static bool truncate_question_mark(void)
+static bool truncate_question_mark()
 {
 	if (story_id == ZORK1) return TRUE;
 	if (story_id == ZORK2) return TRUE;

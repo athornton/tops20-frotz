@@ -21,9 +21,9 @@
 #include <string.h>
 #include "frotz.h"
 
-extern void stream_char (zchar);
-extern void stream_word (const zchar *);
-extern void stream_new_line (void);
+extern void stream_char ();
+extern void stream_word ();
+extern void stream_new_line ();
 
 static zchar buffer[TEXT_BUFFER_SIZE];
 static int bufpos = 0;
@@ -36,7 +36,7 @@ static zchar prev_c = 0;
  * Copy the contents of the text buffer to the output streams.
  *
  */
-void flush_buffer (void)
+void flush_buffer ()
 {
     static bool locked = FALSE;
 
@@ -72,7 +72,8 @@ void flush_buffer (void)
  * High level output function.
  *
  */
-void print_char (zchar c)
+void print_char (c)
+     zchar c;
 {
     static bool flag = FALSE;
     need_newline_at_exit = TRUE;
@@ -122,7 +123,7 @@ void print_char (zchar c)
  * High level newline function.
  *
  */
-void new_line (void)
+void new_line ()
 {
     flush_buffer (); stream_new_line (); need_newline_at_exit = FALSE;
 
@@ -135,7 +136,7 @@ void new_line (void)
  * Initialize buffer variables.
  *
  */
-void init_buffer(void)
+void init_buffer()
 {
     memset(buffer, 0, sizeof (zchar) * TEXT_BUFFER_SIZE);
     bufpos = 0;

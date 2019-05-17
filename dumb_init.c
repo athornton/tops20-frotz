@@ -25,7 +25,7 @@
 #include <libgen.h>
 #endif
 
-static void print_version(void);
+static void print_version();
 
 #define INFORMATION "\
 An interpreter for all Infocom and other Z-Machine games.\n\
@@ -52,7 +52,10 @@ While running, enter \"\\help\" to list the runtime escape sequences.\n"
 static int zoptind = 1;
 static int zoptopt = 0;
 static char *zoptarg = NULL;
-static int zgetopt (int argc, char *argv[], const char *options)
+static int zgetopt (argc, argv, options)
+     int argc;
+     char **argv;
+     const char *options;
 {
     static int pos = 1;
     const char *p;
@@ -100,7 +103,9 @@ bool do_more_prompts;
  * Some variables may be set to activate special features of Frotz.
  *
  */
-void os_process_arguments(int argc, char *argv[])
+void os_process_arguments(argc, argv)
+     int argc;
+     char **argv;
 {
     int c;
     char *p = NULL;
@@ -185,7 +190,7 @@ void os_process_arguments(int argc, char *argv[])
 
 }
 
-void os_init_screen(void)
+void os_init_screen()
 {
     if (h_version == V3 && user_tandy_bit)
 	h_config |= CONFIG_TANDY;
@@ -210,7 +215,7 @@ void os_init_screen(void)
     dumb_init_pictures(graphics_filename);
 }
 
-int os_random_seed (void)
+int os_random_seed ()
 {
     if (user_random_seed == -1)
 	/* Use the epoch as seed value */
@@ -218,7 +223,9 @@ int os_random_seed (void)
     else return user_random_seed;
 }
 
-void os_restart_game (int UNUSED (stage)) {}
+void os_restart_game (UNUSED_stage)
+     int UNUSED_stage;
+ {}
 
 void os_fatal (const char *s, ...)
 {
@@ -230,7 +237,7 @@ void os_fatal (const char *s, ...)
     }
 }
 
-FILE *os_load_story(void)
+FILE *os_load_story()
 {
     FILE *fp;
 
@@ -265,7 +272,10 @@ FILE *os_load_story(void)
  * ZCODE chunk of a blorb file (dumb does not support blorb
  * so this is just a wrapper for fseek)
  */
-int os_storyfile_seek(FILE * fp, long offset, int whence)
+int os_storyfile_seek(fp, offset, whence)
+     FILE *fp;
+     long int offset;
+     int whence;
 {
     return fseek(fp, offset, whence);
 }
@@ -275,12 +285,13 @@ int os_storyfile_seek(FILE * fp, long offset, int whence)
  * or the ZCODE chunk of a blorb file (dumb does not support
  * blorb so this is just a wrapper for fseek)
  */
-int os_storyfile_tell(FILE * fp)
+int os_storyfile_tell(fp)
+     FILE *fp;
 {
     return ftell(fp);
 }
 
-void os_init_setup(void)
+void os_init_setup()
 {
 	f_setup.attribute_assignment = 0;
 	f_setup.attribute_testing = 0;
@@ -299,7 +310,7 @@ void os_init_setup(void)
 	f_setup.restore_mode = 0;
 }
 
-static void print_version(void)
+static void print_version()
 {
     printf("FROTZ V%s\t", VERSION);
     printf("Dumb interface.\n");

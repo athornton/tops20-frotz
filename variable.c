@@ -27,7 +27,7 @@
  * 	zargs[0] = variable to decrement
  *
  */
-void z_dec (void)
+void z_dec ()
 {
     zword value;
 
@@ -52,7 +52,7 @@ void z_dec (void)
  * 	zargs[1] = value to check variable against
  *
  */
-void z_dec_chk (void)
+void z_dec_chk ()
 {
     zword value;
 
@@ -78,7 +78,7 @@ void z_dec_chk (void)
  * 	zargs[0] = variable to increment
  *
  */
-void z_inc (void)
+void z_inc ()
 {
     zword value;
 
@@ -103,7 +103,7 @@ void z_inc (void)
  * 	zargs[1] = value to check variable against
  *
  */
-void z_inc_chk (void)
+void z_inc_chk ()
 {
     zword value;
 
@@ -129,7 +129,7 @@ void z_inc_chk (void)
  *	zargs[0] = variable to store
  *
  */
-void z_load (void)
+void z_load ()
 {
     zword value;
 
@@ -153,7 +153,7 @@ void z_load (void)
  *	no zargs used
  *
  */
-void z_pop (void)
+void z_pop ()
 {
     sp++;
 
@@ -167,7 +167,7 @@ void z_pop (void)
  *	zargs[1] = address of user stack (optional)
  *
  */
-void z_pop_stack (void)
+void z_pop_stack ()
 {
     if (zargc == 2) {		/* it's a user stack */
 
@@ -196,7 +196,7 @@ void z_pop_stack (void)
  *	zargs[0] = variable to write value to
  *
  */
-void z_pull (void)
+void z_pull ()
 {
     zword value;
 
@@ -243,7 +243,7 @@ void z_pull (void)
  *	zargs[0] = value to push onto the stack
  *
  */
-void z_push (void)
+void z_push ()
 {
     *--sp = zargs[0];
 
@@ -257,7 +257,7 @@ void z_push (void)
  *	zargs[1] = address of user stack
  *
  */
-void z_push_stack (void)
+void z_push_stack ()
 {
     zword size;
     zword addr = zargs[1];
@@ -285,7 +285,7 @@ void z_push_stack (void)
  *      zargs[1] = value to write
  *
  */
-void z_store (void)
+void z_store ()
 {
     zword value = zargs[1];
 

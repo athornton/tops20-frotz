@@ -20,7 +20,10 @@ int optopt = 0;
 
 const char *optarg = NULL;
 
-int cdecl getopt (int argc, char *argv[], const char *options)
+int cdecl getopt (argc, argv, options)
+     int argc;
+     char **argv;
+     const char *options;
 {
     static int pos = 1;
 

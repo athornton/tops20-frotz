@@ -29,7 +29,7 @@
 #define EFFECT_STOP 3
 #define EFFECT_FINISH_WITH 4
 
-extern int direct_call (zword);
+extern int direct_call ();
 
 static zword routine = 0;
 
@@ -46,7 +46,7 @@ static bool playing = FALSE;
  * Initialize sound variables.
  *
  */
-void init_sound (void)
+void init_sound ()
 {
     locked = FALSE;
     playing = FALSE;
@@ -62,7 +62,11 @@ void init_sound (void)
  * Call the IO interface to play a sample.
  *
  */
-static void start_sample (int number, int volume, int repeats, zword eos)
+static void start_sample (number, volume, repeats, eos)
+     int number;
+     int volume;
+     int repeats;
+     zword eos;
 {
     static zbyte lh_repeats[] = {
 	0x00, 0x00, 0x00, 0x01, 0xff,
@@ -90,7 +94,7 @@ static void start_sample (int number, int volume, int repeats, zword eos)
  * immediately follow other samples.
  *
  */
-static void start_next_sample (void)
+static void start_next_sample ()
 {
     if (next_sample != 0)
 	start_sample (next_sample, next_volume, 0, 0);
@@ -109,7 +113,7 @@ static void start_next_sample (void)
  * interrupt (which requires extremely careful programming).
  *
  */
-void end_of_sound (void)
+void end_of_sound ()
 {
 #if defined(DJGPP) && defined(SOUND_SUPPORT)
     end_of_sound_flag = 0;
@@ -141,7 +145,7 @@ void end_of_sound (void)
  *	 Repeats are stored in the high byte, 255 is infinite loop.
  *
  */
-void z_sound_effect (void)
+void z_sound_effect ()
 {
     zword number = zargs[0];
     zword effect = zargs[1];

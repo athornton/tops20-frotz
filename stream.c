@@ -20,44 +20,44 @@
 
 #include "frotz.h"
 
-extern bool handle_hot_key (zchar);
+extern bool handle_hot_key ();
 
-extern bool validate_click (void);
+extern bool validate_click ();
 
-extern void replay_open (void);
-extern void replay_close (void);
-extern void memory_open (zword, zword, bool);
-extern void memory_close (void);
-extern void record_open (void);
-extern void record_close (void);
-extern void script_open (void);
-extern void script_close (void);
+extern void replay_open ();
+extern void replay_close ();
+extern void memory_open ();
+extern void memory_close ();
+extern void record_open ();
+extern void record_close ();
+extern void script_open ();
+extern void script_close ();
 
-extern void memory_word (const zchar *);
-extern void memory_new_line (void);
-extern void record_write_key (zchar);
-extern void record_write_input (const zchar *, zchar);
-extern void script_char (zchar);
-extern void script_word (const zchar *);
-extern void script_new_line (void);
-extern void script_write_input (const zchar *, zchar);
-extern void script_erase_input (const zchar *);
-extern void script_mssg_on (void);
-extern void script_mssg_off (void);
-extern void screen_char (zchar);
-extern void screen_word (const zchar *);
-extern void screen_new_line (void);
-extern void screen_write_input (const zchar *, zchar);
-extern void screen_erase_input (const zchar *);
-extern void screen_mssg_on (void);
-extern void screen_mssg_off (void);
+extern void memory_word ();
+extern void memory_new_line ();
+extern void record_write_key ();
+extern void record_write_input ();
+extern void script_char ();
+extern void script_word ();
+extern void script_new_line ();
+extern void script_write_input ();
+extern void script_erase_input ();
+extern void script_mssg_on ();
+extern void script_mssg_off ();
+extern void screen_char ();
+extern void screen_word ();
+extern void screen_new_line ();
+extern void screen_write_input ();
+extern void screen_erase_input ();
+extern void screen_mssg_on ();
+extern void screen_mssg_off ();
 
-extern zchar replay_read_key (void);
-extern zchar replay_read_input (zchar *);
-extern zchar console_read_key (zword);
-extern zchar console_read_input (int, zchar *, zword, bool);
+extern zchar replay_read_key ();
+extern zchar replay_read_input ();
+extern zchar console_read_key ();
+extern zchar console_read_input ();
 
-extern int direct_call (zword);
+extern int direct_call ();
 
 
 /*
@@ -66,7 +66,7 @@ extern int direct_call (zword);
  * Start printing a "debugging" message.
  *
  */
-void stream_mssg_on (void)
+void stream_mssg_on ()
 {
     flush_buffer ();
 
@@ -86,7 +86,7 @@ void stream_mssg_on (void)
  * Stop printing a "debugging" message.
  *
  */
-void stream_mssg_off (void)
+void stream_mssg_off ()
 {
     flush_buffer ();
 
@@ -108,7 +108,7 @@ void stream_mssg_off (void)
  *	zargs[2] = width of redirected output (stream 3 only, optional)
  *
  */
-void z_output_stream (void)
+void z_output_stream ()
 {
     flush_buffer ();
 
@@ -142,7 +142,8 @@ void z_output_stream (void)
  * Send a single character to the output stream.
  *
  */
-void stream_char (zchar c)
+void stream_char (c)
+     zchar c;
 {
     if (ostream_screen)
 	screen_char (c);
@@ -158,7 +159,8 @@ void stream_char (zchar c)
  * Send a string of characters to the output streams.
  *
  */
-void stream_word (const zchar *s)
+void stream_word (s)
+     const zchar *s;
 {
     if (ostream_memory && !message)
 
@@ -182,7 +184,7 @@ void stream_word (const zchar *s)
  * Send a newline to the output streams.
  *
  */
-void stream_new_line (void)
+void stream_new_line ()
 {
     if (ostream_memory && !message)
 	memory_new_line ();
@@ -205,7 +207,7 @@ void stream_new_line (void)
  *	zargs[0] = input stream to be selected
  *
  */
-void z_input_stream (void)
+void z_input_stream ()
 {
     flush_buffer ();
 
@@ -223,7 +225,10 @@ void z_input_stream (void)
  * Read a single keystroke from the current input stream.
  *
  */
-zchar stream_read_key ( zword timeout, zword routine, bool hot_keys )
+zchar stream_read_key (timeout, routine, hot_keys)
+     zword timeout;
+     zword routine;
+     bool hot_keys;
 {
     zchar key = ZC_BAD;
 

@@ -29,11 +29,11 @@
 #define SEEK_END 2
 #endif
 
-extern void set_more_prompts (bool);
+extern void set_more_prompts ();
 
-extern bool is_terminator (zchar);
+extern bool is_terminator ();
 
-extern bool read_yes_or_no (const char *);
+extern bool read_yes_or_no ();
 
 /* char script_name[MAX_FILE_NAME + 1] = DEFAULT_SCRIPT_NAME; */
 /* char command_name[MAX_FILE_NAME + 1] = DEFAULT_COMMAND_NAME; */
@@ -62,7 +62,7 @@ static FILE *pfp = NULL;
  *
  */
 
-void script_open (void)
+void script_open ()
 {
     static bool script_valid = FALSE;
 
@@ -109,7 +109,7 @@ done:
  *
  */
 
-void script_close (void)
+void script_close ()
 {
 
     h_flags &= ~SCRIPTING_FLAG;
@@ -126,7 +126,7 @@ void script_close (void)
  *
  */
 
-void script_new_line (void)
+void script_new_line ()
 {
 
     if (fputc ('\n', sfp) == EOF)
@@ -143,7 +143,8 @@ void script_new_line (void)
  *
  */
 
-void script_char (zchar c)
+void script_char (c)
+     zchar c;
 {
 
     if (c == ZC_INDENT && script_width != 0)
@@ -196,7 +197,8 @@ void script_char (zchar c)
  *
  */
 
-void script_word (const zchar *s)
+void script_word (s)
+     const zchar *s;
 {
     int width;
     int i;
@@ -240,7 +242,9 @@ void script_word (const zchar *s)
  *
  */
 
-void script_write_input (const zchar *buf, zchar key)
+void script_write_input (buf, key)
+     const zchar *buf;
+     zchar key;
 {
     int width;
     int i;
@@ -266,7 +270,8 @@ void script_write_input (const zchar *buf, zchar key)
  *
  */
 
-void script_erase_input (const zchar *buf)
+void script_erase_input (buf)
+     const zchar *buf;
 {
     int width;
     int i;
@@ -285,7 +290,7 @@ void script_erase_input (const zchar *buf)
  *
  */
 
-void script_mssg_on (void)
+void script_mssg_on ()
 {
 
     if (script_width != 0)
@@ -302,7 +307,7 @@ void script_mssg_on (void)
  *
  */
 
-void script_mssg_off (void)
+void script_mssg_off ()
 {
 
     script_new_line ();
@@ -316,7 +321,7 @@ void script_mssg_off (void)
  *
  */
 
-void record_open (void)
+void record_open ()
 {
     char *new_name;
 
@@ -342,7 +347,7 @@ void record_open (void)
  *
  */
 
-void record_close (void)
+void record_close ()
 {
 
     fclose (rfp); ostream_record = FALSE;
@@ -356,7 +361,9 @@ void record_close (void)
  *
  */
 
-static void record_code (int c, bool force_encoding)
+static void record_code (c, force_encoding)
+     int c;
+     bool force_encoding;
 {
 
     if (force_encoding || c == '[' || c < 0x20 || c > 0x7e) {
@@ -382,7 +389,8 @@ static void record_code (int c, bool force_encoding)
  *
  */
 
-static void record_char (zchar c)
+static void record_char (c)
+     zchar c;
 {
 
     if (c != ZC_RETURN) {
@@ -404,7 +412,8 @@ static void record_char (zchar c)
  *
  */
 
-void record_write_key (zchar key)
+void record_write_key (key)
+     zchar key;
 {
 
     record_char (key);
@@ -421,7 +430,9 @@ void record_write_key (zchar key)
  *
  */
 
-void record_write_input (const zchar *buf, zchar key)
+void record_write_input (buf, key)
+     const zchar *buf;
+     zchar key;
 {
     zchar c;
 
@@ -442,7 +453,7 @@ void record_write_input (const zchar *buf, zchar key)
  *
  */
 
-void replay_open (void)
+void replay_open ()
 {
     char *new_name;
 
@@ -471,7 +482,7 @@ void replay_open (void)
  *
  */
 
-void replay_close (void)
+void replay_close ()
 {
 
     set_more_prompts (TRUE);
@@ -487,7 +498,7 @@ void replay_close (void)
  *
  */
 
-static int replay_code (void)
+static int replay_code ()
 {
     int c;
 
@@ -513,7 +524,7 @@ static int replay_code (void)
  *
  */
 
-static zchar replay_char (void)
+static zchar replay_char ()
 {
     int c;
 
@@ -550,7 +561,7 @@ static zchar replay_char (void)
  *
  */
 
-zchar replay_read_key (void)
+zchar replay_read_key ()
 {
     zchar key;
 
@@ -572,7 +583,8 @@ zchar replay_read_key (void)
  *
  */
 
-zchar replay_read_input (zchar *buf)
+zchar replay_read_input (buf)
+     zchar *buf;
 {
     zchar c;
 
