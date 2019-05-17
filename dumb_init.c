@@ -227,8 +227,9 @@ void os_restart_game (UNUSED_stage)
      int UNUSED_stage;
  {}
 
-void os_fatal (const char *s, ...)
+void os_fatal ()
 {
+    const char * s;
     fprintf(stderr, "\nFatal error: %s\n", s);
     if (f_setup.ignore_errors) {
 	fprintf(stderr, "Continuing anyway...\n");
